@@ -43,6 +43,57 @@ class FirstMateDynamicClientTests(unittest.TestCase):
         legacy.write_json(self.request, body)
         return body
 
+    def local_delivery(self):
+        self.dynamic()
+        delivery = dict(kind="ship", mode="local-only", branch="fm/root-1")
+        self.settings["protocol"]["root_deliveries"] = ["ship-local-only"]
+        self.settings["view"]["scope"] = "local-dynamic-ship-local-only"
+        self.settings["view"]["attachment"]["root_delivery"] = delivery
+        self.context_data["root_delivery"] = delivery
+        legacy.write_json(self.context, self.context_data)
+        return delivery
+
+    def test_local_only_context_negotiates_delivery_before_dynamic_submit(self):
+        self.local_delivery()
+        body = self.request_body()
+        code, result = self.cli("submit")
+        self.assertEqual(code, 0, result)
+        self.assertEqual(result["request"]["body"], body)
+        self.assertEqual(result["attachment"]["root_delivery"]["branch"], "fm/root-1")
+
+    def test_local_only_requires_controller_delivery_capability_before_mutation(self):
+        self.local_delivery()
+        self.request_body()
+        for value in (None, [], "ship-local-only", [True], ["ship-local-only", "ship-local-only"]):
+            with self.subTest(value=value):
+                self.settings["protocol"]["root_deliveries"] = value
+                self.assertEqual(self.cli("submit")[0], 2)
+        self.assertFalse(any(call["operation"] == "submit" for call in self.calls()))
+
+    def test_context_cannot_rebind_branch_mode_or_scout_delivery(self):
+        delivery = self.local_delivery()
+        self.request_body()
+        for key, value in (("branch", "fm/other"), ("kind", "scout"), ("mode", "no-mistakes")):
+            with self.subTest(key=key):
+                self.settings["view"]["attachment"]["root_delivery"] = {**delivery, key: value}
+                self.assertEqual(self.cli("submit")[0], 2)
+        self.settings["view"]["attachment"]["root_delivery"] = delivery
+        self.context_data.pop("root_delivery")
+        legacy.write_json(self.context, self.context_data)
+        self.assertEqual(self.cli("submit")[0], 2)
+        self.assertFalse(any(call["operation"] == "submit" for call in self.calls()))
+
+    def test_local_delivery_changed_after_submit_is_uncertain(self):
+        self.local_delivery()
+        self.request_body()
+        changed = copy.deepcopy(self.settings["view"])
+        changed["attachment"]["root_delivery"]["branch"] = "fm/other"
+        self.settings["modes"] = {"submit": {"payload": changed}}
+        code, result = self.cli("submit")
+        self.assertEqual((code, result["status"]), (2, "uncertain"))
+        self.assertFalse(result["retry_automatically"])
+        self.assertEqual([call["operation"] for call in self.calls()].count("submit"), 1)
+
     def test_dynamic_context_work_selects_returned_profile_and_aggregate(self):
         self.dynamic()
         item = copy.deepcopy(self.settings["view"])

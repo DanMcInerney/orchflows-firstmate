@@ -1,0 +1,108 @@
+diff --git a/bin/fm-spawn.sh b/bin/fm-spawn.sh
+--- a/bin/fm-spawn.sh
++++ b/bin/fm-spawn.sh
+@@ -573,6 +573,14 @@
+   default|dynamic|none) ;;
+   *) echo "error: --orchflows-workflow must be default, dynamic or none" >&2; exit 1 ;;
+ esac
++# Explicit dynamic delivery is resolved before task locks, secondmate creation,
++# worktree allocation or endpoint mutation. Defaults leave ordinary ships alone.
++if [ "$ORCHFLOWS_WORKFLOW" = dynamic ]; then
++  case "$KIND:$MODE" in
++    scout:|ship:local-only) ;;
++    *) echo "error: dynamic workflow requires a scout or explicit ship --mode local-only" >&2; exit 1 ;;
++  esac
++fi
+ # A parent-delivered carrier replaces this home's own resolution, so it is
+ # refused unless it is a secondmate spawn carrying a strictly valid W3C value.
+ # Nothing else may reach the pane's TRACEPARENT export.
+@@ -2370,7 +2378,7 @@
+ if [ "$ORCHFLOWS_WORKFLOW_SET" -eq 1 ] || [ -e "$FM_HOME/config/orchflows.json" ] || [ -L "$FM_HOME/config/orchflows.json" ]; then
+   fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" auto-attach "$ID" \
+     --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" \
+-    --workflow "$ORCHFLOWS_WORKFLOW" >/dev/null || exit 1
++    --workflow "$ORCHFLOWS_WORKFLOW" --mode "$MODE" >/dev/null || exit 1
+ fi
+ TASK_GROUP_BOUND=0
+ TASK_GROUP_META=
+@@ -2386,7 +2394,7 @@
+     echo "error: task groups require the owning home's default state/data paths" >&2; exit 1;
+   }
+   fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-check "$ID" \
+-    --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" >/dev/null || exit 1
++    --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" --mode "$MODE" >/dev/null || exit 1
+   TASK_GROUP_META=$(fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-meta "$ID") || exit 1
+ fi
+ if [ "$KIND" = ship ] || [ "$KIND" = scout ]; then
+@@ -3419,7 +3427,7 @@
+   # before trust registration, harness wiring, metadata or command delivery.
+   fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-check "$ID" \
+     --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" \
+-    --worktree "$WT" >/dev/null || exit 1
++    --worktree "$WT" --mode "$MODE" >/dev/null || exit 1
+ fi
+ 
+ # Pre-register Claude's workspace trust for the directory this launch starts in,
+diff --git a/bin/fm-control.sh b/bin/fm-control.sh
+--- a/bin/fm-control.sh
++++ b/bin/fm-control.sh
+@@ -787,6 +787,12 @@
+ }
+ 
+ do_relaunch() {
++  # Verify retained delivery before replacing an agent, preserving pending Work.
++  . "$SCRIPT_DIR/fm-task-group-runtime.sh"
++  if fm_task_group_present "$FM_HOME" "$ID" "$STATE"; then
++    fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" \
++      delivery-check "$ID" >/dev/null || die "retained task-group delivery requires reconciliation before relaunch"
++  fi
+   local exit_result state note_line
+   local -a spawn_args
+ 
+diff --git a/bin/fm-merge-local.sh b/bin/fm-merge-local.sh
+--- a/bin/fm-merge-local.sh
++++ b/bin/fm-merge-local.sh
+@@ -70,6 +70,10 @@
+   exit 1
+ fi
+ 
++# Reuse the composition guard while this landing owner holds root custody.
++. "$SCRIPT_DIR/fm-task-group-state.sh"
++fm_task_group_guard "$FM_HOME" "$ID" "$STATE" merge-local || exit 1
++
+ PROJ=$(grep '^project=' "$META" | cut -d= -f2-)
+ MODE=$(grep '^mode=' "$META" | cut -d= -f2- || true)
+ [ "$MODE" = local-only ] || { echo "error: task $ID is mode=$MODE, not local-only; merge PR tasks with bin/fm-pr-merge.sh <id> <PR url> after approval" >&2; exit 1; }
+diff --git a/AGENTS.md b/AGENTS.md
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -319,7 +319,7 @@
+ ### Dispatch and supervision handoff
+ 
+ Spawn only through `bin/fm-spawn.sh` after the profile and backend checks in section 4.
+-For an enabled Orchflows project, a new scout may explicitly select `--orchflows-workflow dynamic`, retain its configured default with `default`, or decline a new attachment with `none`. Existing attachments survive relaunch and changed defaults; this option does not admit ship tasks.
++For an enabled Orchflows project, a new scout may explicitly select `--orchflows-workflow dynamic`, retain its configured default with `default`, or decline a new attachment with `none`. Existing attachments survive relaunch and changed defaults. An ordinary ship may explicitly select dynamic only with `--mode local-only`; configured defaults leave new ships unchanged.
+ The spawn must resolve a genuine isolated task worktree distinct from the primary checkout; a failed isolation assertion stops the task.
+ When the configured tasks-axi backlog gate applies, the spawn itself moves the work item to In flight and refuses rather than dispatching work this home has no item for, so recording the dispatch is never a separate step to remember; a manual-backend home retains the hand-editing contract in `docs/configuration.md`.
+ After spawning, confirm the worker is processing the brief and handle any trust dialog through `harness-adapters`.
+@@ -339,7 +339,7 @@
+ The selected delivery path owns its own rigor.
+ Once no-mistakes validation starts, no-mistakes alone owns review, fixes, tests, documentation, push, PR, and CI. Otherwise follow the selected delivery path without adding an independent reviewer, except for the explicitly selected workflow below.
+ Never hold work outside no-mistakes for a manual clean verdict, stack serial manual reviews, or infer authority for one from security, architecture, or risk alone.
+-A separate review or audit is allowed when the captain explicitly requests that deliverable, the authorized task is a knowledge-only review, or FirstMate has explicitly attached the dynamic Orchflows workflow with workflow-review policy to a Linux scout. That selected workflow may compose scoped Work in FirstMate worktrees, join and check the candidate, and request one fresh read-only Review followed by one repair/check pass. It must not stack reviews or create another delivery gate; only the root follows ordinary scout delivery. Workflow enablement is not authority for FirstMate self-development delegation, promotion, or work after no-mistakes takes validation custody. One named audit question remains scoped to that question.
++A separate review or audit is allowed when the captain explicitly requests that deliverable, the authorized task is a knowledge-only review, or FirstMate has explicitly attached the dynamic Orchflows workflow with workflow-review policy to a Linux scout or an explicitly selected ordinary ship/local-only root. That selected workflow may compose scoped Work in FirstMate worktrees, join and check the candidate, and request one fresh read-only Review followed by one repair/check pass. It must not stack reviews or create another delivery gate; only the root follows its immutable ordinary scout-report or ship/local-only ready-branch delivery. Workflow enablement is not authority for FirstMate self-development delegation, promotion, or work after no-mistakes takes validation custody. One named audit question remains scoped to that question.
+ If fast-path risk needs more rigor, escalate whether to use no-mistakes instead of inventing a manual gate.
+ The path's worker, automated gates, and captain approval remain authoritative:
+ 
+diff --git a/bin/fm-dod-lib.sh b/bin/fm-dod-lib.sh
+--- a/bin/fm-dod-lib.sh
++++ b/bin/fm-dod-lib.sh
+@@ -35,7 +35,7 @@
+ When this task works on Firstmate itself, the repository root `AGENTS.md` (also imported by `CLAUDE.md`) is the primary/secondmate supervisor's contract: follow this brief instead of that supervisor contract.
+ For that Firstmate task, do the assigned work yourself and report to firstmate; do not adopt the supervisor identity, delegate the task, run fleet supervision, or address the captain.
+ This exception preserves this brief's safety and authority boundaries and applicable contributor guidance, including `CONTRIBUTING.md` and `firstmate-coding-guidelines` for Firstmate changes.
+-Other projects retain their own instructions unchanged. An explicit FirstMate dynamic attachment may authorize scoped Work components, one fresh read-only Review, and one repair/check pass through FirstMate owners. Only the root delivers the ordinary scout report; components return to their parent. This does not authorize delegation for Firstmate self-development, promotion, or a separate delivery gate.
++Other projects retain their own instructions unchanged. An explicit FirstMate dynamic attachment may authorize scoped Work components, one fresh read-only Review, and one repair/check pass through FirstMate owners. Only the root follows its immutable ordinary scout-report or ship/local-only ready-branch delivery; components return to their parent. This does not authorize delegation for Firstmate self-development, promotion, or a separate delivery gate.
+ EOF
+ }
+ 

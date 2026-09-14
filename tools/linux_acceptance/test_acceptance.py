@@ -291,7 +291,7 @@ class DynamicReadChecks(unittest.TestCase):
             for index, name in enumerate(("report.md", "result.json")):
                 event(index * 2, {"type": "tool_use", "id": name, "name": "Read", "input": {"file_path": str(retained / name)}})
                 event(index * 2 + 1, {"type": "tool_result", "tool_use_id": name, "content": (retained / name).read_text()})
-            bash(5, "our-gather", client + "gather --request-id inspect")
+            bash(5, "our-gather", client + "gather --request-id inspect 2>&1")
             trace = traces / "session.jsonl"
             trace.write_text("\n".join(json.dumps(item) for item in events))
             run = {"root": "root", "workflow": "dynamic", "client_path": "/retained/scripts/firstmate.py",
@@ -392,6 +392,10 @@ class LiteralClientChecks(unittest.TestCase):
         from .evidence import literal_client_command
         invocation = "python3 -B /retained/scripts/firstmate.py gather --request-id inspect"
         self.assertEqual(literal_client_command(invocation), (invocation.split(), False))
+        self.assertEqual(literal_client_command(invocation + " 2>&1"), (invocation.split(), False))
+        self.assertEqual(literal_client_command(invocation + " 2>&1 | cat"), (invocation.split(), True))
+        for suffix in (" > /tmp/output", " 2>&2", " >& /tmp/output", " |& cat"):
+            self.assertEqual(literal_client_command(invocation + suffix), ([], False))
         self.assertEqual(literal_client_command(invocation + " | python3 -c 'import json,sys; print(json.load(sys.stdin))'"),
                          (invocation.split(), True))
         for suffix in ("; echo done", " && echo done", " || echo done", " &", " |", " < /tmp/input", " | echo $(date)"):

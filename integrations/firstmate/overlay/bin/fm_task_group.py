@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import time
 from fm_task_group_runtime import runtime
+from fm_task_group_delivery import local_delivery, root_delivery, validate_root_worktree
 from fm_task_group_primitives import (admit, attachment_primitive, component_fields, is_dynamic, scope,
                                       validate_metadata, validate_record)
 
@@ -57,13 +58,13 @@ class TaskGroups:
                 raise GroupError("attached package snapshot changed")
         return value
 
-    def root_meta(self, root, generation):
+    def root_meta(self, root, generation, *, check_worktree=True):
         identifier(generation, "generation")
         value = self.meta(root)
         if self.binding(root) or value.get("task_group_role") != "root":
             raise GroupError("caller must be an attached normal root scout")
-        if value.get("backend") != "herdr" or value.get("kind") != "scout":
-            raise GroupError("Stage 1 root requires backend=herdr kind=scout")
+        if value.get("backend") != "herdr":
+            raise GroupError("task-group root requires backend=herdr")
         if value.get("harness") not in ("claude", "codex"):
             raise GroupError("Stage 1 root requires Claude or Codex CLI")
         if value.get("spawn_gen") != generation or value.get("task_group_epoch") != "1":
@@ -72,6 +73,8 @@ class TaskGroups:
             raise GroupError("root task metadata identity mismatch")
         attachment = self.attachment(root)
         validate_metadata(value, attachment)
+        if check_worktree:
+            validate_root_worktree(value, attachment)
         if safe_path(value.get("project", ""), directory=True) != Path(attachment["project"]):
             raise GroupError("root project differs from attachment")
         return value, attachment
@@ -147,12 +150,17 @@ class TaskGroups:
             raise GroupError("assignment must be nonempty text of at most 32768 UTF-8 bytes")
         return body
 
-    def attach(self, root, package, project, primitive="Work", review_policy="none", workflow=None):
+    def attach(self, root, package, project, primitive="Work", review_policy="none", workflow=None, delivery=None):
         # Policy refusal precedes the group lock, which can create persistent directories.
         admit(primitive, review_policy, workflow)
         root = identifier(root, "root ID")
         package = safe_path(package, directory=True)
         project = safe_path(project, directory=True)
+        if delivery is not None:
+            root_delivery({"root": root, "workflow": workflow, "root_delivery": delivery})
+            from fm_orchflows import supports_local_delivery
+            if not supports_local_delivery(package):
+                raise GroupError("local-only root requires declared ship-local-only client capability")
         if workflow == "dynamic" and (self.code_root / "bin/fm-spawn.sh").is_file():
             # FirstMate self-development remains owned by its ordinary delivery
             # policy. An alternate worktree cannot bypass the exact repository identity.
@@ -167,7 +175,7 @@ class TaskGroups:
             path = self.group(root) / "attachment.json"
             if path.exists():
                 old = self.attachment(root)
-                if (workflow != old.get("workflow") or primitive != old["primitive"] or review_policy != old.get("review_policy", "none") or
+                if (delivery != old.get("root_delivery") or workflow != old.get("workflow") or primitive != old["primitive"] or review_policy != old.get("review_policy", "none") or
                         str(project) != old["project"] or digest(canonical(package_inventory(package))) != old["package_digest"]):
                     raise GroupError("attachment is immutable")
                 clean_commit(project, old["input_commit"])
@@ -186,6 +194,8 @@ class TaskGroups:
                 value.update(workflow=workflow, readonly=False, max_components=32, review_policy=review_policy)
             elif primitive == "Review":
                 value["review_policy"] = review_policy
+            if delivery is not None:
+                value["root_delivery"] = delivery
             if self.runtime.windows:
                 value["runtime"] = self.runtime.identity
             write_json(path, value, exclusive=True)

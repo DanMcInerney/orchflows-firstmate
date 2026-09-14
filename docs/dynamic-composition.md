@@ -1,5 +1,9 @@
 # Dynamic composition through FirstMate owners
 
+The dev.7 [local-only root extension](local-delivery.md) builds on this contract.
+[Current verification](local-delivery-verification.md) records its scope and
+executed evidence; earlier increment restrictions below are historical context.
+
 The dev.6 increment extends the existing normal-launch seam to a bounded Linux
 scout composition. Work and Review remain the two primitives. The root can
 request multiple useful Work results, join committed writer output in its own

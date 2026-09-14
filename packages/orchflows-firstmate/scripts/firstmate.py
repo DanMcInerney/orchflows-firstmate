@@ -84,11 +84,13 @@ def read_context(path: Path) -> dict:
         if len(raw) > CONTEXT_LIMIT:
             raise ValueError("Context exceeds 16 KiB")
         context = parse_object(raw.decode("utf-8"))
-        if set(context) != CONTEXT_FIELDS:
+        if set(context) not in (CONTEXT_FIELDS, CONTEXT_FIELDS | {"root_delivery"}):
             raise ValueError("Context must contain exactly schema, firstmate_root, home, root, "
                              "generation, primitive and package_path")
         if type(context["schema"]) is not int or context["schema"] != 1:
             raise ValueError("Unsupported FirstMate launch context schema")
+        if "root_delivery" in context and context["root_delivery"] != local_delivery(context.get("root")):
+            raise ValueError("Unsupported immutable root delivery identity")
         for key in ("firstmate_root", "home", "package_path"):
             context[key] = context_path(context[key], directory=True)
         if context["package_path"] != PACKAGE_ROOT:
@@ -112,6 +114,7 @@ def resolve_authority(args: argparse.Namespace) -> argparse.Namespace:
         selected = read_context(Path(context))
         for key in AUTHORITY_FIELDS:
             setattr(args, key, selected[key])
+        args.root_delivery = selected.get("root_delivery")
     else:
         if any(getattr(args, key, None) is None for key in AUTHORITY_FIELDS[:-1]):
             raise ClientError("FirstMate launch context or complete explicit authority is required", "preflight")
@@ -166,12 +169,16 @@ def call_controller(args: argparse.Namespace, operation: str, *extra: str) -> di
     return payload
 
 
+def local_delivery(root):
+    return {"kind": "ship", "mode": "local-only", "branch": "fm/" + str(root)}
+
+
 def validate_protocol(response: dict, operation: str, *, primitive: str = "Work",
-                      handshake: bool = True, workflow: str | None = None) -> None:
+                      handshake: bool = True, workflow: str | None = None, delivery: dict | None = None) -> None:
     expected = dict(PROTOCOL)
     if not handshake:
         if workflow == "dynamic":
-            expected["scope"] = "local-dynamic"
+            expected["scope"] = "local-dynamic-ship-local-only" if delivery else "local-dynamic"
         elif primitive == "Review":
             expected["scope"] = "local-readonly-review"
     # bool is an int subclass; version true must not negotiate protocol version 1.
@@ -184,6 +191,8 @@ def validate_protocol(response: dict, operation: str, *, primitive: str = "Work"
         if workflow == "dynamic":
             required_capabilities = (("primitives", "Work"), ("primitives", "Review"),
                                      ("workflows", "dynamic"), ("review_policies", "workflow-review"))
+        if delivery:
+            required_capabilities += (("root_deliveries", "ship-local-only"),)
         for key, required in required_capabilities:
             capabilities = response.get(key)
             if (not isinstance(capabilities, list)
@@ -200,7 +209,12 @@ def validate_view(response: dict, args: argparse.Namespace, operation: str) -> N
     primitive = getattr(args, "primitive", "Work")
     attachment = response.get("attachment")
     workflow = attachment.get("workflow") if isinstance(attachment, dict) else None
-    validate_protocol(response, operation, primitive=primitive, handshake=False, workflow=workflow)
+    delivery = attachment.get("root_delivery") if isinstance(attachment, dict) else None
+    if (delivery is not None and (workflow != "dynamic" or delivery != local_delivery(args.root))) or (
+            hasattr(args, "root_delivery") and args.root_delivery != delivery):
+        raise ClientError("FirstMate root delivery differs from the immutable launch context", operation,
+                          uncertain=operation in {"submit", "gather"})
+    validate_protocol(response, operation, primitive=primitive, handshake=False, workflow=workflow, delivery=delivery)
     if (response.get("attached") is not True or response.get("root") != args.root
             or response.get("generation") != args.generation or not isinstance(attachment, dict)):
         raise ClientError("FirstMate did not confirm this attached root and generation", operation,
@@ -297,7 +311,8 @@ def run(args: argparse.Namespace) -> dict:
     if request_id is not None:
         validate_selection(current, request_id, "status")
     if workflow == "dynamic":
-        validate_protocol(protocol, "protocol", primitive=primitive, workflow=workflow)
+        validate_protocol(protocol, "protocol", primitive=primitive, workflow=workflow,
+                          delivery=current["attachment"].get("root_delivery"))
     if request is not None:
         expected_fields = DYNAMIC_FIELDS if workflow == "dynamic" else {"request_id", "assignment"}
         if set(request) != expected_fields:
@@ -329,7 +344,7 @@ def main(argv: list[str] | None = None) -> int:
                         help="Explicit experimental FirstMate code root containing bin/fm-task-group.py")
     parser.add_argument("--home", type=lambda value: Path(value).expanduser().resolve(),
                         help="Owning FirstMate home; not the Orchflows package home")
-    parser.add_argument("--root", help="Attached normal root scout task ID")
+    parser.add_argument("--root", help="Attached normal root task ID")
     parser.add_argument("--generation", help="This launch's root spawn_gen from FirstMate")
     parser.add_argument("--primitive", choices=("Work", "Review"),
                         help="Explicit attachment primitive (default without launch context: Work)")

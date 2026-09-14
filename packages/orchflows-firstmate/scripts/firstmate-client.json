@@ -1,1 +1,10 @@
-{"schema": 1, "launch_context_schema": 1, "workflows": ["dynamic"]}
+{
+  "schema": 1,
+  "launch_context_schema": 1,
+  "workflows": [
+    "dynamic"
+  ],
+  "root_deliveries": [
+    "ship-local-only"
+  ]
+}

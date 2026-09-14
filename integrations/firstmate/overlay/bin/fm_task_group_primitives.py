@@ -3,6 +3,7 @@ import re
 import sys
 
 from fm_task_group_store import GroupError
+from fm_task_group_delivery import root_delivery, validate_root_metadata
 
 MAX_COMPONENTS = 32
 
@@ -25,6 +26,7 @@ def admit(primitive, review_policy, workflow=None):
 
 
 def attachment_primitive(attachment):
+    root_delivery(attachment)
     primitive = admit(attachment.get("primitive"), attachment.get("review_policy", "none"), attachment.get("workflow"))
     readonly, maximum = (False, MAX_COMPONENTS) if is_dynamic(attachment) else (True, 1)
     if attachment.get("readonly") is not readonly or type(attachment.get("max_components")) is not int or attachment["max_components"] != maximum:
@@ -105,6 +107,8 @@ def validate_record(record, attachment, *, result=False, request=None):
 
 
 def validate_metadata(value, attachment, record=None):
+    if record is None and isinstance(value, dict):
+        validate_root_metadata(value, attachment)
     primitive = component_primitive(record, attachment) if record is not None else attachment_primitive(attachment)
     permitted = (primitive,) if primitive == "Review" or is_dynamic(attachment) else (None, "Work")
     if not isinstance(value, dict) or value.get("task_group_primitive") not in permitted:
@@ -118,5 +122,5 @@ def validate_metadata(value, attachment, record=None):
 
 def scope(attachment):
     if is_dynamic(attachment):
-        return "local-dynamic"
+        return "local-dynamic-ship-local-only" if root_delivery(attachment) else "local-dynamic"
     return "local-readonly-review" if attachment_primitive(attachment) == "Review" else "local-readonly-work"

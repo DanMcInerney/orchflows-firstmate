@@ -1,5 +1,9 @@
 # Ubuntu / WSL development
 
+The dev.7 [local-only root extension](local-delivery.md) builds on this contract.
+[Current verification](local-delivery-verification.md) records its scope and
+executed evidence; earlier increment restrictions below are historical context.
+
 The dev.6 continuation extends this seam to bounded Linux dynamic composition;
 see [dynamic contract](dynamic-composition.md) and [current verification](dynamic-verification.md).
 Earlier one-component restrictions below describe the dev.5 baseline.

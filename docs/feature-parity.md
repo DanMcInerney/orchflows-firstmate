@@ -6,13 +6,13 @@ The implemented historical baseline is Orchflows `0fc6cb7ac7da7b275a83cc90807fba
 
 The dev.3 refresh retained all 1,081 upstream paths at `ca72258493480ddcfe73b3f01d0475ad532e4726` plus six fork additions. It adds `design-loop` 0.1.0 with eight skills: `design-loop`, `brainstorm-options`, `brainstorm-research`, `research-options`, `design-increment`, `implement-increment`, `test-increment` and `analyze-iteration`. There are now six optional libraries with nineteen skills. The added library is inactive migration source; the user said not to use design-loop for this work, and it was not invoked, enabled or installed as a library. Upstream itself labels this packaged example untested. [Refresh verification](upstream-refresh-verification.md).
 
-The dev.6 dynamic increment extends normal project enablement and retained
-custom-library catalogs to bounded Linux scout Work/join/Review composition.
-Each writer returns a clean committed output; the root joins in its assigned
-worktree, requests one fresh exact-candidate Review and makes one repair/check
-pass. [Current verification](dynamic-verification.md) separates fixtures from
-actual worker evidence. This does not establish ship delivery, nesting,
-Build/SelfImprove or all optional-library/meta-workflow parity.
+The dev.7 increment extends bounded dynamic composition to an explicitly
+selected ordinary Linux ship/local-only root. FirstMate binds the root's kind,
+mode and branch, retains component results, and guards local landing and cleanup.
+The root still joins committed Work, requests one exact-candidate Review and
+makes one repair/check pass. [Current verification](local-delivery-verification.md)
+separates fixture checks from actual workers. Direct-PR/no-mistakes delivery,
+nesting, Build/SelfImprove and broader optional-library/meta parity remain open.
 
 ## Core parity target
 
@@ -20,7 +20,7 @@ Build/SelfImprove or all optional-library/meta-workflow parity.
 | --- | --- | --- | --- |
 | Work | Fresh maker, explicit task/context, selected guidance/model/effort, bounded result | Request a FirstMate-owned component; return a durable logical assignment handle, not a native child handle | Legacy read-only Work plus bounded dynamic read-only/writer components; per-request frozen inputs, clean output commits, full-result gather and aggregate lifecycle. Current execution evidence: [dynamic verification](dynamic-verification.md). Native Windows remains refused |
 | Review | Fresh independent reviewer, scoped findings, no repairs | Separate component with reviewed-state identity and explicit review authorization | Legacy explicit audits preserved; dynamic workflow admits one fresh read-only Review after prior results are gathered, freezes the joined root commit and fences a second Review. [Current evidence](dynamic-verification.md) |
-| Dynamic workflow | Investigation, dependency-aware parallel work, join, one review, one repair pass | Root crewmate composes; FirstMate owns component lifecycle; workflow review policy reconciles with root delivery | Bounded Linux scout profile implemented through normal enablement/spawn and exact-result context; [verification](dynamic-verification.md) records actual scope. Ship delivery and nesting remain open |
+| Dynamic workflow | Investigation, dependency-aware parallel work, join, one review, one repair pass | Root crewmate composes; FirstMate owns component lifecycle; workflow review policy reconciles with root delivery | Bounded Linux scout and explicitly selected ship/local-only roots use normal enablement/spawn and exact-result context; [verification](local-delivery-verification.md) records actual scope. Other delivery modes and nesting remain open |
 | Build workflow | Create workflows/guidance/libraries, trial them, review and refine | Author in assigned workspace; collect package artifact and publish/install through the selected authorized delivery | Source retained; workflow execution gated pending adapter |
 | Self-improve | Bounded history inspection, source checks, corrections, trial and independent review | Group history joins several host sessions; target checkout/library and delivery authority are explicit | Native history mechanics retained; group-history correlation not implemented |
 | Layered guidance | Dotted specificity, core then selected-library order, deduplication, missing-domain errors | Resolve within the task's pinned package set; preserve logical domain names | Guidance files retained unchanged |
