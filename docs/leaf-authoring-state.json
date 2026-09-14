@@ -1,0 +1,603 @@
+{
+  "schema": 1,
+  "date": "2026-09-14",
+  "package_version": "0.1.0-dev.8",
+  "base_commit": "d3cf51b6b6dd31887f2d7d35a28679426af19d90",
+  "merged_pr": "https://github.com/DanMcInerney/orchflows-firstmate/pull/4",
+  "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "orchflows_commit": "ca72258493480ddcfe73b3f01d0475ad532e4726",
+  "source_coverage": {
+    "source_paths": 1081,
+    "retained_source_paths": 1081,
+    "package_files": 1091
+  },
+  "distribution": {
+    "deployables": 19,
+    "patches": 6,
+    "overlays": 13
+  },
+  "initial_joined_checks": {
+    "receipt_sha256": "a435b89917f1f3f2db85c1d00c6cb9326e90a1958f3974a18d880b55d175e908",
+    "raw_evidence": ".scratch/leaf-authoring/check-jart2seo",
+    "candidate": {
+      "files": 566,
+      "sha256": "9128e9db61608d7c7de649c10a44abaebfd4e55e59e13b2feaa44ae6c1d35c6a",
+      "symlinks": 1
+    },
+    "inputs": {
+      "integrations/firstmate": {
+        "files": 40,
+        "sha256": "3a13edaf326727c8fa03093e06342eac2a10855ae983655fb24df10cdeb91f34",
+        "symlinks": 0
+      },
+      "packages/orchflows-firstmate": {
+        "files": 1091,
+        "sha256": "a4bf4641547ea3c13494288c98f443be29e1868e2d90283d0d836dd16913fc58",
+        "symlinks": 0
+      }
+    },
+    "checks": [
+      {
+        "name": "reference-clone",
+        "exit": 0
+      },
+      {
+        "name": "reference-checkout",
+        "exit": 0
+      },
+      {
+        "name": "prepare",
+        "exit": 0
+      },
+      {
+        "name": "package",
+        "exit": 0,
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 128,
+          "run": 128,
+          "skipped": [],
+          "unexpected_skips": []
+        }
+      },
+      {
+        "name": "integration",
+        "exit": 0,
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 155,
+          "run": 165,
+          "skipped": [
+            {
+              "reason": "native Windows permission normalization",
+              "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+            }
+          ],
+          "unexpected_skips": []
+        }
+      }
+    ],
+    "driver_tests_passed": 26,
+    "combined_passed": 309
+  },
+  "refined_joined_checks": {
+    "receipt_sha256": "8dd1f8a039f8ece8078c5b8446eb8950c190c112abb4bc8b6c3a0262b8c42b45",
+    "raw_evidence": ".scratch/leaf-authoring/check-8mmdk5nl",
+    "candidate": {
+      "files": 566,
+      "sha256": "9128e9db61608d7c7de649c10a44abaebfd4e55e59e13b2feaa44ae6c1d35c6a",
+      "symlinks": 1
+    },
+    "inputs": {
+      "integrations/firstmate": {
+        "files": 40,
+        "sha256": "3a13edaf326727c8fa03093e06342eac2a10855ae983655fb24df10cdeb91f34",
+        "symlinks": 0
+      },
+      "packages/orchflows-firstmate": {
+        "files": 1091,
+        "sha256": "b15df976f43226b587ce7aae30cd3a48e258d4252813ea863da80cc96fb9fd6d",
+        "symlinks": 0
+      }
+    },
+    "checks": [
+      {
+        "name": "reference-clone",
+        "exit": 0
+      },
+      {
+        "name": "reference-checkout",
+        "exit": 0
+      },
+      {
+        "name": "prepare",
+        "exit": 0
+      },
+      {
+        "name": "package",
+        "exit": 0,
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 128,
+          "run": 128,
+          "skipped": [],
+          "unexpected_skips": []
+        }
+      },
+      {
+        "name": "integration",
+        "exit": 0,
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 155,
+          "run": 165,
+          "skipped": [
+            {
+              "reason": "native Windows permission normalization",
+              "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+            }
+          ],
+          "unexpected_skips": []
+        }
+      }
+    ],
+    "driver_tests_passed": 27,
+    "combined_passed": 310
+  },
+  "development_review": {
+    "snapshot_commit": "8565660b52022e836a3d9abce3c2b62a23ef7548",
+    "status": "two P2 observer findings repaired in one pass",
+    "count": 1,
+    "findings": [
+      "Bind reviewed and final provenance to actual retained bytes and identities",
+      "Verify complete native reads of declared retained core dependencies at exact immutable paths"
+    ],
+    "repairs": [
+      "Shared provenance verifier applied to reviewed and final snapshots",
+      "Retained core writing check for child, retained Orchflows/writing checks for replacement root; precise successful native cat supported for child core guidance"
+    ],
+    "independent_driver_checks": 27,
+    "independent_owner_regression_passed": true,
+    "second_review": false
+  },
+  "first_live_trial": {
+    "trial": "a-s450kuf1",
+    "status": "failed",
+    "receipt_sha256": "2fa40939dfe100727603c2a45a786b53097c438a58f6b281baca19506f25ae57",
+    "raw_evidence": ".scratch/leaf-authoring/a-s450kuf1-original",
+    "original_unchanged": true,
+    "acceptance": {
+      "checks": {
+        "accepted_work_survived_relaunch": true,
+        "all_results_gathered": true,
+        "author_writer_and_fresh_readonly_trial": true,
+        "authoring_context_reapplied_before_review": true,
+        "clean_final_candidate": true,
+        "committed_on_expected_branch": true,
+        "committed_trial_identities": false,
+        "components_return_to_parent": true,
+        "context_only_calls": false,
+        "exact_ready_branch_signal": true,
+        "exact_trial_output_committed": true,
+        "final_library_has_exact_trial_evidence": true,
+        "fresh_trial_read_declared_context": true,
+        "full_reads_before_each_gather": false,
+        "immutable_local_delivery_attachment": true,
+        "input_checkout_unchanged": true,
+        "joined_behavior_and_tests": true,
+        "local_delivery_survived_relaunch": true,
+        "maker_running_at_relaunch": true,
+        "normal_spawn_attached": true,
+        "ordinary_root_done": true,
+        "ordinary_ship_local_only_metadata": true,
+        "ready_branch_clean_fast_forward": true,
+        "requested_worker_profile": true,
+        "retained_integrity": true,
+        "reviewed_joined_candidate": true,
+        "root_final_check_receipt": false,
+        "root_spawn_succeeded": true,
+        "same_child_replays": false,
+        "trial_gathered_before_review": true,
+        "trial_json_from_fresh_worker": true,
+        "two_work_one_review": true
+      },
+      "passed": false
+    },
+    "cleanup_passed": false,
+    "landing_skipped": true,
+    "recovery_after_cleanup": "ordinary relaunch refused missing endpoint; no worker launched"
+  },
+  "worker_profile": {
+    "model": "claude-sonnet-5",
+    "effort": "high"
+  },
+  "refined_live_trial": {
+    "trial": "a-mh9osxed",
+    "status": "failed",
+    "receipt_sha256": "40f14c7000110d244b699c593ed7fb921f5653947faa374f6d4018f2ac2e8a43",
+    "raw_evidence": ".scratch/leaf-authoring/a-mh9osxed-original",
+    "original_unchanged": true,
+    "candidate": {
+      "sha256": "9128e9db61608d7c7de649c10a44abaebfd4e55e59e13b2feaa44ae6c1d35c6a",
+      "files": 566,
+      "symlinks": 1
+    },
+    "package": {
+      "sha256": "b15df976f43226b587ce7aae30cd3a48e258d4252813ea863da80cc96fb9fd6d",
+      "files": 1091,
+      "symlinks": 0
+    },
+    "driver": {
+      "files": 11,
+      "sha256": "e5e1d25a456571400e5ca108cfc0bd61fcab707a483eb0405098fb2ef1c349b0",
+      "symlinks": 0
+    },
+    "entrypoint_sha256": "bfdda65e378297e5ca295d6087bee9d98f0f769109bd79c5abece02cdcf38843",
+    "acceptance": {
+      "checks": {
+        "accepted_work_survived_relaunch": true,
+        "all_results_gathered": false,
+        "author_writer_and_fresh_readonly_trial": true,
+        "authoring_context_reapplied_before_review": false,
+        "clean_final_candidate": true,
+        "committed_on_expected_branch": true,
+        "committed_trial_identities": true,
+        "components_return_to_parent": false,
+        "context_only_calls": false,
+        "exact_ready_branch_signal": true,
+        "exact_retained_trial_result_committed": true,
+        "exact_trial_output_committed": true,
+        "final_library_has_exact_trial_evidence": false,
+        "fresh_trial_read_declared_context": true,
+        "full_reads_before_each_gather": false,
+        "immutable_local_delivery_attachment": true,
+        "input_checkout_unchanged": true,
+        "joined_behavior_and_tests": true,
+        "local_delivery_survived_relaunch": true,
+        "maker_running_at_relaunch": true,
+        "normal_spawn_attached": true,
+        "ordinary_root_done": true,
+        "ordinary_ship_local_only_metadata": true,
+        "ready_branch_clean_fast_forward": true,
+        "requested_worker_profile": false,
+        "retained_integrity": false,
+        "reviewed_joined_candidate": true,
+        "root_final_check_receipt": false,
+        "root_spawn_succeeded": true,
+        "same_child_replays": false,
+        "trial_gathered_before_review": true,
+        "trial_json_from_fresh_worker": true,
+        "two_work_one_review": false
+      },
+      "passed": false
+    },
+    "cleanup_passed": false,
+    "scoped_processes_remaining": 0,
+    "root_records_and_unlanded_branch_retained": true,
+    "landing_performed": false,
+    "input_commit": "7c70e97d9c31076220fdcfe09d3d4ff318b31c90",
+    "reviewed_commit": "c2d90821a55b747114add069505ceb9f06b46fc8",
+    "final_commit": "45f79ddb27f272064742e30b4b5319135dcc859e",
+    "components": {
+      "author-maker-v1": {
+        "child": "tg-949a70ba23a3b5cdc098",
+        "primitive": "Work",
+        "writable": true,
+        "input_commit": "7c70e97d9c31076220fdcfe09d3d4ff318b31c90",
+        "output_commit": "1c1a859a7e6491a4eaefb5cf19cdbed5f659d8bf",
+        "report_digest": "573a12d19f12840611497bd150597966a358015519cbc456ca89aa73bc931821"
+      },
+      "final-review-v1": {
+        "child": "tg-8f11f384a089e42b19b6",
+        "primitive": "Review",
+        "writable": false,
+        "input_commit": "c2d90821a55b747114add069505ceb9f06b46fc8",
+        "output_commit": null,
+        "report_digest": "db7e57d5b33a91253e18e214e5d08f033abdd6ff1c258dd61e3245de989575b1"
+      },
+      "leaf-trial-v1": {
+        "child": "tg-569de93e5f2e391bc459",
+        "primitive": "Work",
+        "writable": false,
+        "input_commit": "b8e23df3459ff91d3461544cca1f27cb53856350",
+        "output_commit": null,
+        "report_digest": "eedabd0de5e7ff410a960a6a30faf3fabec4e905788012b1819b415d3e5f1ff1"
+      },
+      "repair-trial-v1": {
+        "child": "tg-5a3bf426f7b5dfca6cab",
+        "primitive": "Work",
+        "writable": false,
+        "input_commit": "45f79ddb27f272064742e30b4b5319135dcc859e",
+        "output_commit": null,
+        "report_digest": "1e2801c001b71190ce4bac6693a9b603a6e1c8432068a1ac1805341534035dc1"
+      }
+    },
+    "operator_intervention": false,
+    "additional_product_review": false,
+    "original_request_trial_evidence_committed": true,
+    "repair_trial_evidence_committed": false,
+    "preserved_artifact": ".scratch/leaf-authoring/a-mh9osxed-artifact",
+    "git_bundle_sha256": "ce57a8f016e8182d56e496c93067cb48ba0a15843dfc0c763a27cf11c715f710"
+  },
+  "limits": [
+    "same-project non-delegating leaf only",
+    "unrelated-project portability untested",
+    "general composing Build, nesting and SelfImprove open",
+    "current Codex runtime evidence separate",
+    "native Windows deferred"
+  ],
+  "final_driver": {
+    "files": 11,
+    "symlinks": 0,
+    "sha256": "c074e8a1fe3c2883eaff67bac6b84d76e7798fa06359917be11493df4e4fbcee",
+    "entrypoint_sha256": "bfdda65e378297e5ca295d6087bee9d98f0f769109bd79c5abece02cdcf38843",
+    "tests_passed": 30,
+    "log_sha256": "a3b2096a7c8bb452a71d58467414b689ab5beff807c4275b25f73245585017b1"
+  },
+  "final_total_checks_passed": 313,
+  "native_runtime": {
+    "claude": {
+      "version": "2.1.269 (Claude Code)",
+      "exit": 0,
+      "sha256": "25e44883f54419569a3d739f38cbbdaebe83b09895da0f343e1b003710a4775b"
+    },
+    "herdr": {
+      "version": "herdr 0.7.4",
+      "exit": 0,
+      "sha256": "bc0fc02d4ba500f9cac2353a43e67fe036785ecca6eb55378e050fac3c103059"
+    },
+    "treehouse": {
+      "version": "v2.0.1",
+      "exit": 0,
+      "sha256": "07a54f318c4b17f200cf34a679ad63c66bc05166461de9c33fa83ed39301338d"
+    }
+  },
+  "repaired_observer_reassessment": {
+    "receipt_sha256": "df215f924e2ea562dc56d6688da151f77376134bbe504aa71d8937c3ac59a0d4",
+    "supplemental_sha256": "028dbb7d8155f4c80d7cbfdcf4e15328a2e533521da5188a362362d30824c2f9",
+    "raw_evidence": ".scratch/leaf-authoring/a-mh9osxed-reassessed",
+    "original_unchanged": true,
+    "additional_model_launches": 0,
+    "landing_performed": false,
+    "reviewed_candidate_checks": {
+      "checks": {
+        "distinct_candidate": true,
+        "reviewed_behavior": true,
+        "reviewed_committed_trial_identities": true,
+        "reviewed_exact_retained_trial_result_committed": true,
+        "reviewed_exact_trial_output_committed": true,
+        "reviewed_tests": true,
+        "reviewed_trial_json_from_fresh_worker": true,
+        "same_authored_trialed_reviewed_library": true
+      },
+      "files_sha256": {
+        "release-input.json": "41ff621ccaa4bf57d76a976abef327efe54f7574622d04ffb8810057dc60c23f",
+        "release-library/.claude-plugin/plugin.json": "5edd277c2a302aa5d26da39d35813a25104c8bf15bf541167298502b8abfd384",
+        "release-library/.codex-plugin/plugin.json": "5edd277c2a302aa5d26da39d35813a25104c8bf15bf541167298502b8abfd384",
+        "release-library/README.md": "343073cf2d62cf59f8d996ddca6c97624601e1f924afef56873e6167773317fe",
+        "release-library/guidance/release.md": "1439957f05a9d7635e1ba52814845b400e88f6815cd0239fbabe8738b659c0f5",
+        "release-library/plugin.json": "5edd277c2a302aa5d26da39d35813a25104c8bf15bf541167298502b8abfd384",
+        "release-library/references/library-context.md": "69e42d409209e0b0350439b74fbe8c253a67107518e0ec0cfd03a16ae1dddb40",
+        "release-library/skills/triage-release/SKILL.md": "194c97b2dab80bbcb05f98ad166f50feaaad389fc49d1cc75885795d10341a2c",
+        "release-library/trials/expected-behavior.md": "cd6fc73e6cbd06e7a6924494b853214e087ce376861cba383fc3e01b89dce8e8",
+        "release-library/trials/request.md": "9ee97dfeef4e87dc1431c69d825f264dfc5a250a1a9b0d5c08e24e08b4e94582",
+        "test_delivery.py": "5c7e10787f7dd6b0382acfcb721437bb1b3bd349e43a2a69195d916e9bf01176",
+        "trial-output.json": "eedabd0de5e7ff410a960a6a30faf3fabec4e905788012b1819b415d3e5f1ff1",
+        "trial-record.json": "b93cb6362e0dfe34bf9f1e7085cda6e7f4df68aba1d9d0235c88d0fe52efab6d",
+        "trial-result.json": "6cd5c73ffb0164db6c2ee24626087e2cedda554be0e1611e9b770f7660730197"
+      },
+      "library_trees": {
+        "author": "a987f65ba3e38a600ddee8db1a825e412432914e",
+        "reviewed": "a987f65ba3e38a600ddee8db1a825e412432914e",
+        "trial": "a987f65ba3e38a600ddee8db1a825e412432914e"
+      },
+      "passed": true
+    },
+    "full_child_dependencies_read": true,
+    "full_root_context_reapplied": true,
+    "all_four_gathered": true,
+    "all_results_integrity": true,
+    "requested_profiles": true,
+    "exactly_one_review": true,
+    "strict_acceptance_passed": false,
+    "repair_trial": {
+      "after_review_gather": true,
+      "child": "tg-5a3bf426f7b5dfca6cab",
+      "committed_retrial_evidence": false,
+      "correct_output": true,
+      "evidence_location": "retained component result and root tasktmp diagnostic; final committed files describe original trial",
+      "exact_final_input": true,
+      "gathered": true,
+      "input_commit": "45f79ddb27f272064742e30b4b5319135dcc859e",
+      "phase": "repair",
+      "readonly_work": true,
+      "report_digest": "1e2801c001b71190ce4bac6693a9b603a6e1c8432068a1ac1805341534035dc1",
+      "result_digest": "a2f3375805ba2b9a22415e1baaf65afabea4d619c9f52187ec9dfb24f3c9319b"
+    },
+    "full_repair_trial_dependencies_read": true
+  },
+  "post_trial_package_clarification": {
+    "change": "Require committed additional repair-trial output, retained result and provenance before delivery",
+    "actual_worker_trial": false
+  },
+  "runtime_readiness": "partial runtime evidence; strict dev.8 authoring delivery not accepted",
+  "next_work": "Close post-Review repair-trial evidence retention and the precise observed acceptance sequence using existing owners",
+  "final_joined_checks": {
+    "receipt_sha256": "f3fd4cdf8c870bb3694bbef9fa41cd59c65bbe3e1a9cfaab0079cb6aff1e4814",
+    "raw_evidence": ".scratch/leaf-authoring/check-1peajh57",
+    "candidate": {
+      "files": 566,
+      "sha256": "9128e9db61608d7c7de649c10a44abaebfd4e55e59e13b2feaa44ae6c1d35c6a",
+      "symlinks": 1
+    },
+    "inputs": {
+      "integrations/firstmate": {
+        "files": 40,
+        "sha256": "3a13edaf326727c8fa03093e06342eac2a10855ae983655fb24df10cdeb91f34",
+        "symlinks": 0
+      },
+      "packages/orchflows-firstmate": {
+        "files": 1091,
+        "sha256": "799d774972f0539f3bbb041b97ceeb13b0542fc35cb2b8fb6899ba72109e7a54",
+        "symlinks": 0
+      }
+    },
+    "checks": [
+      {
+        "name": "reference-clone",
+        "exit": 0
+      },
+      {
+        "name": "reference-checkout",
+        "exit": 0
+      },
+      {
+        "name": "prepare",
+        "exit": 0
+      },
+      {
+        "name": "package",
+        "exit": 0,
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 128,
+          "run": 128,
+          "skipped": [],
+          "unexpected_skips": []
+        }
+      },
+      {
+        "name": "integration",
+        "exit": 0,
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 155,
+          "run": 165,
+          "skipped": [
+            {
+              "reason": "native Windows permission normalization",
+              "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+            }
+          ],
+          "unexpected_skips": []
+        }
+      }
+    ],
+    "driver_tests_passed": 30,
+    "combined_passed": 313
+  }
+}

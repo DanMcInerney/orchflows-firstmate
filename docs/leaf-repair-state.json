@@ -1,0 +1,471 @@
+{
+  "base_commit": "4f63714d4497ff5ba11381b5774ffa75032958ab",
+  "date": "2026-09-14",
+  "development_review": {
+    "count": 1,
+    "finding": "P2: external symlinks could substitute for committed evidence",
+    "independent_driver_checks": 36,
+    "post_repair_driver_checks": 39,
+    "raw_source": ".scratch/leaf-repair/reviewed-driver",
+    "repair": "Require regular Git blob modes and exact committed bytes for original and repair evidence before delivery and after cleanup",
+    "second_review": false,
+    "snapshot_driver": {
+      "files": 13,
+      "sha256": "f4fa4eb57cc6e86091ac54c4a6db5092d341c854b74b5aa37a28622a3459715e",
+      "symlinks": 0
+    },
+    "snapshot_entrypoint_sha256": "43875ab8136ff67dba84019123ee18587567c74fc2a8e99f6dbd577a0e78066f"
+  },
+  "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "fixture": {
+    "cleanup_passed": true,
+    "raw_evidence": ".scratch/leaf-repair/a-pjp8f5mg-fixture",
+    "receipt_sha256": "bf130eeed9a5c3075b9e903aa457db9f62785ac41ec05f6def480ee3f1f84d5e",
+    "status": "fixture-prepared-no-live-run",
+    "trial": "a-pjp8f5mg"
+  },
+  "git_bundle_sha256": "e6da0e176016feedb3a28a520291a6ef14e24c985914d072cc42ee3913bc8f0a",
+  "joined_checks": {
+    "candidate": {
+      "files": 566,
+      "sha256": "9128e9db61608d7c7de649c10a44abaebfd4e55e59e13b2feaa44ae6c1d35c6a",
+      "symlinks": 1
+    },
+    "checks": [
+      {
+        "exit": 0,
+        "name": "reference-clone"
+      },
+      {
+        "exit": 0,
+        "name": "reference-checkout"
+      },
+      {
+        "exit": 0,
+        "name": "prepare"
+      },
+      {
+        "exit": 0,
+        "name": "package",
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 128,
+          "run": 128,
+          "skipped": [],
+          "unexpected_skips": []
+        }
+      },
+      {
+        "exit": 0,
+        "name": "integration",
+        "tests": {
+          "errors": 0,
+          "failures": 0,
+          "passed": 155,
+          "run": 165,
+          "skipped": [
+            {
+              "reason": "native Windows permission normalization",
+              "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+            },
+            {
+              "reason": "requires explicit native Windows Git Bash",
+              "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+            },
+            {
+              "reason": "native Windows complete entrypoint",
+              "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+            }
+          ],
+          "unexpected_skips": []
+        }
+      }
+    ],
+    "combined_passed": 322,
+    "driver_log_sha256": "f66c8d76f0ded5a26981313b2c3446f71a1401de4fd4a025286338c8a1fa60ac",
+    "driver_tests_passed": 39,
+    "inputs": {
+      "integrations/firstmate": {
+        "files": 40,
+        "sha256": "3a13edaf326727c8fa03093e06342eac2a10855ae983655fb24df10cdeb91f34",
+        "symlinks": 0
+      },
+      "packages/orchflows-firstmate": {
+        "files": 1091,
+        "sha256": "799d774972f0539f3bbb041b97ceeb13b0542fc35cb2b8fb6899ba72109e7a54",
+        "symlinks": 0
+      }
+    },
+    "raw_evidence": ".scratch/leaf-repair/check-q38fxj_o",
+    "receipt_sha256": "ba95bcb18b244fbae93aadf9b559644708b51c6f0056085ad04ea0d5322ae841"
+  },
+  "limits": [
+    "same-project non-delegating leaf",
+    "no general composing Build, nesting or SelfImprove claim",
+    "no unrelated-project portability claim",
+    "current Codex composition open",
+    "native Windows deferred"
+  ],
+  "live_trial": {
+    "acceptance": {
+      "checks": {
+        "accepted_work_survived_relaunch": true,
+        "all_results_gathered": true,
+        "author_writer_and_fresh_readonly_trial": true,
+        "authoring_context_reapplied_before_review": true,
+        "changed_library_has_exact_repair_trial": true,
+        "clean_final_candidate": true,
+        "committed_on_expected_branch": true,
+        "committed_trial_identities": true,
+        "components_return_to_parent": true,
+        "context_only_calls": true,
+        "exact_author_review_repair_sequence": true,
+        "exact_ready_branch_signal": true,
+        "exact_retained_trial_result_committed": true,
+        "exact_review_evidence_committed": true,
+        "exact_trial_output_committed": true,
+        "fresh_repair_trial_read_declared_context": true,
+        "fresh_trial_read_declared_context": true,
+        "full_reads_before_each_gather": true,
+        "immutable_local_delivery_attachment": true,
+        "input_checkout_unchanged": true,
+        "joined_behavior_and_tests": true,
+        "local_delivery_survived_relaunch": true,
+        "maker_running_at_relaunch": true,
+        "normal_spawn_attached": true,
+        "only_repair_evidence_added_after_trial": true,
+        "ordinary_root_done": true,
+        "ordinary_ship_local_only_metadata": true,
+        "original_reviewed_trial_evidence_preserved": true,
+        "ready_branch_clean_fast_forward": true,
+        "repair_changes_only_library": true,
+        "repair_committed_trial_identities": true,
+        "repair_exact_retained_trial_result_committed": true,
+        "repair_exact_trial_output_committed": true,
+        "repair_trial_after_review_gather": true,
+        "repair_trial_json_from_fresh_worker": true,
+        "repair_trial_limits_recorded": true,
+        "requested_worker_profile": true,
+        "retained_integrity": true,
+        "review_repair_delivery_ancestry": true,
+        "reviewed_joined_candidate": true,
+        "root_final_check_after_repair_gather": false,
+        "root_final_check_receipt": false,
+        "root_spawn_succeeded": true,
+        "same_child_replays": true,
+        "three_work_one_review": true,
+        "trial_gathered_before_review": true,
+        "trial_json_from_fresh_worker": true
+      },
+      "passed": false
+    },
+    "candidate": {
+      "files": 566,
+      "sha256": "9128e9db61608d7c7de649c10a44abaebfd4e55e59e13b2feaa44ae6c1d35c6a",
+      "symlinks": 1
+    },
+    "cleanup_passed": false,
+    "components": {
+      "author-maker-v1": {
+        "child": "tg-88a3ce8f939c7e520efd",
+        "input_commit": "d1c08bf14b1cea179e656fdb32d36f31f62efff3",
+        "output_commit": "08e7c830a4f4800ddeb7e901deb587931624ea15",
+        "primitive": "Work",
+        "report_digest": "f2eda3b940688c34aa416187169c9298fcb51bc94b7798fc8d8780546a426440",
+        "writable": true
+      },
+      "final-review-v1": {
+        "child": "tg-52a5273d366b3206b9f8",
+        "input_commit": "340319a49d1a509dacd82cebd81d841e94dc49a6",
+        "primitive": "Review",
+        "report_digest": "2333b2f88630ef9e41222f7eecd245e27deb9bd4d86c82811fef77fa011ee92c",
+        "writable": false
+      },
+      "leaf-trial-v1": {
+        "child": "tg-95117f380b836e6e179b",
+        "input_commit": "124fc7f3f60773b0b3c644a8a3dec1f6fc16aa58",
+        "primitive": "Work",
+        "report_digest": "1e2801c001b71190ce4bac6693a9b603a6e1c8432068a1ac1805341534035dc1",
+        "writable": false
+      },
+      "repair-trial-v1": {
+        "child": "tg-a44e494f82f5dd8394ca",
+        "input_commit": "fb3d1209950580501079a2e1c77ebed6b6c55ec5",
+        "primitive": "Work",
+        "report_digest": "1e2801c001b71190ce4bac6693a9b603a6e1c8432068a1ac1805341534035dc1",
+        "writable": false
+      }
+    },
+    "driver": {
+      "files": 13,
+      "sha256": "f4fa4eb57cc6e86091ac54c4a6db5092d341c854b74b5aa37a28622a3459715e",
+      "symlinks": 0
+    },
+    "entrypoint_sha256": "43875ab8136ff67dba84019123ee18587567c74fc2a8e99f6dbd577a0e78066f",
+    "failure": "Final native test had cd to the exact recorded root worktree on the preceding line, violating strict standalone-call requirement",
+    "final_commit": "76a1ca904c6b4eb8e2fefdb5a4e0ee2c19463160",
+    "input_commit": "d1c08bf14b1cea179e656fdb32d36f31f62efff3",
+    "landing_performed": false,
+    "library_trees": {
+      "final": "bfdc3e8f4b159c6c1b6deed00ae3f6ce335198fe",
+      "repair_trial": "bfdc3e8f4b159c6c1b6deed00ae3f6ce335198fe",
+      "reviewed": "7a4bb82e367fa6eae7181f71c433f2d59ede4c7e"
+    },
+    "native_models_observed": [
+      "claude-sonnet-5"
+    ],
+    "native_read_replay_checks": {
+      "author-maker-v1": {
+        "context_only_calls": true,
+        "read_both_before_first_gather": true,
+        "read_both_before_owner_acknowledgement": true,
+        "same_child_replay": true
+      },
+      "final-review-v1": {
+        "context_only_calls": true,
+        "read_both_before_first_gather": true,
+        "read_both_before_owner_acknowledgement": true,
+        "same_child_replay": true
+      },
+      "leaf-trial-v1": {
+        "context_only_calls": true,
+        "read_both_before_first_gather": true,
+        "read_both_before_owner_acknowledgement": true,
+        "same_child_replay": true
+      },
+      "repair-trial-v1": {
+        "context_only_calls": true,
+        "read_both_before_first_gather": true,
+        "read_both_before_owner_acknowledgement": true,
+        "same_child_replay": true
+      }
+    },
+    "operator_intervention_during_workers": false,
+    "original_unchanged": true,
+    "package": {
+      "files": 1091,
+      "sha256": "799d774972f0539f3bbb041b97ceeb13b0542fc35cb2b8fb6899ba72109e7a54",
+      "symlinks": 0
+    },
+    "raw_evidence": ".scratch/leaf-repair/a-t27bkjzs-original",
+    "raw_native_transcripts": ".scratch/leaf-repair/a-t27bkjzs-native/projects",
+    "receipt_sha256": "fc4ec7c1f736cb2dd7af47fccbbab4a4f15176225c046f14e812878a9949d080",
+    "reviewed_commit": "340319a49d1a509dacd82cebd81d841e94dc49a6",
+    "scoped_processes_remaining": 0,
+    "status": "failed",
+    "trial": "a-t27bkjzs",
+    "worker_profile": {
+      "effort": "high",
+      "model": "claude-sonnet-5"
+    }
+  },
+  "orchflows_commit": "ca72258493480ddcfe73b3f01d0475ad532e4726",
+  "package_version": "0.1.0-dev.8",
+  "preserved_artifact": ".scratch/leaf-repair/a-t27bkjzs-artifact",
+  "product_package_and_firstmate_unchanged": true,
+  "qualified_delivery": {
+    "acceptance": {
+      "checks": {
+        "accepted_work_survived_relaunch": true,
+        "all_results_gathered": true,
+        "all_trial_evidence_regular_committed_blobs": true,
+        "author_writer_and_fresh_readonly_trial": true,
+        "authoring_context_reapplied_before_review": true,
+        "changed_library_has_exact_repair_trial": true,
+        "clean_final_candidate": true,
+        "committed_on_expected_branch": true,
+        "committed_trial_identities": true,
+        "components_return_to_parent": true,
+        "context_only_calls": true,
+        "exact_author_review_repair_sequence": true,
+        "exact_ready_branch_signal": true,
+        "exact_retained_trial_result_committed": true,
+        "exact_review_evidence_committed": true,
+        "exact_trial_output_committed": true,
+        "fresh_repair_trial_read_declared_context": true,
+        "fresh_trial_read_declared_context": true,
+        "full_reads_before_each_gather": true,
+        "immutable_local_delivery_attachment": true,
+        "input_checkout_unchanged": true,
+        "joined_behavior_and_tests": true,
+        "local_delivery_survived_relaunch": true,
+        "maker_running_at_relaunch": true,
+        "native_final_test_output_success": true,
+        "native_same_cwd_final_test_after_repair": true,
+        "normal_spawn_attached": true,
+        "only_repair_evidence_added_after_trial": true,
+        "ordinary_local_landing": true,
+        "ordinary_root_done": true,
+        "ordinary_ship_local_only_metadata": true,
+        "original_reviewed_trial_evidence_preserved": true,
+        "ready_branch_clean_fast_forward": true,
+        "repair_changes_only_library": true,
+        "repair_committed_trial_identities": true,
+        "repair_exact_retained_trial_result_committed": true,
+        "repair_exact_trial_output_committed": true,
+        "repair_trial_after_review_gather": true,
+        "repair_trial_json_from_fresh_worker": true,
+        "repair_trial_limits_recorded": true,
+        "requested_worker_profile": true,
+        "retained_integrity": true,
+        "review_repair_delivery_ancestry": true,
+        "reviewed_joined_candidate": true,
+        "root_spawn_succeeded": true,
+        "same_child_replays": true,
+        "strict_failures_limited_to_declared_syntax": true,
+        "three_work_one_review": true,
+        "trial_evidence_regular_committed_blobs": true,
+        "trial_gathered_before_review": true,
+        "trial_json_from_fresh_worker": true
+      },
+      "passed": true,
+      "scope": "qualified artifact delivery; strict fixture remains failed"
+    },
+    "additional_model_launches": 0,
+    "clean_uninterrupted_pass": false,
+    "cleanup_passed": true,
+    "delivery_after_cleanup": {
+      "checks": {
+        "landed_behavior_and_tests": true,
+        "landed_checkout_clean": true,
+        "landed_exact_final_commit": true,
+        "root_metadata_removed": true
+      },
+      "passed": true
+    },
+    "final_driver": {
+      "files": 13,
+      "sha256": "e654a86bd2dcb2b620c3e647abe1a38045ee96ac8f52f81cdf929380e7ecbeb2",
+      "symlinks": 0
+    },
+    "local_delivery": {
+      "branch": "fm/accept-t27bkjzs",
+      "default_after": "76a1ca904c6b4eb8e2fefdb5a4e0ee2c19463160",
+      "default_before": "d1c08bf14b1cea179e656fdb32d36f31f62efff3",
+      "landed": true,
+      "merge_exit": 0,
+      "ready_commit": "76a1ca904c6b4eb8e2fefdb5a4e0ee2c19463160",
+      "root_status": "done: ready in branch fm/accept-t27bkjzs"
+    },
+    "native_final_test": {
+      "events": [
+        {
+          "after_review_gather": true,
+          "completed_at": 1789425131.863,
+          "invoked_at": 1789425130.303,
+          "same_cwd_prefix": true,
+          "success": true
+        }
+      ],
+      "passed": true
+    },
+    "ordinary_root_teardown_exit": 0,
+    "original_receipt_unchanged": true,
+    "raw_evidence": ".scratch/leaf-repair/a-t27bkjzs-qualified",
+    "receipt_sha256": "1a33c8b319cf34f3d1e9934ac87467be4c43f1ce42a7e42d194df0cefdd9c47a",
+    "repair_evidence_after_cleanup": {
+      "files_sha256": {
+        "final-review-report.md": "2333b2f88630ef9e41222f7eecd245e27deb9bd4d86c82811fef77fa011ee92c",
+        "final-review-result.json": "70ea241d4cae3badd59f870b6e2b469d453040f6d4d8affda0b92308b3210121",
+        "repair-trial-output.json": "1e2801c001b71190ce4bac6693a9b603a6e1c8432068a1ac1805341534035dc1",
+        "repair-trial-record.json": "6b3f54f3d008828167a01b4282893d02e11a771434ea8ba5532702e0618634d3",
+        "repair-trial-result.json": "26a77837ecc548fba28093079bbf5b439e9eadfd9f8a65ab2279c81de57317e1",
+        "trial-output.json": "1e2801c001b71190ce4bac6693a9b603a6e1c8432068a1ac1805341534035dc1",
+        "trial-record.json": "31dbee8aee4b75f679c754433e8b63a01dd5e66e1e1ecfefbf0e54b7e3ef4499",
+        "trial-result.json": "bbdb2e1bd2f70a50b7666127c891ff6b38daf0b4e4070167018218b053aed1c2"
+      },
+      "passed": true
+    },
+    "scoped_processes_remaining": 0,
+    "status": "delivered-with-qualified-assessment",
+    "strict_acceptance": {
+      "checks": {
+        "accepted_work_survived_relaunch": true,
+        "all_results_gathered": true,
+        "all_trial_evidence_regular_committed_blobs": true,
+        "author_writer_and_fresh_readonly_trial": true,
+        "authoring_context_reapplied_before_review": true,
+        "changed_library_has_exact_repair_trial": true,
+        "clean_final_candidate": true,
+        "committed_on_expected_branch": true,
+        "committed_trial_identities": true,
+        "components_return_to_parent": true,
+        "context_only_calls": true,
+        "exact_author_review_repair_sequence": true,
+        "exact_ready_branch_signal": true,
+        "exact_retained_trial_result_committed": true,
+        "exact_review_evidence_committed": true,
+        "exact_trial_output_committed": true,
+        "fresh_repair_trial_read_declared_context": true,
+        "fresh_trial_read_declared_context": true,
+        "full_reads_before_each_gather": true,
+        "immutable_local_delivery_attachment": true,
+        "input_checkout_unchanged": true,
+        "joined_behavior_and_tests": true,
+        "local_delivery_survived_relaunch": true,
+        "maker_running_at_relaunch": true,
+        "normal_spawn_attached": true,
+        "only_repair_evidence_added_after_trial": true,
+        "ordinary_root_done": true,
+        "ordinary_ship_local_only_metadata": true,
+        "original_reviewed_trial_evidence_preserved": true,
+        "ready_branch_clean_fast_forward": true,
+        "repair_changes_only_library": true,
+        "repair_committed_trial_identities": true,
+        "repair_exact_retained_trial_result_committed": true,
+        "repair_exact_trial_output_committed": true,
+        "repair_trial_after_review_gather": true,
+        "repair_trial_json_from_fresh_worker": true,
+        "repair_trial_limits_recorded": true,
+        "requested_worker_profile": true,
+        "retained_integrity": true,
+        "review_repair_delivery_ancestry": true,
+        "reviewed_joined_candidate": true,
+        "root_final_check_after_repair_gather": false,
+        "root_final_check_receipt": false,
+        "root_spawn_succeeded": true,
+        "same_child_replays": true,
+        "three_work_one_review": true,
+        "trial_evidence_regular_committed_blobs": true,
+        "trial_gathered_before_review": true,
+        "trial_json_from_fresh_worker": true
+      },
+      "passed": false
+    },
+    "strict_fixture_passed": false,
+    "writer_refs_after_cleanup": {
+      "author-maker-v1": true
+    }
+  },
+  "runtime_readiness": "Actual bounded leaf repair evidence and local delivery through qualified reassessment; strict standalone-call fixture still failed",
+  "schema": 1
+}

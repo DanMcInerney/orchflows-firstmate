@@ -5,17 +5,19 @@ Code and Codex CLI as worker harnesses. The target is near feature parity with
 Orchflows through FirstMate's existing agent, workspace, communication, recovery,
 supervision and delivery owners.
 
-The current owned package is **0.1.0-dev.7**, retaining all 1,081 source paths at
+The current owned package is **0.1.0-dev.8**, retaining all 1,081 source paths at
 Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 (0.7.0). The experimental
 design-loop library remains inactive migration source and is not used.
 
-**Current increment:** an explicitly selected ordinary Linux ship/local-only
-root can compose Work, join committed results, request one fresh Review of the
-exact clean joined candidate, make one repair/check pass, and deliver its
-ordinary ready branch. FirstMate's existing local merge and teardown owners
-protect that delivery. Dynamic scouts and retained legacy clients preserve
-their previous contracts. See [local delivery](docs/local-delivery.md) and
-[current verification](docs/local-delivery-verification.md).
+**Current increment:** bounded authoring of a complete non-delegating leaf
+workflow or guidance library through an explicitly selected Linux
+ship/local-only root. Work authors it, a fresh Work trials the exact joined
+library, one Review assesses the committed artifact and trial evidence, and
+FirstMate's existing local delivery owners land it.
+See [leaf authoring](docs/leaf-authoring.md) and
+[repair-trial verification](docs/leaf-repair-verification.md). The continuation
+checks committed evidence and local delivery for an explicit post-Review repair
+trial; earlier strict dev.8 failures remain separately recorded.
 
 Enable the fork and selected complete custom libraries once; select dynamic
 through ordinary FirstMate spawn. The retained package client uses immutable
@@ -29,7 +31,7 @@ workflow is the pinned upstream Orchflows dynamic workflow: scoped makers,
 joined checks, one fresh independent Review and one repair/check pass.
 
 The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/README.md).
-Direct-PR/no-mistakes delivery, nesting, Build/SelfImprove, broader custom/meta
+Direct-PR/no-mistakes delivery, nesting, general Build/SelfImprove, broader custom/meta
 and optional-library execution, current Codex runtime evidence and release
 installation/update/rollback remain open. Source coverage and package checks
 are distinct from actual fleet execution.
@@ -38,7 +40,8 @@ are distinct from actual fleet execution.
 | --- | --- |
 | [Handoff](HANDOFF.md) | User intent, next assignment, expected outputs and completion criteria |
 | [Fundamental design](docs/fundamental-design.md) | Selected architecture, required FirstMate changes, staged implementation and fixed runtime acceptance |
-| [Local delivery verification](docs/local-delivery-verification.md) | Current delivery checks, independent Review and actual worker evidence |
+| [Leaf authoring verification](docs/leaf-authoring-verification.md) | Current authoring checks, independent Review, actual trials and delivery gaps |
+| [Local delivery verification](docs/local-delivery-verification.md) | Historical dev.7 delivery evidence |
 | [Dynamic verification](docs/dynamic-verification.md) | Historical dev.6 scout composition, workers, review and repair evidence |
 | [Review verification](docs/review-verification.md) | Historical bounded Review and recovery evidence |
 | [Linux acceptance driver](docs/linux-acceptance.md) | Reproduce private Claude Work/Review and parent-replacement trials |

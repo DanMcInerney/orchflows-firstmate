@@ -247,3 +247,29 @@ including before a formatter. It does not treat file redirection, shell lists or
 substitution as literal invocation evidence. When correcting an observer after
 a run, preserve the original receipt and write a separate reassessment; an
 administrative delivery/cleanup retry is distinct from an uninterrupted pass.
+
+
+## Bounded leaf authoring
+
+The --authoring case selects dynamic local-only delivery and reuses the existing
+driver lifecycle. It authors a complete library, trials its non-delegating leaf
+in a fresh read-only Work, replaces the root during that trial when --restart
+is selected, then reviews committed trial evidence and lands the library.
+[The authoring contract](leaf-authoring.md) gives the command and exact observer
+scope; [verification](leaf-authoring-verification.md) records executed outcomes.
+This remains same-project evidence, with no portability or nested Build claim.
+
+
+The separate --authoring-repair selection implies authoring, dynamic and
+local-only. It requires one additional read-only Work after the single Review,
+a changed library committed before that Work, and exact new trial/Review evidence
+committed before readiness. The original strict --authoring checks remain intact.
+[The repair case](leaf-authoring.md#separate-post-review-repair-case) defines its
+bounded sequence; [verification](leaf-repair-verification.md) records execution.
+
+
+The final-test observer keeps literal standalone calls as its default.
+Its explicit same-directory-prefix option is only for a separately labelled
+trace reassessment: exactly one preceding cd must name the worktree already
+recorded in that native event. This is not enabled by either live authoring
+fixture. Preserve strict failures when recording such an administrative follow-up.

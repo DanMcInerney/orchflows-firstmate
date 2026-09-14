@@ -52,7 +52,7 @@ class LocalDeliveryChecks(unittest.TestCase):
                 "kind": "ship", "mode": "local-only", "branch": "fm/root"}}))
             result = {"final_commit": final, "acceptance": {"passed": True, "checks": {"composition": True}},
                       "retained_results": {str(i): {"component_meta": {"kind": "scout", "result_disposition": "parent"}}
-                                           for i in range(3)}}
+                                           for i in trial.expected_requests}}
             trial.receipt = {"input_commit": initial, "runs": [result], "cleanup_passed": True}
             yield trial, result, project, worktree, git
 

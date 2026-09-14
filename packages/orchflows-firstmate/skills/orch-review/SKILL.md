@@ -17,7 +17,7 @@ Write the request in the root's assigned temporary directory, outside project an
 
 After dynamic Review is gathered, make one repair/check pass on the joined candidate, directly in the authorized root worktree or through scoped Work requests. Do not request another Review. FirstMate's ordinary root reporting and delivery owners remain authoritative; component completion does not complete the root, and the selected local-only profile adds no separate delivery gate and does not authorize no-mistakes dispatch.
 
-Identical replays preserve the original child, including after root relaunch with a new immutable context. Uncertain launch, failed reviewer or missing results require FirstMate reconciliation, without a replacement from another tool. Reviewers cannot edit, repair or delegate. Nesting, component continuation, model overrides, remote homes, Build and SelfImprove remain unsupported. Read-only is an instruction and result-validation contract, not an operating-system sandbox.
+Identical replays preserve the original child, including after root relaunch with a new immutable context. Uncertain launch, failed reviewer or missing results require FirstMate reconciliation, without a replacement from another tool. Reviewers cannot edit, repair or delegate. Nesting, component continuation, model overrides, remote homes, general composing Build and SelfImprove remain unsupported. [Bounded leaf authoring](../orch-build-workflow/SKILL.md) uses these same primitives under its narrower contract. Read-only is an instruction and result-validation contract, not an operating-system sandbox.
 
 ## Upstream migration baseline (inactive)
 
