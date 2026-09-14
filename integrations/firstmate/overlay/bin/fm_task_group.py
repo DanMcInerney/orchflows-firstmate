@@ -1,4 +1,4 @@
-"""FirstMate-owned, single read-only Work component admission and result owner.
+"""FirstMate-owned, single read-only component admission and result owner.
 
 This is an experimental controller, not a fleet-readiness probe. Only FirstMate's
 shell bridge may dispatch; tests can explicitly inject that external boundary.
@@ -9,6 +9,8 @@ from pathlib import Path
 import subprocess
 import time
 from fm_task_group_runtime import runtime
+from fm_task_group_primitives import (admit, attachment_primitive, review_fields, scope,
+                                      validate_metadata, validate_record)
 
 from fm_task_group_store import (GroupError, canonical, clean_commit, digest, group_lock,
                                  identifier, metadata, package_inventory, read_bytes,
@@ -44,6 +46,7 @@ class TaskGroups:
         value = read_json(self.group(root) / "attachment.json")
         if value.get("root") != root or value.get("epoch") != 1 or value.get("schema") != 1:
             raise GroupError("invalid task-group attachment identity")
+        attachment_primitive(value)
         if self.runtime.windows and value.get("runtime") != self.runtime.identity:
             raise GroupError("Windows runtime differs from immutable task attachment")
         if verify:
@@ -66,6 +69,7 @@ class TaskGroups:
         if value.get("endpoint_task_id") != root:
             raise GroupError("root task metadata identity mismatch")
         attachment = self.attachment(root)
+        validate_metadata(value, attachment)
         if safe_path(value.get("project", ""), directory=True) != Path(attachment["project"]):
             raise GroupError("root project differs from attachment")
         return value, attachment
@@ -81,12 +85,13 @@ class TaskGroups:
                 value.get("body_hash") != digest(canonical(body)) or value.get("child") != expected_child or
                 value.get("state") not in ("launching", "uncertain", "launched", "complete")):
             raise GroupError("invalid saved component request")
+        validate_record(value, self.attachment(root, verify=False))
         return value
 
     @staticmethod
     def request_body(body):
         if not isinstance(body, dict) or set(body) != {"request_id", "assignment"}:
-            raise GroupError("request must contain only request_id and assignment; Stage 1 is read-only Work")
+            raise GroupError("request must contain only request_id and assignment; the attachment selects the primitive")
         identifier(body["request_id"], "request ID")
         assignment = body["assignment"]
         if (not isinstance(assignment, str) or not assignment.strip() or
@@ -94,7 +99,9 @@ class TaskGroups:
             raise GroupError("assignment must be nonempty text of at most 32768 UTF-8 bytes")
         return body
 
-    def attach(self, root, package, project):
+    def attach(self, root, package, project, primitive="Work", review_policy="none"):
+        # Policy refusal precedes the group lock, which can create persistent directories.
+        admit(primitive, review_policy)
         root = identifier(root, "root ID")
         package = safe_path(package, directory=True)
         project = safe_path(project, directory=True)
@@ -104,7 +111,8 @@ class TaskGroups:
             path = self.group(root) / "attachment.json"
             if path.exists():
                 old = self.attachment(root)
-                if str(project) != old["project"] or digest(canonical(package_inventory(package))) != old["package_digest"]:
+                if (primitive != old["primitive"] or review_policy != old.get("review_policy", "none") or
+                        str(project) != old["project"] or digest(canonical(package_inventory(package))) != old["package_digest"]):
                     raise GroupError("attachment is immutable")
                 clean_commit(project, old["input_commit"])
                 return old
@@ -114,10 +122,12 @@ class TaskGroups:
                 raise GroupError("incomplete package attachment remains; inspect it before another attach")
             package_digest = snapshot_package(package, target)
             clean_commit(project, commit)
-            value = {"schema": 1, "root": root, "epoch": 1, "primitive": "Work",
+            value = {"schema": 1, "root": root, "epoch": 1, "primitive": primitive,
                      "readonly": True, "max_components": 1, "project": str(project),
                      "input_commit": commit, "package_digest": package_digest,
                      "package_path": str(target), "attached_at": time.time()}
+            if primitive == "Review":
+                value["review_policy"] = review_policy
             if self.runtime.windows:
                 value["runtime"] = self.runtime.identity
             write_json(path, value, exclusive=True)
@@ -145,6 +155,7 @@ class TaskGroups:
                       "harness": parent["harness"], "model": parent.get("model", "default"),
                       "effort": parent.get("effort", "default"), "package_digest": attachment["package_digest"],
                       "input_commit": attachment["input_commit"]}
+            record.update(review_fields(attachment))
             if self.spawn == self._spawn:
                 record["launch_custody"] = self.launch_custody(root, generation)
             # Acceptance precedes all child scaffolding and every external side effect.
@@ -234,6 +245,8 @@ class TaskGroups:
         if any(not value.get(key) for key in ("herdr_session", "herdr_workspace_id", "herdr_tab_id", "herdr_pane_id", "window")):
             raise GroupError("component metadata lacks exact Herdr endpoint identity")
         attachment = self.attachment(binding["parent"])
+        validate_record(record, attachment)
+        validate_metadata(value, attachment)
         if safe_path(value.get("project", ""), directory=True) != Path(attachment["project"]):
             raise GroupError("component project mismatch")
         worktree = safe_path(value.get("worktree", ""), directory=True)
@@ -245,13 +258,15 @@ class TaskGroups:
     def _view(self, root, record):
         meta_path = self.home / "state" / f"{root}.meta"
         current = self.meta(root) if meta_path.exists() or meta_path.is_symlink() else {}
+        attachment = self.attachment(root)
         value = {"attached": True, "root": root, "epoch": 1,
                  "generation": current.get("spawn_gen"), "protocol": "firstmate-task-group",
-                 "version": 1, "experimental": True, "scope": "local-readonly-work", "attachment": self.attachment(root),
+                 "version": 1, "experimental": True, "scope": scope(attachment), "attachment": attachment,
                  "request_path": str(self.group(root) / "request.json"), "request": record}
         if record and record["state"] == "complete":
             directory = self.group(root) / "results" / record["child"]
             result = read_json(directory / "result.json")
+            validate_record(result, attachment, result=True)
             payload = read_bytes(directory / "report.md", 512 * 1024)
             if digest(canonical(result)) != record.get("result_digest") or digest(payload) != result.get("report_digest"):
                 raise GroupError("retained component result integrity check failed")
@@ -266,7 +281,9 @@ class TaskGroups:
             if gather:
                 if not record or record["state"] != "complete":
                     raise GroupError("component has no complete retained result to gather")
-                record.update(gathered=True, gathered_parent_gen=generation, gathered_at=time.time())
+                # Keep the first acknowledgement observable across retries/recovery.
+                record.setdefault("gathered_at", time.time())
+                record.update(gathered=True, gathered_parent_gen=generation)
                 write_json(self.group(root) / "request.json", record)
                 value = self._view(root, record)
         return value
@@ -314,6 +331,7 @@ class TaskGroups:
                       "report_bytes": len(payload), "completed_at": time.time(),
                       "native_session_id": None,
                       "identity_limit": "Herdr endpoint and spawn generation recorded; native transcript session not verified"}
+            result.update(review_fields(attachment))
             # A crash before request publication leaves retained output but no fabricated completion.
             write_bytes(directory / "report.md", payload)
             write_json(directory / "result.json", result)

@@ -1,14 +1,16 @@
 # Experimental FirstMate task-group integration
 
-This distribution adds one local read-only Work component to FirstMate at `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`. It is the FirstMate-owned execution half of `packages/orchflows-firstmate/`; the package itself never launches a harness. See the [Stage 1 contract](../../docs/stage1-contract.md) for admission, immutable input, uncertainty and delivery boundaries.
+This distribution admits one local read-only Work component or one explicitly authorized Linux Review component to FirstMate at `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`. It is the FirstMate-owned execution half of `packages/orchflows-firstmate/`; the package itself never launches a harness. See the [Stage 1 contract](../../docs/stage1-contract.md) for admission, immutable input, uncertainty and delivery boundaries.
 
-It consists of seven existing-owner patches and new controller, storage, launch and lifecycle files. `manifest.json` lists all eleven deployable patch/overlay files. Preparation validates the complete inventory, clones a clean pinned checkout, applies the patch, and adds the overlay. It neither installs dependencies nor changes a live FirstMate home.
+The distribution patches seven existing owners and adds controller, storage, launch and lifecycle files. `manifest.json` lists the complete deployable patch/overlay inventory. Preparation validates the complete inventory, clones a clean pinned checkout, applies the patch, and adds the overlay. It neither installs dependencies nor changes a live FirstMate home.
 
-From this repository's root, choose a nonexistent disposable candidate path:
+For current development, use the [Ubuntu/WSL check runner](../../docs/linux-development.md). It verifies the pinned research input, creates an LF checkout on the Linux filesystem, calls this distribution's preparation tool and runs both owned suites with isolated homes. Native Windows development is deferred.
+
+For manual preparation from a clean Linux reference, choose a nonexistent disposable candidate path:
 
 ```sh
 python3 integrations/firstmate/prepare.py \
-  --source .sources/firstmate --destination .scratch/firstmate-candidate
+  --source "$LINUX_FIRSTMATE_SOURCE" --destination "$LINUX_CANDIDATE"
 ```
 
 The prepared directory is a modified detached FirstMate checkout. Its upstream instructions remain FirstMate source contracts; preparing it does not make this research task a fleet supervisor. Keep real runtime trials in a private FirstMate home and named Herdr lab with the original helper's default-session tripwire. The [runtime record](../../docs/stage1-runtime.md) describes the isolated tested prerequisites.
@@ -36,4 +38,13 @@ The inherited FirstMate regression runner is `bin/fm-test-run.sh`; use its fixtu
 
 On Linux, current launch supervision checks the original parent lock claims, process identities and ancestry before treating a launching request as waiting. Unknown or abandoned custody remains attention. Attached POSIX teardown also refuses missing process-cleanup evidence and preserves worktree/task records. The [continuation verification](../../docs/stage1-continuation-verification.md) records the 81-case combined suite and separates fixtures from actual runtime acceptance.
 
-Stage 1 rejects Review, writers, multiple components, nesting, promotion and remote homes. All upstream Orchflows example files remain available for migration; their presence does not certify runtime parity. No global install or published release is performed by this distribution.
+The Review extension requires explicit primitive Review and policy explicit-audit at attachment; see the [Review contract](../../docs/review-contract.md). Writers, multiple components, nesting, promotion and remote homes remain rejected. All upstream Orchflows example files remain available for migration; their presence does not certify runtime parity. No global install or published release is performed by this distribution.
+
+
+For attached Linux Claude workers, the spawn/relaunch owner now supplies
+CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1 and BASH_DEFAULT_TIMEOUT_MS=420000
+on that worker command. This selects the foreground profile exercised by the
+Stage 1 Linux watcher acceptance; it does not claim native background-shell
+supervision. The selected permission mode, model, effort and native file
+grants remain intact. Ordinary unattached tasks and Codex launches are unchanged.
+See [Linux verification](../../docs/linux-first-verification.md).

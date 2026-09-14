@@ -1,8 +1,30 @@
-# Experimental FirstMate Work client
+# Experimental FirstMate Work and Review client
 
-This client implements the package side of protocol `firstmate-task-group`, version `1`, scope `local-readonly-work`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
+This client implements the package side of protocol `firstmate-task-group`, version `1`, scopes `local-readonly-work` and `local-readonly-review`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
 
-Stage 1 permits one read-only Work component from a local normal root scout in Herdr. FirstMate attaches a complete snapshot of this fork and a clean local Git input commit before launching the root. The project must have no origin. The component inherits the root's Claude/Codex harness, model and effort. Review, writers, nesting, multiple components, continuation, remote homes, model overrides and the other four core workflows remain gated. Example libraries remain inactive migration fixtures.
+The current contract permits one read-only Work component or one explicitly selected Review component from a local normal root scout in Herdr. FirstMate attaches a complete snapshot of this fork and a clean local Git input commit before launching the root. The project must have no origin. The component inherits the root's Claude/Codex harness, model and effort. Review requires Linux and an attachment admitted by FirstMate with primitive Review and review_policy explicit-audit. Writers, nesting, multiple components, component continuation, remote homes, model overrides and the other three core workflows remain gated. Example libraries remain inactive migration fixtures.
+
+## Primitive and review authority
+
+The root client defaults to Work. For an admitted audit, supply --primitive
+Review before submit, status or gather. The client must see the controller's
+advertised Review capability and the same selected primitive and policy in the
+attachment. A Work attachment cannot be upgraded by changing the request body,
+a prompt, an environment variable or a client flag.
+
+FirstMate's administrator admits a standalone audit before the root launches:
+
+~~~sh
+python3 "$FIRSTMATE_CODE/bin/fm-task-group.py" --home "$FM_HOME" attach "$ROOT_TASK" \
+  --package "$PACKAGE" --project "$PROJECT" \
+  --primitive Review --review-policy explicit-audit
+~~~
+
+This audits the frozen clean Git input commit in a fresh component. It does not
+compose Work followed by Review in the same attachment, freeze a dirty writer
+candidate, or authorize repairs. The reviewer applies the retained package's
+Review guidance and returns findings without changing project files. Only the
+root writes and delivers its ordinary scout audit report.
 
 ## Inputs and invocation
 
@@ -28,7 +50,7 @@ The request has exactly these two fields:
 {"request_id":"inspect-1","assignment":"Inspect the attached source without edits. Apply the named Make guidance from the retained package and return findings with file references."}
 ```
 
-The assignment carries the concrete read-only result, exact input and resolved Make guidance paths. Do not embed unsupported dispatch controls in its prose. FirstMate accepts identifiers matching `[A-Za-z0-9][A-Za-z0-9_.-]{0,63}`, an assignment of at most 32,768 UTF-8 bytes without NUL, and a request file of at most 1 MiB. Unsupported JSON fields and duplicate keys refuse.
+The assignment carries the concrete read-only result, exact input and resolved Make guidance paths for Work, or Review guidance paths for an audit. Do not embed unsupported dispatch controls in its prose. FirstMate accepts identifiers matching `[A-Za-z0-9][A-Za-z0-9_.-]{0,63}`, an assignment of at most 32,768 UTF-8 bytes without NUL, and a request file of at most 1 MiB. Unsupported JSON fields and duplicate keys refuse.
 
 The client calls only the controller, using a subprocess argument list and explicit home. It first negotiates protocol, then asks FirstMate for status. Status checks the current root, generation and retained snapshot digest. The client also checks the returned scope and attachment, its own exact snapshot path, and consistent `orchflows-firstmate` identities in all three manifests. It cannot attach a task, allocate endpoints or directly launch a worker. Run with `-B`; the client also disables bytecode writes, because any added or modified snapshot file invalidates its binding.
 

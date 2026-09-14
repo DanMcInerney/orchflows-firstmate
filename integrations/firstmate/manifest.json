@@ -1,9 +1,10 @@
 {
   "schema": 1,
   "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
-  "status": "experimental Stage1 candidate; runtime evidence recorded separately",
+  "status": "experimental read-only Work/Review candidate; runtime evidence recorded separately",
   "patches": [
-    "patches/0001-readonly-task-groups.patch"
+    "patches/0001-readonly-task-groups.patch",
+    "patches/0002-linux-foreground-claude.patch"
   ],
   "files": [
     {
@@ -24,19 +25,23 @@
     },
     {
       "path": "overlay/bin/fm-task-group.py",
-      "sha256": "c8263b002bcdf0f6a50a23ae5588583cb1142f04a1d6e5726cbcb68091433048"
+      "sha256": "d9070b7feebbdc0414785e0a7d85b98c0c5ea769d61cddfff8cbd2d9228a5f88"
     },
     {
       "path": "overlay/bin/fm_task_group.py",
-      "sha256": "dfb6404cfdfa32a561357cb42e39b87bd9de3980eb4e6273bc7a8212e7e0b62e"
+      "sha256": "cb2a4b555ec7b4670d8288168e1b14d899e94a79ad1998246e6f74141f9e9b9e"
     },
     {
       "path": "overlay/bin/fm_task_group_launch.py",
-      "sha256": "e38450789da6a39c0ef5cd9a915471b57fd7be4739f0e58317d62c23276ab100"
+      "sha256": "8ccbc2ba749f7231d558f6d8cc2a7fe6f5fdf8797a42310a02155fe7c687e975"
     },
     {
       "path": "overlay/bin/fm_task_group_policy.py",
       "sha256": "5c422767d3c6c00a80eb24571db5512244aa87983052718afd2c36cc1c05b007"
+    },
+    {
+      "path": "overlay/bin/fm_task_group_primitives.py",
+      "sha256": "273da38a77861767db0fce6b0a29c2fcffbf14d2010b91b77c48edc176ba2534"
     },
     {
       "path": "overlay/bin/fm_task_group_runtime.py",
@@ -49,6 +54,10 @@
     {
       "path": "patches/0001-readonly-task-groups.patch",
       "sha256": "d967967b95d7348f91ad4bd8f38e9dcece1b940f38b74cd55c5a35b8e95188f3"
+    },
+    {
+      "path": "patches/0002-linux-foreground-claude.patch",
+      "sha256": "3f8ad46e861cc4e24f1bca6b63b2a944782bbc3dc2ddc68c0ebfe88cab6122ab"
     }
   ]
 }

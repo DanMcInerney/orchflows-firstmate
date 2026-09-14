@@ -38,6 +38,8 @@ def main(argv=None):
     attach.add_argument("task")
     attach.add_argument("--package", required=True)
     attach.add_argument("--project", required=True)
+    attach.add_argument("--primitive", choices=("Work", "Review"), default="Work")
+    attach.add_argument("--review-policy", choices=("none", "explicit-audit"), default="none")
     for verb in ("submit", "status", "gather", "complete", "internal-submit", "internal-gather"):
         child = commands.add_parser(verb)
         child.add_argument("task")
@@ -61,6 +63,8 @@ def main(argv=None):
             print(json.dumps({"protocol": "firstmate-task-group", "version": 1,
                               "experimental": True, "scope": "local-readonly-work",
                               "runtime_verified": False,
+                              "primitives": ["Work", "Review"],
+                              "review_policies": ["explicit-audit"],
                               "commands": ["attach", "submit", "status", "gather", "complete",
                                            "waiting", "launch-check", "launch-meta", "launch-overlay"]}))
             return 0
@@ -78,7 +82,7 @@ def main(argv=None):
                     arguments.append(str(safe_path(args.request)))
                 return bridge_call(owner, arguments)
         if args.command == "attach":
-            result = owner.attach(args.task, args.package, args.project)
+            result = owner.attach(args.task, args.package, args.project, args.primitive, args.review_policy)
         elif args.command == "internal-submit":
             result = owner.submit(args.task, args.generation, read_json(args.request))
         elif args.command in ("status", "internal-gather"):

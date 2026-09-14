@@ -1,5 +1,17 @@
 # Stage 1: one FirstMate-owned read-only Work component
 
+This document preserves the original Work contract. Dev.4 adds the
+[standalone Review contract](review-contract.md); its explicit Linux audit
+admission supersedes the Work-only restriction for that primitive. Writers
+and multiple-component composition remain outside both implemented profiles.
+
+
+Current development targets Ubuntu/WSL, Linux first. Attached Linux Claude
+launches use the foreground shell profile through FirstMate's existing spawn
+owner. Native background tools and native Windows workers remain unsupported;
+see [Linux verification](linux-first-verification.md) for exact changed bytes
+and the separation between fixture checks and actual runtime evidence.
+
 This increment implements the first path in the fundamental design. It targets a local normal root scout in Herdr and one read-only maker component, using the root's Claude or Codex harness. Independent Review, writers, nesting, promotion, remote homes and full plug-and-play release remain later stages. Unsupported operations must refuse rather than acquire weaker semantics.
 
 ## Ownership and implementation layout
