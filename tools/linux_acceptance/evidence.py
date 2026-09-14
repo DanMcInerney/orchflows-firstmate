@@ -204,8 +204,8 @@ def assess(run, *, restart, minimum_waiting_span):
             "waiting_samples": len(waiting), "waiting_span_seconds": round(span, 3)}
 
 
-def final_check_order(namespace, home, run, receipt_path):
-    """Observe this root's literal final test command after Review acknowledgement."""
+def final_check_order(namespace, home, run, receipt_path, *, allow_same_cwd_prefix=False):
+    """Keep strict calls by default; opt in only for a labelled trace reassessment."""
     root = run["root"]
     cwd = run.get("metadata", {}).get(root, {}).get("worktree")
     review = next((r for r in run.get("requests", []) if r.get("primitive") == "Review"), {})
@@ -233,12 +233,19 @@ def final_check_order(namespace, home, run, receipt_path):
                 if not isinstance(block, dict):
                     continue
                 if block.get("type") == "tool_use" and block.get("name") == "Bash":
+                    prefixed = False
                     try:
-                        argv = shlex.split(block.get("input", {}).get("command", ""))
+                        command = block.get("input", {}).get("command", "")
+                        lines = command.splitlines()
+                        if (allow_same_cwd_prefix and len(lines) == 2
+                                and shlex.split(lines[0]) == ["cd", cwd]):
+                            command, prefixed = lines[1], True
+                        argv = shlex.split(command)
                     except ValueError:
                         argv = []
                     if argv == expected and at > acknowledged:
-                        event = {"invoked_at": at, "after_review_gather": True, "success": False}
+                        event = {"invoked_at": at, "after_review_gather": True, "success": False,
+                                 "same_cwd_prefix": prefixed}
                         observations.append(event)
                         pending[block.get("id")] = event
                 elif block.get("type") == "tool_result" and block.get("tool_use_id") in pending:

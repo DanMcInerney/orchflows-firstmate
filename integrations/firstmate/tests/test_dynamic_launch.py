@@ -12,6 +12,7 @@ import test_enablement as enable_fixtures
 from fm_orchflows import auto_attach, enable, launch_context, library_overlay
 from fm_task_group_launch import launch_check, launch_meta, launch_overlay, launch_position
 from fm_task_group_store import GroupError, clean_commit, git
+from fm_task_group_policy import claude_permissions, file_rule
 
 
 class DynamicLaunchTests(unittest.TestCase):
@@ -208,6 +209,63 @@ export FM_TASK_GROUP_LOCK_OWNER FM_TASK_GROUP_LOCK_ROOT=root FM_TASK_GROUP_LOCK_
                 self.assertEqual(clean_commit(slot), clean_commit(self.project))
                 if not succeeds:
                     self.assertIn("current spawn custody and its own Treehouse slot", result.stderr)
+
+    def test_leaf_trial_reads_frozen_authored_library_and_retained_dependencies(self):
+        dependency = self.fixture.library()
+        enable(self.owner, self.package, self.project, workflow="dynamic",
+               libraries=(dependency,))
+        self.publish_root()
+        attachment = self.owner.attachment("dynamic-root")
+        authored = {
+            "library/plugin.json": '{"name":"authored","version":"1.0","skills":"./skills/"}',
+            "library/.claude-plugin/plugin.json": '{"name":"authored","version":"1.0"}',
+            "library/.codex-plugin/plugin.json": '{"name":"authored","version":"1.0"}',
+            "library/README.md": "Apply the leaf to a declared input; zero delegated agents.",
+            "library/references/library-context.md": "Use retained custom-a and writing guidance.",
+            "library/guidance/summary.md": "## Make\nRetain every input fact.",
+            "library/skills/summarize/SKILL.md": "Read the declared input and return its summary.",
+            "fixture.txt": "Three crates remain.",
+        }
+        for relative, content in authored.items():
+            path = self.worktree / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content)
+        git(self.worktree, "add", ".")
+        git(self.worktree, "commit", "-qm", "join authored library")
+        candidate = clean_commit(self.worktree)
+        view = self.owner.submit("dynamic-root", "s1.123.4", {
+            "request_id": "leaf-trial", "primitive": "Work", "writable": False,
+            "assignment": "Apply library/skills/summarize/SKILL.md to fixture.txt in your "
+                          "own worktree using retained dependencies. Return the output and findings.",
+        })
+        child = view["request"]["child"]
+        meta = self.owner.meta(child)
+        worktree = Path(meta["worktree"])
+        self.assertEqual(view["request"]["input_commit"], candidate)
+        for relative, content in authored.items():
+            self.assertEqual((worktree / relative).read_text(), content)
+        self.assertFalse((Path(attachment["package_path"]) / "library").exists())
+        retained_dependency = (Path(attachment["package_path"]) /
+                               "firstmate-libraries/custom-a/skills/inspect/SKILL.md")
+        expected_dependency = retained_dependency.read_bytes()
+        (dependency / "skills/inspect/SKILL.md").write_text("Changed future dependency")
+        (self.worktree / "fixture.txt").write_text("Changed author input")
+        self.assertEqual((worktree / "fixture.txt").read_text(), authored["fixture.txt"])
+        self.assertEqual(retained_dependency.read_bytes(), expected_dependency)
+        permissions = claude_permissions(self.owner, child, meta["spawn_gen"])["allow"]
+        self.assertIn(file_rule(self.owner.runtime, "Read", attachment["package_path"], tree=True),
+                      permissions)
+        self.assertNotIn(file_rule(self.owner.runtime, "Read", self.worktree, tree=True), permissions)
+        self.assertNotIn(file_rule(self.owner.runtime, "Edit", attachment["package_path"], tree=True),
+                         permissions)
+        report = Path(meta["tasktmp"]) / "trial.md"
+        report.write_text("Three crates remain.\nTrial uses the frozen declared input.")
+        self.owner.complete(child, meta["spawn_gen"], report)
+        retained = self.owner.status("dynamic-root", "s1.123.4", request_id="leaf-trial")
+        self.assertEqual(Path(retained["report_path"]).read_bytes(), report.read_bytes())
+        self.assertEqual(retained["result"]["input_commit"], candidate)
+        self.assertEqual(clean_commit(worktree), candidate)
+        self.assertEqual(self.owner.attachment("dynamic-root"), attachment)
 
     def test_relaunch_reapplies_retained_custom_deliverables_before_completion(self):
         library = self.fixture.library()

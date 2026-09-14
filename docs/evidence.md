@@ -2,6 +2,28 @@
 
 This document preserves what the originating session established. The [original assessment](assessment-2026-09-13.md) remains the dated narrative record; this file can accumulate later evidence.
 
+## Bounded leaf authoring  September 14, 2026
+
+After PR #4 merged as d3cf51b6b6dd31887f2d7d35a28679426af19d90, dev.8
+clarifies bounded non-delegating leaf authoring through existing dynamic
+ship/local-only Work/Review. No new runtime owner or capability was added.
+
+Actual Sonnet 5/high trials produced a complete library, exercised ordinary
+parent replacement, applied the leaf in fresh read-only Work and obtained
+Review. The refined run also used a fresh repair Work against its exact final
+commit. Both original receipts remain failed; dev.8 local landing is not
+certified. The initial diagnostic exposed digest confusion. The refined case
+exceeded its narrow three-request/unchanged-library fixture and missed required
+native-call observations; repair-trial evidence was not committed with the final
+artifact. Cleanup retained both unlanded roots, with zero scoped processes.
+
+One independent development Review found and prompted two observer repairs.
+The final pass has 30 passing driver checks; exact package/integration checks,
+runtime identities, failed receipts, separate strengthened reassessment and
+remaining limits are in [verification](leaf-authoring-verification.md) and
+[exact state](leaf-authoring-state.json). The final package clarification requires
+committed repair-trial evidence before delivery and is not yet live-tested.
+
 ## Upstream target clarification — September 14, 2026
 
 The user explicitly confirmed the latest [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows) as the source to adapt, superseding their preceding local `orchflows-light` reference. The product remains a modified Orchflows with near feature parity, executed through FirstMate on Herdr with Claude Code and Codex workers.
@@ -425,3 +447,34 @@ Current Codex composition, direct-PR/no-mistakes, nested/meta authoring and the
 remaining lifecycle/release gaps remain open. Pinned references, active
 installations and rotating credential caches remain unchanged; design-loop
 was not used.
+
+
+## September 14 continuation: committed repair-trial evidence and qualified delivery
+
+The dev.8 package and FirstMate candidate are unchanged. The existing Build/client
+clarification required retaining post-Review trial evidence; a separate bounded
+four-request case now exercises it. One independent development Review found
+external symlinks could pass as committed evidence. The single repair/check pass
+requires regular Git blobs and exact bytes. Final checks: 128 package, 155 Linux
+integration and 39 driver tests passed (322 total), with ten Windows skips.
+
+Actual Sonnet 5/high trial a-t27bkjzs completed authoring, root replacement,
+original trial, one Review and fresh repair Work. It committed original and
+repair trial evidence plus Review bytes. All native read/replay/context checks
+passed. The strict receipt correctly failed because the final command included
+a preceding cd, and its initial landing was skipped.
+
+A separate labelled assessment verified that cd named the exact native worktree,
+the final tests succeeded after repair gathering, and all eight evidence files
+were actual regular Git blobs. It retained both failed strict assertions. The
+same private lab was restored through its owner, and existing merge-local and
+teardown owners delivered the exact branch and cleaned up without another model
+or recreated task endpoint. Fifty-one qualified delivery checks passed. Four
+delivered tests, evidence-byte preservation, writer-ref retention, metadata
+removal and zero scoped processes were verified after cleanup.
+
+[Verification](leaf-repair-verification.md) and [exact state](leaf-repair-state.json)
+keep original failure, final observer, qualified delivery and artifact identities
+separate. This closes the observed retention/delivery gap with qualification;
+clean strict acceptance, broader Build/SelfImprove, portability and current
+Codex composition remain open.

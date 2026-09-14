@@ -17,7 +17,7 @@ Keep each returned request and child identity. Inspect with `status --request-id
 
 An identical request replay retains its child; changing an accepted body is an error. On an uncertain launch, failed child or missing result, use FirstMate's existing reconciliation owner without creating a replacement through another tool. A relaunched root uses its new immutable context to recover the same requests. Keep the supplied context unchanged; an old launch must not substitute a newer generation.
 
-Dynamic admits at most 32 total components, including its one Review and any repair Work. Nesting, component continuation, model/effort overrides, remote homes, other ship delivery modes, promotion, Build and SelfImprove remain unsupported. Read-only is an instruction and result-validation contract, not an operating-system sandbox.
+Dynamic admits at most 32 total components, including its one Review and any repair Work. Nesting, component continuation, model/effort overrides, remote homes, other ship delivery modes, promotion, general composing Build and SelfImprove remain unsupported. [Bounded leaf authoring](../orch-build-workflow/SKILL.md) uses these same primitives under its narrower contract. Read-only is an instruction and result-validation contract, not an operating-system sandbox.
 
 ## Upstream migration baseline (inactive)
 

@@ -19,6 +19,11 @@ def maker_relaunch_window(requests):
 
 
 class DynamicTrial(Trial):
+    expected_requests = {"stock-maker-v1", "label-maker-v1", "final-review-v1"}
+    writer_requests = {"stock-maker-v1", "label-maker-v1"}
+    request_count_check = "two_work_one_review"
+    title = "Compose two makers and an independent review"
+
     @property
     def local_only(self):
         return getattr(self.args, "local_only", False)
@@ -54,47 +59,11 @@ class DynamicTrial(Trial):
         env = {**self.env, "FM_HOME": str(home), "HERDR_SESSION": session}
         self.owner_home, self.root, self.worker_env = home, root, env
         self.active_homes.append((home, env))
-        self.run(["tasks-axi", "add", root, "Compose two makers and an independent review",
+        self.run(["tasks-axi", "add", root, self.title,
                   "--kind", "ship" if self.local_only else "scout", "--repo", "acceptance-fixture", "--file", home / "data/backlog.md"],
                  env=env, cwd=home)
         self.owner("fm-brief.sh", root, "acceptance-fixture", *self.root_flags(), env=env)
-        spec = (
-            "Use the retained orch-dynamic-workflow skill through FirstMate. Produce two useful isolated Work "
-            "results, join them in your assigned worktree, request one fresh independent Review of that exact "
-            "clean candidate, then perform one repair/check pass without a second Review. "
-            "Only components use component completion; you deliver through the ordinary root delivery contract below. "
-            "Read retained skill/guidance paths from the launch catalog. Use only the retained scripts/firstmate.py "
-            "client for submit/status/gather, relying on launch context. Every submit and gather must be a separate "
-            "literal python3 -B ABSOLUTE_CLIENT_PATH command, with no wrappers, variables or compound shell syntax. "
-            "Requests have exactly request_id,assignment,primitive,writable. Keep request files under tasktmp.\n\n"
-            "Submit these two Work requests before gathering either (primitive Work, writable true). "
-            "stock-maker-v1 owns stock.py and test_stock.py: add has_stock(counts), returning whether total_units(counts) "
-            "is positive; test empty, all zero and positive inputs. label-maker-v1 owns labels.py and test_labels.py: "
-            "add label_key(value), which strips and uppercases via normalize_code then replaces hyphens with underscores; "
-            "test empty, whitespace and ' ab-7 ' -> 'AB_7'. "
-            f"The label maker begins with a {self.args.component_delay}-second foreground sleep (timeout at least 420000 ms). "
-            "Each maker reads Make guidance, edits only its own files, runs its tests with python3 -B -m unittest, "
-            "commits its change on its assigned branch, and completes with a report describing checks and commit. "
-            "No maker delegates. Submit each IDENTICAL request JSON twice consecutively, recording replay identity.\n\n"
-            "Use status to reconcile all accepted requests. Once each result completes, read the ENTIRE retained "
-            "report.md and result.json using native Read with no offset/limit BEFORE the first gather --request-id ID. "
-            "Join each maker's commits using ordinary git cherry-pick of input_commit..output_commit in your worktree. "
-            "Use Git history and tests to recognize an already joined result after relaunch; never duplicate accepted work. "
-            "Once both results are gathered and joined, run python3 -B -m unittest discover -v and keep HEAD clean.\n\n"
-            "Then submit final-review-v1 (primitive Review,writable false) for one fresh independent audit of your exact "
-            "joined candidate, both functions and tests, applying Review guidance. It may run tests but cannot repair or "
-            "delegate. Submit the identical review request twice. Read both retained files fully before gather. "
-            "Make one repair/check pass from findings, committing any repairs; run the complete tests once more and write "
-            "their output with exactly one literal command: python3 -B -m unittest discover -v > "
-            "ABSOLUTE_TASKTMP/dynamic-final-check.txt 2>&1 (replace ABSOLUTE_TASKTMP with the actual path, "
-            "no variables, compound commands or wrappers). No second Review. Report exact reviewed and final commits, "
-            "request/child identities, joins, reviewer findings, repairs and final checks. "
-            "Do not modify original project checkout or package, inspect credentials/history, use native children, open a PR "
-            "or merge into the original branch. "
-            + self.delivery_instructions() +
-            "After relaunch use current context to reconcile all "
-            "accepted requests and continue this same composition.\n"
-        )
+        spec = self.composition_spec()
         if self.args.restart:
             spec += ("\nFor this recovery trial, gather and join each ready Work result immediately while the "
                      "other still runs. Do not wait for both Work results before gathering either. "
@@ -135,6 +104,45 @@ class DynamicTrial(Trial):
                             root_delivery="ship/local-only" if self.local_only else "scout/report")
         return home, root, env
 
+    def composition_spec(self):
+        return (
+            "Use the retained orch-dynamic-workflow skill through FirstMate. Produce two useful isolated Work "
+            "results, join them in your assigned worktree, request one fresh independent Review of that exact "
+            "clean candidate, then perform one repair/check pass without a second Review. "
+            "Only components use component completion; you deliver through the ordinary root delivery contract below. "
+            "Read retained skill/guidance paths from the launch catalog. Use only the retained scripts/firstmate.py "
+            "client for submit/status/gather, relying on launch context. Every submit and gather must be a separate "
+            "literal python3 -B ABSOLUTE_CLIENT_PATH command, with no wrappers, variables or compound shell syntax. "
+            "Requests have exactly request_id,assignment,primitive,writable. Keep request files under tasktmp.\n\n"
+            "Submit these two Work requests before gathering either (primitive Work, writable true). "
+            "stock-maker-v1 owns stock.py and test_stock.py: add has_stock(counts), returning whether total_units(counts) "
+            "is positive; test empty, all zero and positive inputs. label-maker-v1 owns labels.py and test_labels.py: "
+            "add label_key(value), which strips and uppercases via normalize_code then replaces hyphens with underscores; "
+            "test empty, whitespace and ' ab-7 ' -> 'AB_7'. "
+            f"The label maker begins with a {self.args.component_delay}-second foreground sleep (timeout at least 420000 ms). "
+            "Each maker reads Make guidance, edits only its own files, runs its tests with python3 -B -m unittest, "
+            "commits its change on its assigned branch, and completes with a report describing checks and commit. "
+            "No maker delegates. Submit each IDENTICAL request JSON twice consecutively, recording replay identity.\n\n"
+            "Use status to reconcile all accepted requests. Once each result completes, read the ENTIRE retained "
+            "report.md and result.json using native Read with no offset/limit BEFORE the first gather --request-id ID. "
+            "Join each maker's commits using ordinary git cherry-pick of input_commit..output_commit in your worktree. "
+            "Use Git history and tests to recognize an already joined result after relaunch; never duplicate accepted work. "
+            "Once both results are gathered and joined, run python3 -B -m unittest discover -v and keep HEAD clean.\n\n"
+            "Then submit final-review-v1 (primitive Review,writable false) for one fresh independent audit of your exact "
+            "joined candidate, both functions and tests, applying Review guidance. It may run tests but cannot repair or "
+            "delegate. Submit the identical review request twice. Read both retained files fully before gather. "
+            "Make one repair/check pass from findings, committing any repairs; run the complete tests once more and write "
+            "their output with exactly one literal command: python3 -B -m unittest discover -v > "
+            "ABSOLUTE_TASKTMP/dynamic-final-check.txt 2>&1 (replace ABSOLUTE_TASKTMP with the actual path, "
+            "no variables, compound commands or wrappers). No second Review. Report exact reviewed and final commits, "
+            "request/child identities, joins, reviewer findings, repairs and final checks. "
+            "Do not modify original project checkout or package, inspect credentials/history, use native children, open a PR "
+            "or merge into the original branch. "
+            + self.delivery_instructions() +
+            "After relaunch use current context to reconcile all "
+            "accepted requests and continue this same composition.\n"
+        )
+
     def requests(self):
         directory = self.owner_home / "data" / self.root / "task-group/requests"
         return [json.loads(path.read_text()) for path in sorted(directory.glob("*.json"))]
@@ -163,12 +171,13 @@ class DynamicTrial(Trial):
                 attachment_path = home / "data" / root / "task-group/attachment.json"
                 delivery_before = {key: old.get(key) for key in ("kind", "mode", "task_group_delivery")}
                 attachment_before = hashlib.sha256(attachment_path.read_bytes()).hexdigest()
+                replacement_started = time.time()
                 replaced = self.owner("fm-control.sh", root, "relaunch", "--note",
                     "Resume the exact dynamic composition. Read current status for every accepted request. "
                     "Keep gathered results and joined commits; use existing child IDs and current context. "
                     "Complete remaining Work, one Review and one repair/check pass; do not duplicate requests.",
                     env=env, timeout=180, check=False)
-                result["replacement"] = {"exit": replaced.returncode, "before_generation": old.get("spawn_gen"),
+                result["replacement"] = {"exit": replaced.returncode, "requested_at": replacement_started, "before_generation": old.get("spawn_gen"),
                     "accepted": {r["body"]["request_id"]: r["child"] for r in requests},
                     "gathered_before": [r["body"]["request_id"] for r in completed],
                     "pending_work": {r["body"]["request_id"]: r["child"] for r in pending}}
@@ -213,6 +222,8 @@ class DynamicTrial(Trial):
                 continue
             value = json.loads((directory / "result.json").read_text())
             retained[request_id] = value
+            if request["child"] not in metas:
+                metas[request["child"]] = value.get("component_meta", {})
             canonical = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
             integrity &= hashlib.sha256(canonical).hexdigest() == request.get("result_digest")
             integrity &= hashlib.sha256((directory / "report.md").read_bytes()).hexdigest() == value.get("report_digest")
@@ -228,30 +239,27 @@ class DynamicTrial(Trial):
                   else home / "data" / root / "report.md")
         report_text = report.read_text() if report.exists() else ""
         self.write(self.out / "root-report.md", report_text)
-        expected = {"stock-maker-v1", "label-maker-v1", "final-review-v1"}
+        expected = self.expected_requests
         checks = {"normal_spawn_attached": attachment.get("workflow") == "dynamic",
                   "root_spawn_succeeded": result["spawn_exit"] == 0,
-                  "requested_worker_profile": len(metas) == 4 and all(
+                  "requested_worker_profile": len(metas) == len(expected) + 1 and all(
                       meta.get("harness") == "claude" and all(meta.get(key) == value
                           for key, value in self.receipt["worker_profile"].items())
                       for meta in metas.values()),
                   "ordinary_root_done": bool(lines) and lines[-1].startswith("done:"),
-                  "two_work_one_review": set(retained) == expected and len(requests) == 3,
-                  "all_results_gathered": len(requests) == 3 and all(r.get("gathered") for r in requests),
-                  "retained_integrity": integrity and len(retained) == 3,
-                  "full_reads_before_each_gather": len(reads) == 3 and all(r["read_both_before_first_gather"] and
+                  self.request_count_check: set(retained) == expected and len(requests) == len(expected),
+                  "all_results_gathered": len(requests) == len(expected) and all(r.get("gathered") for r in requests),
+                  "retained_integrity": integrity and len(retained) == len(expected),
+                  "full_reads_before_each_gather": len(reads) == len(expected) and all(r["read_both_before_first_gather"] and
                       r["read_both_before_owner_acknowledgement"] for r in reads.values()),
-                  "same_child_replays": len(reads) == 3 and all(r["same_child_replay"] for r in reads.values()),
-                  "context_only_calls": len(reads) == 3 and all(r["context_only_calls"] for r in reads.values()),
+                  "same_child_replays": len(reads) == len(expected) and all(r["same_child_replay"] for r in reads.values()),
+                  "context_only_calls": len(reads) == len(expected) and all(r["context_only_calls"] for r in reads.values()),
                   "input_checkout_unchanged": self.run(["git", "-C", project, "rev-parse", "HEAD"]).stdout.strip() == self.receipt["input_commit"]
                       and self.run(["git", "-C", project, "status", "--porcelain"]).stdout == ""}
         if worktree.is_dir():
             result["final_commit"] = self.run(["git", "-C", worktree, "rev-parse", "HEAD"]).stdout.strip()
             result["reviewed_commit"] = retained.get("final-review-v1", {}).get("input_commit")
-            actual = self.run(["python3", "-B", "-c",
-                "from stock import has_stock; from labels import label_key; assert not has_stock([]); "
-                "assert not has_stock([0,0]); assert has_stock([0,3]); assert label_key(' ab-7 ')=='AB_7'; assert label_key('')==''"],
-                cwd=worktree, check=False)
+            actual = self.check_behavior(worktree)
             tests = self.run(["python3", "-B", "-m", "unittest", "discover", "-v"], cwd=worktree, check=False)
             self.write(self.out / "final-tests.log", tests.stdout + tests.stderr)
             checks["joined_behavior_and_tests"] = actual.returncode == 0 and tests.returncode == 0 and "Ran 0 tests" not in tests.stderr
@@ -270,7 +278,7 @@ class DynamicTrial(Trial):
                 self.write(self.out / "root-final-check.txt", final_text)
         if self.args.custom_workflow:
             checks["retained_composed_custom_skill"] = "composed-catalog-accepted" in report_text and all(
-                r["custom_skill_read_before_submit"] for r in reads.values()) and len(reads) == 3
+                r["custom_skill_read_before_submit"] for r in reads.values()) and len(reads) == len(expected)
         if self.args.restart:
             replacement = result.get("replacement", {})
             by_id = {r["body"]["request_id"]: r["child"] for r in requests}
@@ -283,6 +291,12 @@ class DynamicTrial(Trial):
                 by_id.get(key) == value for key, value in replacement.get("accepted", {}).items())
         result["acceptance"] = {"passed": all(checks.values()), "checks": checks}
 
+
+    def check_behavior(self, worktree):
+        return self.run(["python3", "-B", "-c",
+                "from stock import has_stock; from labels import label_key; assert not has_stock([]); "
+                "assert not has_stock([0,0]); assert has_stock([0,3]); assert label_key(' ab-7 ')=='AB_7'; assert label_key('')==''"],
+                cwd=worktree, check=False)
 
     def check_reviewed_candidate(self, worktree, reviewed, retained):
         """Execute the frozen Review tree and compare each maker's actual file bytes."""
@@ -337,5 +351,5 @@ class DynamicTrial(Trial):
                     checks[request_id] = False
                     self.receipt.setdefault("writer_ref_cleanup_errors", {})[request_id] = type(error).__name__
             result["writer_refs_after_cleanup"] = checks
-            if set(checks) != {"stock-maker-v1", "label-maker-v1"} or not all(checks.values()):
+            if set(checks) != self.writer_requests or not all(checks.values()):
                 self.receipt["cleanup_passed"] = False

@@ -327,8 +327,10 @@ def library_overlay(attachment):
         lines[3] = ("This attachment selects dynamic composition: custom and meta skills may use "
                     "scoped Work components and one fresh read-only Review through this same client. "
                     "Read library READMEs and dependency references. Join and check before Review, then "
-                    "perform one repair/check pass. Build, SelfImprove and nesting remain gated; "
-                    "never use native-child fallback.")
+                    "perform one repair/check pass. Bounded leaf authoring requires an explicitly "
+                    "selected ship/local-only root; follow the retained "
+                    f"{package / 'skills/orch-build-workflow/SKILL.md'}. General composing Build, "
+                    "SelfImprove and nesting remain gated; never use native-child fallback.")
     if catalog["libraries"]:
         lines.append("On initial launch and every relaunch, read the full retained custom skill selected "
                      "for this task and its required dependency guidance at the catalog paths below before "
