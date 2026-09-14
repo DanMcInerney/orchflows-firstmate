@@ -76,3 +76,130 @@ Use separate checkout locations or recorded refs for contemporary upstream resea
 **Handoff preservation**
 
 The original report was copied unchanged into this repository. Its recorded SHA-256 is `b2e10533790e2886cf3d94479afe48edff58a1a317e38eca6aa160cafa64528c`. Its phrase “this investigation” refers to the originating session described above. New questions and candidate approaches in this repository are proposed follow-up work, not additional completed research.
+
+## Continuation research — September 13, 2026
+
+The user requested fresh FirstMate and Orchflows research, reading this library, a complete Orchflows copy inside this workspace, and solutions to the integration friction points. That turn's scope was research and brainstorming; no implementation was authorized or performed in that turn. The subsequent implementation increment is recorded separately below. The dated original assessment and original source manifest remain unchanged.
+
+### Acquisition and verification actually performed
+
+Both public GitHub repository pages were opened, and full, non-shallow source clones were acquired inside the existing ignored `.sources/` directory:
+
+```text
+git clone https://github.com/DanMcInerney/orchflows.git .sources/orchflows
+git clone https://github.com/kunchenguid/firstmate.git .sources/firstmate
+```
+
+The Orchflows copy includes the complete checked-out repository, Git history, tests and examples, rather than only its shipped skills. It has 1,064 tracked files and 2,419 commits reachable from the checked-out head. No submodules were reported by `git submodule status`. FirstMate has 553 tracked files and 632 commits reachable from its checked-out head. Both clones initially and after research had empty `git status --short` output. They are local research copies excluded from the parent repository by its existing ignore rules; the source itself is not committed or published here.
+
+| Project | Original baseline | Observed remote-default checkout | Difference |
+| --- | --- | --- | --- |
+| FirstMate | `b182d0f908b78d08c7ccb8dce3775bdca8c5d657` | `b182d0f908b78d08c7ccb8dce3775bdca8c5d657` | None |
+| Orchflows | `86aabd91071fa07a05cf970db2e73909184a1955` | `0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a` | One commit, one changed line in `example-workflows/evolve/skills/evolve/SKILL.md`; clarifies how external failures affect the pivot counter |
+
+Both Orchflows revisions declare version 0.7.0. No cited core integration interface changed between them. A Git revision/content identity is therefore more precise than the version label alone. [Exact change](https://github.com/DanMcInerney/orchflows/commit/0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a).
+
+Executed read-only checks included `git rev-parse HEAD`, `git rev-parse --is-shallow-repository`, `git rev-list --count HEAD`, `git ls-files`, baseline-to-head `git log`/`git diff`, `git submodule status`, and parent `git check-ignore`. All 27 original manifest Git blob IDs were rechecked against their pinned revisions successfully. The original assessment's SHA-256 still matches the recorded value. [Machine-readable refresh](source-refresh-2026-09-13.json) records those identities, counts and file checks. No upstream installers or integration code were run.
+
+### Local host inventory actually performed
+
+Read-only command discovery/version calls found Windows Claude Code 2.1.233 and Codex CLI 0.144.0. PowerShell did not discover tmux on its PATH. WSL lists Ubuntu and docker-desktop; an Ubuntu shell found bash, tmux, git, gh and python3, plus a Codex npm shim under a mounted Windows path, but did not find Claude. These are command-discovery observations, not execution/authentication checks for a Linux worker. No credentials were inspected, no FirstMate home bootstrapped, no actual worker launched, and no host plugin/configuration changed. The [experiment plan](experiment-plan.md) records the remaining prerequisites.
+
+### New source observations and inferences
+
+| Finding | Classification and source |
+| --- | --- |
+| The durable Firstmate spec can carry an explicit package/workflow for a manual trial; launch overlays are regenerated, including on relaunch | Source observation; feasibility of actual loading remains a proposal. [FirstMate trace](firstmate-contracts.md#q04-attachment-and-durable-instructions) |
+| Unknown metadata keys survive the inspected ordinary relaunch and promotion rewrites | Source observation, not an existing supported workflow schema, external-writer API or universal preservation guarantee. [Metadata trace](firstmate-contracts.md#durable-task-metadata-a-seam-with-limits) |
+| Promotion demotes scout spec to investigation context while retaining the original brief; later relaunch reads that brief | Source-derived integration replay hazard, not a reproduced FirstMate runtime bug. [Promotion trace](firstmate-contracts.md#q04-attachment-and-durable-instructions) |
+| FirstMate's appended self-development role rule supersedes earlier role text and forbids delegation | Source contract; a brief-only exception does not solve it. [Role trace](firstmate-contracts.md#q05q06-workspace-and-role-boundaries) |
+| Relaunch is a fresh conversation in the existing worktree; parent endpoint exit does not establish native-child termination | Source observation and bounded inference; native-child recovery remains untested. [Recovery trace](firstmate-contracts.md#q07-recovery-and-cancellation-are-distinct-from-durable-results) |
+| Environment allowlisting retains destination-pane values; explicit CLAUDE_CONFIG_DIR forwarding is a distinct mechanism | Source observation; caller ORCHFLOWS_HOME forwarding cannot be assumed. [Environment trace](firstmate-contracts.md#q11-and-fallback-inheritance-does-not-provision-a-host) |
+| Native plugin discovery is only one supported Orchflows resolution route; supplied complete roots are another | Documented contract; no FirstMate path-loading trial. [Package findings](orchflows-contracts.md#package-identity-paths-and-discovery) |
+| Successful core setup deletes the prior copy, resolve does not request versions, and library dependencies are declared in prose | Source observation; retained dependency snapshots require new integration behavior. [Package freezing](orchflows-contracts.md#freezing-a-tasks-entire-input-package), [upgrade trace](orchflows-contracts.md#upgrade-and-rollback-mechanics) |
+| This session uses installed Orchflows Light 0.6.3, while the copied public source is Orchflows 0.7.0 | Local manifest/skill observation; these research children do not prove that FirstMate can run the source package. [Identity findings](orchflows-contracts.md#package-identity-paths-and-discovery) |
+| Root MIT LICENSE files exist in both pinned repositories, with additional selected-library notices inventoried | File inventory only; no legal compatibility conclusion, redistribution or maintainer acceptance. [Orchflows inventory](orchflows-contracts.md#distribution-facts-and-smallest-useful-scope) |
+
+A refreshed Claude primary documentation page describes configurable nested subagents and a concurrent-subagent limit separately from tool concurrency. Current Codex documentation describes local subagents. These are **external documentation claims**, not new FirstMate worker measurements; they do not erase FirstMate's older empirical tool inventory or certify this session's installed CLIs. [Host-doc findings and primary links](orchflows-contracts.md#composition-and-native-depth). Orchflows also contains its own model/effort trial report; it is upstream-reported evidence, not a trial executed here.
+
+### Deliverables and verification scope
+
+New research deliverables are [FirstMate contracts](firstmate-contracts.md), [Orchflows contracts](orchflows-contracts.md), [ranked solution options](solution-options.md), [experiment plan](experiment-plan.md), and [proposed increment](proposed-increment.md). All Q01–Q16 now distinguish source answers, proposals and remaining runtime checks. Recommendations remain provisional in the decision log.
+
+Two bounded native researchers investigated source contracts while the coordinator compared architectures and wrote the experiment/increment proposals. Their source documents contain no repairs to either upstream. The existing 31 packaging tests were not repeated: the relevant source is unchanged, and they would not close the new worker/lifecycle gaps. Documentation and pinned-reference verification are separate from runtime validation.
+
+A fresh independent reviewer examined the joined research against the pinned sources and current primary host documentation, without making changes. It returned no material findings. The coordinator's reference check found two link defects (one local heading, one source line range), which were corrected in one repair pass. No second review was run. The final checks cover 12 Markdown documents, 78 local links/anchors and 105 commit-pinned source file/line references; they check local source identity and numeric range, not the semantic sufficiency of every citation or every external HTTP/heading target. The local check receipt is under ignored `.scratch/document-checks.json`.
+
+Both full clones also passed `git fsck --full --no-reflogs` with exit 0 and no diagnostics. `git diff --check` passed, and the original assessment and original manifest have no Git diff. All workspace changes for this task are research Markdown/JSON records and ignored source/check artifacts. There is still no integration runtime result.
+
+
+## Standalone foundation increment — September 13, 2026
+
+### Scope and design decisions
+
+The user authorized beginning modifications and requested a fundamental plan for a standalone variant with near Orchflows feature parity. A subsequent explicit answer restricted workflow execution to **FirstMate/Herdr only**, with Claude Code and Codex as worker harnesses. This supersedes the earlier research-only and native-crewmate add-on scope. [Decisions D10–D13](decisions.md) distinguish the user decisions from the selected, unvalidated architecture.
+
+The [fundamental design](fundamental-design.md) keeps composition in a root crewmate and changes Work/Review into requests for FirstMate-owned component tasks. FirstMate owns admission, endpoint lifecycle, quotas, workspace allocation, reconciliation and outer delivery. Task-group requests, a component role/result disposition, group-aware parent waiting and retention need real FirstMate changes. These are proposed contracts, not capabilities inferred from existing extension bindings or unknown metadata preservation. No native fallback or separate Orchflows scheduler is selected.
+
+### Source acquisition and implementation actually performed
+
+Both upstream default HEADs were checked again with `git ls-remote origin HEAD`; they remained the pinned continuation revisions. A complete `git archive` of Orchflows `0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a` was expanded into the owned `packages/orchflows-firstmate/` tree, containing all 1,064 original files without Git metadata. The complete ignored clone retains the original history. Existing research files were first copied and hashed into ignored verification storage.
+
+The fork now has an independent package/catalog identity and home (`ORCHFLOWS_FIRSTMATE_HOME`, default `~/.orchflows-firstmate`). Setup protects recognized normal Orchflows homes/cores/catalogs, changes host concurrency only by explicit request, and reports package readiness separately from the unimplemented integration. Resolver alias `orchflows` resolves only the fork's core, with both names reserved against library collisions. All five core skills state the missing execution contract and stop before workflow work. No task-group schema, pretend preflight, FirstMate patch or Herdr adapter was added.
+
+The [source inventory](foundation-state.json) records the exact candidate aggregate and every deliberate file divergence. All 1,022 files under `example-workflows/`, including their assets and notices, are byte-identical to upstream. Core host-configuration and native-history implementation modules are unchanged. Preserved examples and quoted upstream instructions are migration source, not certified runtime entrypoints. [Feature parity](feature-parity.md) inventories all core and optional behavior still to demonstrate.
+
+### Checks actually performed and their limits
+
+The baseline core suite ran with disposable fixture homes: Windows Python completed 61 tests (60 pass, one POSIX-mode skip); WSL Ubuntu passed all 61. The package maker ran the adapted candidate suite: Windows Python 3.14.6 completed 69 tests (68 pass, one POSIX-mode skip), and WSL Python 3.12.3 passed all 69. The eight added tests exercise isolation, alias collisions and honest readiness. The plugin manifest validator and all five core skill frontmatter validators passed. These are local packaging/history checks, not FirstMate lifecycle or optional-library feature trials.
+
+A fresh native caller tried the exact gated dynamic workflow on an unrelated reading-list fixture. It read the gate, reported the absent task-group integration and stopped without creating the requested output, making changes or spawning children. The coordinator independently checked the unchanged input SHA-256 and missing output. This is one observed negative instruction-gate trial; it does not prove automatic discovery, sandbox enforcement or successful execution under either FirstMate worker harness. Exact identities and test records are in [foundation verification](foundation-verification.md).
+
+Read-only runtime inventory found no Herdr executable in the inspected Windows/WSL shells. No FirstMate home or Herdr session was created, no live worker was launched, and no user plugin registration or active host configuration was changed. A prepared named Herdr lab and the actual FirstMate component seam are still needed for the first positive integration acceptance case.
+
+
+One fresh independent reviewer assessed the joined foundation and plan without making changes. It found no material issues after a second pass for shared causes, independently passed all eight new boundary tests, and reverified package/source retention and candidate/design identities. No repairs were needed and no second review was run. The coordinator also checked 16 root Markdown files, 120 local links/headings and 111 pinned source-file/numeric-range references without errors. These reference checks do not prove citation semantics or remote HTTP/heading availability. Both research clones remained clean, the original assessment hash was unchanged, and the preserved assessment/source manifest had no Git diff. The package remained at the exact reviewed identity; final evidence and handoff records were then completed.
+
+
+## Stage 1 implementation — September 14, 2026
+
+The user asked to continue implementation and clarified that their authenticated host is Windows. The experimental subset is now one read-only Work component through FirstMate/Herdr, while near full feature parity remains the target. [Stage 1 contract](stage1-contract.md) records the scope and predeclared acceptance; [verification](stage1-verification.md) separates current tests from live work.
+
+The package client, exact retained-package verification and conditional Work instructions are implemented in `packages/orchflows-firstmate/`. The FirstMate-owned controller, request/result store, launch bridge and lifecycle patches are distributed in `integrations/firstmate/`. A clean pinned FirstMate checkout can be prepared without changing `.sources/` or a live home. One accepted request consumes the component allowance even after an uncertain launch. Parent generation, component endpoint, input commit and retained report digest are recorded; native transcript identity is explicitly unverified.
+
+Executed checks now include the 84-case package suite on Windows/WSL, 46 integration fixtures with platform skips stated in verification, fresh preparation and byte comparison, plugin/skill validation, and inherited brief/spawn/relaunch behavior suites. The long watcher suite's held-worker timing failure remains recorded despite a passing targeted baseline/candidate comparison. These are fixture results, not a claim of full lifecycle or Windows worker support.
+
+A private Herdr lifecycle smoke test passed with the exact staged tuple in [runtime preparation](stage1-runtime.md). Initial actual Codex work returned and gathered one component result and produced a normal root scout report; subsequent repaired-candidate results are recorded below. Early real trials separately exposed mount-copy latency, disposable Codex project trust, a missing staged Codex companion executable, and fresh Claude onboarding prerequisites. None was replaced by a synthetic worker pass. Exact worker receipts and cleanup evidence belong with their runtime record.
+
+### Source retention clarification
+
+The current state is recorded in [stage1-state.json](stage1-state.json). All 1,064 original files remain, with six added files; all 1,022 example files are byte-identical to the pinned **local checkout**. Comparing directly with Git blobs reveals 49 example text files with checkout CRLF endings instead of blob LF endings. Earlier foundation wording that said byte-identical to upstream or a Git archive did not distinguish this checkout normalization. There are no Stage 1 edits to example content. The original dated assessment and historical foundation candidate hash are preserved; this living correction narrows the earlier provenance claim.
+
+
+The joined repair added the native Windows runtime boundary and used FirstMate's existing report-reference format for component backlog closure. The original pending-close failure was reproduced before repair; real tasks-axi marker/replay checks passed afterward. A fresh prepared candidate matched all 561 files. That integration suite ran 56 cases on each platform: WSL 49 passed/seven Windows skips; Windows 36 passed/20 POSIX or dependency skips. These superseded the earlier 46-case fixture count, not the earlier native-trial identities. [Windows boundary evidence](stage1-windows.md) records the actual native controller checks and remaining Windows worker gap.
+
+### Final review and scoped Claude repair
+
+One fresh independent reviewer found a P1 in native Claude launch permissions: retained guidance paths were allowed by prose but absent from the actual harness Read grants. A real Claude component reproduced that prompt after a successful parent replacement. The repair adds generation-checked, task-scoped Read/Edit settings at the existing launch owner, preserving the selected mode and original settings. It received seven new checks and one repair pass; no second review was run.
+
+The final 63-case integration discovery passed with platform skips: WSL 55 passed/eight skipped; Windows 42 passed/21 skipped. Fresh preparation reproduced all 562 candidate files. The inherited ordinary spawn-dispatch suite also passed again after the template repair, exit 0 without gate skips. [Stage 1 verification](stage1-verification.md) records durations, review scope and the exact evidence boundary. [Stage 1 state](stage1-state.json) identifies the final bytes separately from the reviewed and earlier runtime candidates.
+
+### Final repaired native case
+
+The final Codex trial `2oqaz0tn` completed through FirstMate in Herdr on WSL: one component, supported parent replacement, identical-request replay without duplication, correct retained report, gather by the replacement generation and normal root scout delivery. The actual result notice reached the new root inbox and was handled. Both task exits and ordinary teardowns returned 0. The original fixture and worktrees remained clean, retained-result integrity passed, and lab/sentinel shutdown left no scoped processes; the copied authentication file was removed. [Native evidence](stage1-native-trial.md) records the exact identities and reports.
+
+The repaired Claude retry `wpgnlat8` failed before model work when its copied Windows cache could not authenticate the request, despite cached logged-in status. Its earlier Windows-cache attempt had executed actual tools and parent replacement before the now-repaired guidance prompt. Repaired Claude completion, actual native Windows workers and normal watcher stale-supervision behavior remain open. The named lab had no ordinary watcher, so owner-state polling and parent replacement do not close that last question.
+
+## Stage 1 acceptance continuation — September 14, 2026
+
+The user confirmed the refreshed native Windows Claude login. A bounded real native diagnostic succeeded; a subsequent isolated FirstMate/Herdr Claude Work trial completed source inspection, retained result, replay, gather and ordinary root delivery. Both task exits and ordinary teardowns succeeded, with the cleanup owner explicitly reaping leaked worktree processes, followed by successful private lab/sentinel shutdown and empty scoped process inventory. Its actual watcher also exposed a launching-request race, and Claude's background shell remained active after FirstMate classified the component unknown. Those failures are retained beside the successful Work result in [acceptance continuation](stage1-acceptance-continuation.md). No refresh token or credential file was copied into that Work trial.
+
+The old copied Codex cache produced an already-used-refresh-token failure before model work. The authentication design now follows the owning host's supported store and avoids resetting rotating caches from old seeds. That failed fixture does not negate the earlier successful Codex tuple or imply that the user is logged out. Official guidance and exact distinctions are in the continuation record.
+
+Native Windows probes staged official Herdr0.9.0/protocol22 and Treehouse2.0.1 binaries in ignored storage. Private endpoint and worktree operations passed; FirstMate's actual idle-shell and session-marker owners refused native observations. An attached native child stopped on workspace close; a detached child survived both workspace and lab closure, then the probe stopped that exact child through a retained Windows handle. [Native Windows evidence](stage1-windows-native.md) preserves source/release/binary identities and the required owner changes. No native Windows model worker was launched.
+
+The 563-file continuation candidate adds positive Linux launch-transaction custody and native Windows admission/retention guards. Its full 77-case integration suite passed with platform skips: WSL67 passed/ten skipped, Windows49 passed/28 skipped. Fresh preparation reproduced every candidate byte and the eleven deployables match the manifest. Ordinary inherited spawn-dispatch and teardown endpoint-safety suites passed without gate skips. These fixture/owner results remain separate from the subsequent actual watcher observations and final review in [continuation verification](stage1-continuation-verification.md).
+
+One fresh final independent review found the routine root signal defect also reproduced live: authoritative task-group waiting failed the no-verb working predicate, causing an unnecessary watcher wake. The single repair pass accepts group waiting only in that signal owner, preserving actionable-status precedence, secondmate routing and the general working proof. Four new regressions reproduce the prior rejection and pass repaired. Full final discovery ran 81 cases: WSL71 passed/ten skipped; Windows49 passed/32 skipped. No second independent review was run.
+
+Final Claude trial `ed3tuvcz` on the repaired 563-file candidate passed actual ordinary watcher supervision: 20 waiting classifications over 345.56 seconds, matching same-watcher/root-waiting/child-working samples and an advancing beacon. The routine progress signal was absorbed; the only wake was the legitimate group-ready result. Complete native reads preceded gather, the retained and ordinary reports were correct, source/worktrees stayed clean, and all ordinary cleanup operations succeeded with no scoped processes remaining. The cleanup owner reaped residual worktree shells; this is not a claim that endpoint closure alone retired them. No drain/rearm or credential-file copy was used. Parent replacement was not repeated in this final trial, and background-tool/native Windows/full-parity acceptance remain open. [Final verification](stage1-continuation-verification.md), [exact runtime evidence](stage1-acceptance-continuation.md).

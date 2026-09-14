@@ -1,0 +1,361 @@
+{
+  "schema": 1,
+  "package_version": "0.1.0-dev.2",
+  "upstream_commit": "0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a",
+  "file_count": 1070,
+  "aggregate_sha256": "a3cd1cddf0098ed0462ebf62fd8802dfc7cb92ddd29c9a8007fb1e2f97706c8e",
+  "aggregate_rule": "Sorted POSIX relative path + NUL + lowercase file SHA-256 + LF, UTF-8, then SHA-256; exclude bytecode",
+  "removed": [],
+  "changed_from_pinned_local_checkout": [
+    ".agents/plugins/marketplace.json",
+    ".claude-plugin/marketplace.json",
+    ".claude-plugin/plugin.json",
+    ".codex-plugin/plugin.json",
+    "AGENTS.md",
+    "README.md",
+    "docs/architecture.md",
+    "docs/history.md",
+    "docs/home.md",
+    "docs/hosts.md",
+    "plugin.json",
+    "scripts/orchflows.py",
+    "skills/orch-build-workflow/SKILL.md",
+    "skills/orch-dynamic-workflow/SKILL.md",
+    "skills/orch-review/SKILL.md",
+    "skills/orch-self-improve/SKILL.md",
+    "skills/orch-work/SKILL.md",
+    "tests/test_home_cli.py",
+    "tests/test_home_setup.py"
+  ],
+  "added_to_upstream": [
+    "UPSTREAM.md",
+    "docs/firstmate-client.md",
+    "scripts/firstmate.py",
+    "scripts/package_identity.py",
+    "tests/test_firstmate_client.py",
+    "tests/test_firstmate_foundation.py"
+  ],
+  "stage1_changed_or_added": [
+    "AGENTS.md",
+    "plugin.json",
+    "README.md",
+    "UPSTREAM.md",
+    ".claude-plugin/plugin.json",
+    ".codex-plugin/plugin.json",
+    "docs/architecture.md",
+    "docs/firstmate-client.md",
+    "docs/home.md",
+    "docs/hosts.md",
+    "scripts/firstmate.py",
+    "scripts/orchflows.py",
+    "scripts/package_identity.py",
+    "tests/test_firstmate_client.py",
+    "tests/test_firstmate_foundation.py",
+    "skills/orch-build-workflow/SKILL.md",
+    "skills/orch-dynamic-workflow/SKILL.md",
+    "skills/orch-review/SKILL.md",
+    "skills/orch-self-improve/SKILL.md",
+    "skills/orch-work/SKILL.md"
+  ],
+  "git_blob_differences": 90,
+  "git_blob_line_ending_only": [
+    "CLAUDE.md",
+    "LICENSE",
+    "example-workflows/3d-browser-game/.claude-plugin/plugin.json",
+    "example-workflows/3d-browser-game/.codex-plugin/plugin.json",
+    "example-workflows/3d-browser-game/README.md",
+    "example-workflows/3d-browser-game/guidance/browser-game.blender.md",
+    "example-workflows/3d-browser-game/guidance/browser-game.md",
+    "example-workflows/3d-browser-game/guidance/browser-game.playtesting.md",
+    "example-workflows/3d-browser-game/guidance/browser-game.threejs.md",
+    "example-workflows/3d-browser-game/plugin.json",
+    "example-workflows/3d-browser-game/references/blender.md",
+    "example-workflows/3d-browser-game/references/evidence.md",
+    "example-workflows/3d-browser-game/references/library-context.md",
+    "example-workflows/3d-browser-game/references/test-interface.md",
+    "example-workflows/3d-browser-game/references/threejs.md",
+    "example-workflows/3d-browser-game/skills/3d-browser-game/SKILL.md",
+    "example-workflows/3d-browser-game/skills/make-blender-game-assets/SKILL.md",
+    "example-workflows/3d-browser-game/skills/playtest-3d-browser-game/SKILL.md",
+    "example-workflows/3d-browser-game/trials/expected-behavior.md",
+    "example-workflows/3d-browser-game/trials/request.md",
+    "example-workflows/evolve/.claude-plugin/plugin.json",
+    "example-workflows/evolve/.codex-plugin/plugin.json",
+    "example-workflows/evolve/README.md",
+    "example-workflows/evolve/RESEARCH.md",
+    "example-workflows/evolve/plugin.json",
+    "example-workflows/evolve/references/library-context.md",
+    "example-workflows/evolve/references/research.md",
+    "example-workflows/evolve/skills/evolve/SKILL.md",
+    "example-workflows/evolve/skills/evolve/references/evaluation.md",
+    "example-workflows/evolve/skills/evolve/references/state.md",
+    "example-workflows/evolve/trials/continuation/expected-behavior.md",
+    "example-workflows/evolve/trials/continuation/request.md",
+    "example-workflows/evolve/trials/runnable/expected-behavior.md",
+    "example-workflows/evolve/trials/runnable/request.md",
+    "example-workflows/evolve/trials/visual/expected-behavior.md",
+    "example-workflows/evolve/trials/visual/request.md",
+    "example-workflows/short-video/.claude-plugin/plugin.json",
+    "example-workflows/short-video/.codex-plugin/plugin.json",
+    "example-workflows/short-video/README.md",
+    "example-workflows/short-video/guidance/short-video.marketing.md",
+    "example-workflows/short-video/guidance/short-video.md",
+    "example-workflows/short-video/plugin.json",
+    "example-workflows/short-video/references/library-context.md",
+    "example-workflows/short-video/references/marketing-reference.md",
+    "example-workflows/short-video/references/remotion.md",
+    "example-workflows/short-video/references/short-form-reference.md",
+    "example-workflows/short-video/skills/make-short-video/SKILL.md",
+    "example-workflows/short-video/skills/review-short-video/SKILL.md",
+    "example-workflows/short-video/skills/short-video/SKILL.md",
+    "example-workflows/short-video/trials/expected-behavior.md",
+    "example-workflows/short-video/trials/request.md",
+    "guidance/code.api.md",
+    "guidance/code.md",
+    "guidance/data-analysis.md",
+    "guidance/orchflows.md",
+    "guidance/research.md",
+    "guidance/visual-design.md",
+    "guidance/writing.md",
+    "reports/3d-browser-game-rebuild-2026-09-12.md",
+    "reports/evolve-implementation-2026-09-13.md",
+    "reports/evolve-research-2026-09-13.md",
+    "reports/evolve-trial-code-2026-09-13.md",
+    "reports/evolve-trial-harness-2026-09-13.md",
+    "reports/evolve-trial-visual-2026-09-13.md",
+    "reports/fable-design-review-prompt.md",
+    "reports/guidance-review-2026-09-12.md",
+    "reports/model-effort-implementation-2026-09-13.md",
+    "scripts/host_config.py",
+    "scripts/native_logs.py",
+    "tests/test_host_config.py",
+    "tests/test_native_logs.py"
+  ],
+  "examples": {
+    "count": 1022,
+    "byte_identical_to_pinned_local_checkout": true,
+    "raw_git_blob_line_ending_differences": 49,
+    "semantic_edits": 0
+  },
+  "firstmate": {
+    "commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+    "candidate_files": 563,
+    "candidate_aggregate_sha256": "b2a77515706e18b5eade021ec774f57cc0f11cd632023723900d155f77fb07a1",
+    "integration_manifest_sha256": "b56d9fc44eaf67cd3e728c5ae580af3472434244bf1d2b02eb6ba7c9298e6cc0",
+    "existing_owner_patch": [
+      "patches/0001-readonly-task-groups.patch"
+    ],
+    "overlay_files": [
+      "overlay/bin/fm-task-group-custody.sh",
+      "overlay/bin/fm-task-group-runtime.sh",
+      "overlay/bin/fm-task-group-spawn.sh",
+      "overlay/bin/fm-task-group-state.sh",
+      "overlay/bin/fm-task-group.py",
+      "overlay/bin/fm_task_group.py",
+      "overlay/bin/fm_task_group_launch.py",
+      "overlay/bin/fm_task_group_policy.py",
+      "overlay/bin/fm_task_group_runtime.py",
+      "overlay/bin/fm_task_group_store.py"
+    ]
+  },
+  "evidence_status": "Experimental Stage 1 continuation; see stage1-continuation-verification.md. Earlier trial and review identities are retained separately.",
+  "earlier_native_trial": {
+    "package_aggregate_sha256": "53ad9b2701e2bf3b940133615040256eab50ae6e17b1b6b5061d2ca0e480e3ba",
+    "firstmate": {
+      "commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+      "candidate_files": 559,
+      "candidate_aggregate_sha256": "bf60ae59aefbec61f7d9bac119b24e2453b39fa57cc172330cabdd2f066f8b1e",
+      "integration_manifest_sha256": "077541f8d7b0e45bd1cffd11338b849302c01ebc154ce773fcefabc2d72284d5",
+      "existing_owner_patch": [
+        "patches/0001-readonly-task-groups.patch"
+      ],
+      "overlay_files": [
+        "overlay/bin/fm-task-group-spawn.sh",
+        "overlay/bin/fm-task-group-state.sh",
+        "overlay/bin/fm-task-group.py",
+        "overlay/bin/fm_task_group.py",
+        "overlay/bin/fm_task_group_launch.py",
+        "overlay/bin/fm_task_group_store.py"
+      ]
+    },
+    "evidence": "stage1-native-trial.md",
+    "scope": "Initial Codex Work success; component teardown defect, before joined repairs"
+  },
+  "independently_reviewed_firstmate": {
+    "commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+    "candidate_files": 561,
+    "candidate_aggregate_sha256": "27f5f115baad4ebe3a2408bc431dcceaff9a666a0a7e74cf0d97977bd4a981a8",
+    "integration_manifest_sha256": "84bdd5ffb900f315561ec5bb437c7d7597430b955264b531b71427cfaab0cb2f",
+    "existing_owner_patch": [
+      "patches/0001-readonly-task-groups.patch"
+    ],
+    "overlay_files": [
+      "overlay/bin/fm-task-group-runtime.sh",
+      "overlay/bin/fm-task-group-spawn.sh",
+      "overlay/bin/fm-task-group-state.sh",
+      "overlay/bin/fm-task-group.py",
+      "overlay/bin/fm_task_group.py",
+      "overlay/bin/fm_task_group_launch.py",
+      "overlay/bin/fm_task_group_runtime.py",
+      "overlay/bin/fm_task_group_store.py"
+    ]
+  },
+  "previous_repaired_firstmate": {
+    "commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+    "candidate_files": 562,
+    "candidate_aggregate_sha256": "5072cf224d4b45677fef3d0d9b6efdacdac755e694c57ecd5d0c9c71d4a24af2",
+    "integration_manifest_sha256": "78d8c553eeafd51bfb14c33189d003ef96d172aacd5bd5d0e2c58e86339a80eb",
+    "existing_owner_patch": [
+      "patches/0001-readonly-task-groups.patch"
+    ],
+    "overlay_files": [
+      "overlay/bin/fm-task-group-runtime.sh",
+      "overlay/bin/fm-task-group-spawn.sh",
+      "overlay/bin/fm-task-group-state.sh",
+      "overlay/bin/fm-task-group.py",
+      "overlay/bin/fm_task_group.py",
+      "overlay/bin/fm_task_group_launch.py",
+      "overlay/bin/fm_task_group_policy.py",
+      "overlay/bin/fm_task_group_runtime.py",
+      "overlay/bin/fm_task_group_store.py"
+    ]
+  },
+  "previous_increment_verification": {
+    "integration_cases": 63,
+    "wsl": {
+      "passed": 55,
+      "skipped": 8
+    },
+    "windows": {
+      "passed": 42,
+      "skipped": 21
+    },
+    "ordinary_spawn_regression": "passed after Claude launch repair; no gate skips",
+    "native_codex_wsl": {
+      "attempt": "fm-n1.2oqaz0tn",
+      "result": "passed Work, parent replacement, replay, gather, ordinary root delivery and teardown",
+      "result_digest": "7d1bd2b26db33bdc1b6044ab35428d45bb07e3653f548ac69b203be0c6da9b91",
+      "evidence": "stage1-native-trial.md"
+    },
+    "native_claude_wsl": "Repaired completion unverified: copied Windows login cache failed before model work in fm-n1.wpgnlat8",
+    "native_windows_workers": "unverified",
+    "normal_watcher_stale_supervision": "unverified; named lab had no normal watcher"
+  },
+  "previous_increment_review": {
+    "result": "One P1 finding: declared task paths missing from native Claude permissions",
+    "repair": "FirstMate per-launch scoped Read/Edit rules; selected mode and existing settings preserved",
+    "second_review": false
+  },
+  "continuation_verification": {
+    "integration_cases": 81,
+    "wsl": {
+      "passed": 71,
+      "skipped": 10,
+      "seconds": 59.569
+    },
+    "windows": {
+      "passed": 49,
+      "skipped": 32,
+      "seconds": 117.848
+    },
+    "fresh_preparation_byte_equal": true,
+    "new_signal_regressions": {
+      "cases": 4,
+      "reproduced_prior_rejection": true,
+      "repaired_passed": true
+    },
+    "runtime_evidence": "stage1-acceptance-continuation.md",
+    "native_windows_evidence": "stage1-windows-native.md",
+    "native_windows_workers": "launch refused pending native process custody",
+    "normal_watcher_stale_supervision": {
+      "attempt": "ed3tuvcz",
+      "observed_waiting_span_seconds": 345.556,
+      "actual_classifications": 20,
+      "contemporaneous_owner_samples": 19,
+      "default_stale_interval_seconds": 240,
+      "uninterrupted_watcher": true,
+      "drain_or_rearm": false,
+      "routine_status_absorbed": true,
+      "first_wake": "group-ready: retained component result awaits gather acknowledgement"
+    },
+    "native_claude_wsl": {
+      "attempt": "ed3tuvcz",
+      "result": "passed bounded Work, same-child replay evidence, full native reads before gather, ordinary root delivery and cleanup",
+      "root": "native-claude-ed3tuvcz",
+      "root_generation": "s1789388671.619399.27774",
+      "child": "tg-dda4652f1c0a7b85dcb2",
+      "child_generation": "s1789388730.622363.13016",
+      "elapsed_seconds": 637.024,
+      "result_digest": "3bbd46777c58cf1129276348dcf7ec8499fe5d43f500bcc35ccd1a83989ffb01",
+      "report_digest": "e5a114fe980ba241faa89513b3e4ef6a50f0fe4622880be24d11368b7a49852d",
+      "root_report_digest": "3f108d1c191cefde173d0284aa9bc07bc3de125b326791732b7bd94089ac5682",
+      "read_order_verified": true,
+      "remaining_owned_processes": 0,
+      "private_authentication_files": false,
+      "parent_replacement": false,
+      "evidence": "stage1-acceptance-continuation.md"
+    }
+  },
+  "continuation_reviewed_firstmate": {
+    "commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+    "candidate_files": 563,
+    "candidate_aggregate_sha256": "5f3b429e3b314f47427cc1e62a78300ec04eedfc0055a2a596a46d4a7b814fa8",
+    "integration_manifest_sha256": "df304e456ad49611dc3233056d4b8c47280971d89e8eb027a45303f300029b25",
+    "existing_owner_patch": [
+      "patches/0001-readonly-task-groups.patch"
+    ],
+    "overlay_files": [
+      "overlay/bin/fm-task-group-custody.sh",
+      "overlay/bin/fm-task-group-runtime.sh",
+      "overlay/bin/fm-task-group-spawn.sh",
+      "overlay/bin/fm-task-group-state.sh",
+      "overlay/bin/fm-task-group.py",
+      "overlay/bin/fm_task_group.py",
+      "overlay/bin/fm_task_group_launch.py",
+      "overlay/bin/fm_task_group_policy.py",
+      "overlay/bin/fm_task_group_runtime.py",
+      "overlay/bin/fm_task_group_store.py"
+    ]
+  },
+  "continuation_before_review_repair_checks": {
+    "integration_cases": 77,
+    "wsl": {
+      "passed": 67,
+      "skipped": 10,
+      "seconds": 64.507
+    },
+    "windows": {
+      "passed": 49,
+      "skipped": 28,
+      "seconds": 106.389
+    },
+    "fresh_preparation_byte_equal": true,
+    "runtime_evidence": "stage1-acceptance-continuation.md",
+    "native_windows_evidence": "stage1-windows-native.md",
+    "native_windows_workers": "launch refused pending native process custody",
+    "normal_watcher_stale_supervision": "Unmet: actual routine root status signal stopped watcher; no rearm. See hrilwgto in stage1-acceptance-continuation.md.",
+    "inherited": {
+      "spawn_dispatch": {
+        "exit": 0,
+        "seconds": 143.497,
+        "gate_skip": false
+      },
+      "teardown_endpoint_safety": {
+        "exit": 0,
+        "seconds": 32.835,
+        "gate_skip": false
+      }
+    }
+  },
+  "continuation_review": {
+    "findings": [
+      {
+        "priority": "P1",
+        "problem": "Routine no-verb root signals reject proved task-group waiting and stop watcher",
+        "repair": "Signal-only predicate accepts authoritative working or task-group waiting; actionable gate and secondmate exclusions preserved"
+      }
+    ],
+    "second_review": false,
+    "repair_passes": 1
+  }
+}

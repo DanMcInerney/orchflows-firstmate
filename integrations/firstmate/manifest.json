@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "status": "experimental Stage1 candidate; runtime evidence recorded separately",
+  "patches": [
+    "patches/0001-readonly-task-groups.patch"
+  ],
+  "files": [
+    {
+      "path": "overlay/bin/fm-task-group-custody.sh",
+      "sha256": "edb65b7160b104bfef401ac3dee2c1b64b4a5734f9b368f5af5345d9ee27bb16"
+    },
+    {
+      "path": "overlay/bin/fm-task-group-runtime.sh",
+      "sha256": "711d61b1bd1bad3b16b4374aa990f963148ef55b73a6cbf3bae2d1fff695e9d4"
+    },
+    {
+      "path": "overlay/bin/fm-task-group-spawn.sh",
+      "sha256": "c71ba344f80aa7010cc3ed8548c4fd5c5f01f8d066b72abb569749acd6abee08"
+    },
+    {
+      "path": "overlay/bin/fm-task-group-state.sh",
+      "sha256": "484a199d726d89cf3271188c237d3ac2abb8a8f070afa88bc568cadb0d19f002"
+    },
+    {
+      "path": "overlay/bin/fm-task-group.py",
+      "sha256": "c8263b002bcdf0f6a50a23ae5588583cb1142f04a1d6e5726cbcb68091433048"
+    },
+    {
+      "path": "overlay/bin/fm_task_group.py",
+      "sha256": "dfb6404cfdfa32a561357cb42e39b87bd9de3980eb4e6273bc7a8212e7e0b62e"
+    },
+    {
+      "path": "overlay/bin/fm_task_group_launch.py",
+      "sha256": "e38450789da6a39c0ef5cd9a915471b57fd7be4739f0e58317d62c23276ab100"
+    },
+    {
+      "path": "overlay/bin/fm_task_group_policy.py",
+      "sha256": "5c422767d3c6c00a80eb24571db5512244aa87983052718afd2c36cc1c05b007"
+    },
+    {
+      "path": "overlay/bin/fm_task_group_runtime.py",
+      "sha256": "3dcbc283059db45c41f0928df65f423504587541f6ef6096cd774b4ef398e1f0"
+    },
+    {
+      "path": "overlay/bin/fm_task_group_store.py",
+      "sha256": "1272cf6c84af9d620ed75306c4486a7e9de01bbe1476edc8e75977b217b51af4"
+    },
+    {
+      "path": "patches/0001-readonly-task-groups.patch",
+      "sha256": "d967967b95d7348f91ad4bd8f38e9dcece1b940f38b74cd55c5a35b8e95188f3"
+    }
+  ]
+}

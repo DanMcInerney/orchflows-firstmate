@@ -1,0 +1,12 @@
+{
+  "name": "orchflows-firstmate-local",
+  "owner": {
+    "name": "orchflows-firstmate"
+  },
+  "plugins": [
+    {
+      "name": "orchflows-firstmate",
+      "source": "./"
+    }
+  ]
+}
