@@ -1,0 +1,188 @@
+{
+  "schema": 1,
+  "investigation_date": "2026-09-13",
+  "timezone": "America/New_York",
+  "scope": "Source inspection; existing Orchflows tests only; no integrated fleet trial",
+  "sources": [
+    {
+      "name": "firstmate",
+      "repository": "https://github.com/kunchenguid/firstmate",
+      "revision": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+      "files": [
+        {
+          "path": "VISION.md",
+          "git_blob_id": "5d9d9c2e191614282d7b68743ec6214c577818ff",
+          "inspected_working_copy_sha256": "75a7a78fe7f50b67a5ad969ad3af561af51871e1c60bacc3f7db2b78b7bc6499",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/VISION.md"
+        },
+        {
+          "path": "AGENTS.md",
+          "git_blob_id": "f4940d9915e70ce7e747f93b7bc6da677bb5b465",
+          "inspected_working_copy_sha256": "33e35cf305d695dd9fc65d9d0feecafb54575483c74cf304aad8867d31777b7c",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/AGENTS.md"
+        },
+        {
+          "path": "docs/architecture.md",
+          "git_blob_id": "443dcaa99d4d86a4e30097c8366666d224d7fef7",
+          "inspected_working_copy_sha256": "8fd3bea086d104b2857dfe30c6388140c2b95b6f5cbb1b5550f3e900cc8ba9dd",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/docs/architecture.md"
+        },
+        {
+          "path": "docs/subagent-guard.md",
+          "git_blob_id": "5cfcad7119e192099f00301eb194bdb349fa056c",
+          "inspected_working_copy_sha256": "ad4e010629fcffe4ff838fa42caf500803af5f5add82aeaaa602695c55fddb7c",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/docs/subagent-guard.md"
+        },
+        {
+          "path": "docs/configuration.md",
+          "git_blob_id": "e17970736468b4f3d809a786a8d3b521e56180ba",
+          "inspected_working_copy_sha256": "f095a9f44039b067a93de00c7c2cbec4df7e55e36aa59ee92d50320611a142ae",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/docs/configuration.md"
+        },
+        {
+          "path": "docs/extension-bindings.md",
+          "git_blob_id": "a8947afa942cce7417b1a86c482207942a3a2f7a",
+          "inspected_working_copy_sha256": "dffcdaf83672c479c70f7cfcedf17bbeaa0e643720c7cf066436fb7968dc6182",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/docs/extension-bindings.md"
+        },
+        {
+          "path": "docs/codex-app-backend.md",
+          "git_blob_id": "4f01ded7e1db8b952cb2fc71359126ebb9f047b4",
+          "inspected_working_copy_sha256": "68415e18687b6db115c1941e5d33b8c5f28622b933e61184d1fa13cd8c5ba584",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/docs/codex-app-backend.md"
+        },
+        {
+          "path": "bin/fm-brief.sh",
+          "git_blob_id": "750f19feba07a0c14de08df2a00ed927e5457664",
+          "inspected_working_copy_sha256": "354f28333b9f520b924f25297db5a94bc983f3861d3fd941b9cb7fbf63c5dbe2",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/bin/fm-brief.sh"
+        },
+        {
+          "path": "bin/fm-dod-lib.sh",
+          "git_blob_id": "07a7b46e24285b912b3ed336e92db3eb86a39b64",
+          "inspected_working_copy_sha256": "1745bd7cf9d79d158adbddf67d2a030bf046590b664e2de716177a645b57536b",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/bin/fm-dod-lib.sh"
+        },
+        {
+          "path": "bin/fm-spawn.sh",
+          "git_blob_id": "366f0c1be008c4a7acebf8b0e581655cdb6fec94",
+          "inspected_working_copy_sha256": "4b6b4b495060cc3f61c53f93a08e28040b460b14ceea6e59544072b62dffa28f",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/bin/fm-spawn.sh"
+        },
+        {
+          "path": "bin/fm-config-inherit-lib.sh",
+          "git_blob_id": "79ff10605c20ed4e3c21f6b6d834ab489691df7f",
+          "inspected_working_copy_sha256": "1865ba6cc2070dd9d6ff530dcbb986a542fd395f70e075dd422f42a8554d438f",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/bin/fm-config-inherit-lib.sh"
+        },
+        {
+          "path": ".agents/skills/updatefirstmate/SKILL.md",
+          "git_blob_id": "77ccda19510a6995279ca152f850404cc13bfdf2",
+          "inspected_working_copy_sha256": "95e619de20edab7e2c055bb0112e4f8dcc64ae12778cf624432529e75a3bcc8c",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/.agents/skills/updatefirstmate/SKILL.md"
+        },
+        {
+          "path": ".agents/skills/secondmate-provisioning/SKILL.md",
+          "git_blob_id": "9d5a27e2effc4e4860a3b3b0b61ee8e5dca132f6",
+          "inspected_working_copy_sha256": "1fd90e86425056a0df45caa0c74a8b9b2988385d0033551f017fe94ac1d03692",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/.agents/skills/secondmate-provisioning/SKILL.md"
+        },
+        {
+          "path": ".agents/skills/harness-adapters/references/harness/claude.md",
+          "git_blob_id": "f29720ca4119fef6b4543d451bd78fbc4d056113",
+          "inspected_working_copy_sha256": "d4d3f05732a3e9c185145d3fbf0f7b5c9d89400899923706d62782615df479ee",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/.agents/skills/harness-adapters/references/harness/claude.md"
+        },
+        {
+          "path": ".agents/skills/harness-adapters/references/harness/codex.md",
+          "git_blob_id": "368afadddf927ae2e85e51a0a64818d0b444a8ab",
+          "inspected_working_copy_sha256": "1e1e5e8933115b55f81b99e0cc411db83bfa270c878dd2ffff6eb2c5f1020a03",
+          "url": "https://github.com/kunchenguid/firstmate/blob/b182d0f908b78d08c7ccb8dce3775bdca8c5d657/.agents/skills/harness-adapters/references/harness/codex.md"
+        }
+      ]
+    },
+    {
+      "name": "orchflows",
+      "repository": "https://github.com/DanMcInerney/orchflows",
+      "revision": "86aabd91071fa07a05cf970db2e73909184a1955",
+      "files": [
+        {
+          "path": "plugin.json",
+          "git_blob_id": "98f1a829e980be085d0d50bd6a85c3bd1e1ac601",
+          "inspected_working_copy_sha256": "ff68a995add8421e5b541afba6571e1202f555c904b7b2faf75214ef296e8a76",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/plugin.json"
+        },
+        {
+          "path": "docs/architecture.md",
+          "git_blob_id": "96e250a3bbba4e4cfd274675e9af97705eb0530f",
+          "inspected_working_copy_sha256": "51b266956bbcef2f82728a305ba7cc7b67e6088d4a5a98063820c3a4bdebd726",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/docs/architecture.md"
+        },
+        {
+          "path": "docs/hosts.md",
+          "git_blob_id": "d3010cb76e440d41a40a3b96c791c33b5d4f2d62",
+          "inspected_working_copy_sha256": "537bc2a77d82aae1e3bdcf38379bb96896d3bd8b2b2fd1c650b8aae20a2de17e",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/docs/hosts.md"
+        },
+        {
+          "path": "docs/home.md",
+          "git_blob_id": "1e513b4701a2a2c34963efc256291507c1cc3492",
+          "inspected_working_copy_sha256": "ffcbb39723d360dd5b12c6ce474ab64feeb242a828d745616a39734fb25ecf3e",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/docs/home.md"
+        },
+        {
+          "path": "docs/history.md",
+          "git_blob_id": "80b622d23f9fe0fb6d22de9e562b66cdb69a04d6",
+          "inspected_working_copy_sha256": "946f3eb470af600ed23bd72bfb390bfb4614e13e444692c8cad382a68502077b",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/docs/history.md"
+        },
+        {
+          "path": "skills/orch-work/SKILL.md",
+          "git_blob_id": "88699ade365bb8d738520e343e6dc09c175d4e96",
+          "inspected_working_copy_sha256": "a00b566c8bd2c0999b5a9f529927b1cb0a3aa849f926bdb14ffd04fe379bfef3",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/skills/orch-work/SKILL.md"
+        },
+        {
+          "path": "skills/orch-review/SKILL.md",
+          "git_blob_id": "7acb9ec473625b430b5f323d2134456bb218e828",
+          "inspected_working_copy_sha256": "e50bacbe404eb7dbedf74c9bb7552b62d831a9d4cadd149324793f7cc1e8eacc",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/skills/orch-review/SKILL.md"
+        },
+        {
+          "path": "skills/orch-dynamic-workflow/SKILL.md",
+          "git_blob_id": "a9ed724a2b1399c3970ead7d458f803551739072",
+          "inspected_working_copy_sha256": "16067ed73e185ba1246d368b2717af9e29f2f44711f6f0a5f2622dd310c038ed",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/skills/orch-dynamic-workflow/SKILL.md"
+        },
+        {
+          "path": "scripts/orchflows.py",
+          "git_blob_id": "f561bca5815745c68f603d77e849de638410bde0",
+          "inspected_working_copy_sha256": "e56d29191dc1f82da74ba087c7945a4fbae8ffbf7c3103841ed8567777e520a2",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/scripts/orchflows.py"
+        },
+        {
+          "path": "scripts/host_config.py",
+          "git_blob_id": "95e88814f6d8e0acb845ab524dc789679964cf65",
+          "inspected_working_copy_sha256": "de22fb4e5aba4130764dbca7ff8dce06ba220b9b61bb49aa3c0324989ae7aa11",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/scripts/host_config.py"
+        },
+        {
+          "path": "tests/test_home_setup.py",
+          "git_blob_id": "612b26fc8ac5db505533227adfffce5100e79191",
+          "inspected_working_copy_sha256": "6f13d37dbd3724f2c070ca5a596163418f9f6caa48c4598db38f05b3211a9f20",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/tests/test_home_setup.py"
+        },
+        {
+          "path": "tests/test_home_cli.py",
+          "git_blob_id": "e008f75e234c1495f1c7357cf8eae0ee2e692027",
+          "inspected_working_copy_sha256": "b442b43b7395964acf3e523e35c907cb26464c6cc5c8169576fb9f8a3898b7c7",
+          "url": "https://github.com/DanMcInerney/orchflows/blob/86aabd91071fa07a05cf970db2e73909184a1955/tests/test_home_cli.py"
+        }
+      ]
+    }
+  ],
+  "preserved_report": {
+    "path": "docs/assessment-2026-09-13.md",
+    "sha256": "b2e10533790e2886cf3d94479afe48edff58a1a317e38eca6aa160cafa64528c"
+  }
+}
