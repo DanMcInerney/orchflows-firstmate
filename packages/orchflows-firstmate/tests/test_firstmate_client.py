@@ -67,6 +67,7 @@ class FirstMateClientTests(unittest.TestCase):
                                 ORCHFLOWS_HOME=str(self.area / "unused-normal-home"),
                                 FM_HOME=str(self.area / "wrong-firstmate-home"))
         self.environment.pop("PYTHONDONTWRITEBYTECODE", None)
+        self.environment.pop("ORCHFLOWS_FIRSTMATE_CONTEXT", None)
 
     def cli(self, operation="status", *, generation="gen-1", timeout="3", script=None):
         write_json(self.home / "fixture.json", self.settings)

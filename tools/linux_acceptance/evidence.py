@@ -5,6 +5,32 @@ from pathlib import Path
 import shlex
 
 
+def literal_client_command(command):
+    """Identify the literal first command, allowing only a following output pipeline.
+
+    A formatter cannot change which root/request that first command invoked.
+    Owner acknowledgement remains a separate required observation. Shell lists,
+    substitutions and redirected input are not accepted as invocation evidence.
+    """
+    if any(term in command for term in ("\n", "`", "$(")):
+        return [], False
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars="|&;<>")
+        lexer.whitespace_split = True
+        lexer.commenters = ""
+        tokens = list(lexer)
+    except ValueError:
+        return [], False
+    if any(token in (";", "&&", "||", "&", "<", "<<") for token in tokens):
+        return [], False
+    if "|" in tokens:
+        position = tokens.index("|")
+        if position == 0 or position == len(tokens) - 1:
+            return [], False
+        return tokens[:position], True
+    return tokens, False
+
+
 def read_order(namespace, home, run):
     root = run["root"]
     cwd = run["metadata"].get(root, {}).get("worktree")
@@ -14,6 +40,8 @@ def read_order(namespace, home, run):
         return {"read_both_before_first_gather": False, "reason": "missing root or child identity"}
     retained = home / "data" / root / "task-group/results" / child
     targets = {str(retained / "report.md"): "report", str(retained / "result.json"): "result"}
+    if run.get("custom_skill_path"):
+        targets[run["custom_skill_path"]] = "custom-skill"
     expected = {kind: Path(path).read_text() for path, kind in targets.items()}
     events = []
     for path in (namespace / "claude/projects").rglob("*.jsonl"):
@@ -42,15 +70,18 @@ def read_order(namespace, home, run):
                                      "unlimited": inputs.get("offset") in (None, 1) and inputs.get("limit") is None}
                         elif block.get("name") == "Bash":
                             command = inputs.get("command", "")
-                            try:
-                                argv = shlex.split(command)
-                            except ValueError:
-                                argv = []
+                            argv, formatted = literal_client_command(command)
                             if (argv and Path(argv[0]).name in ("python", "python3") and
                                 any(arg.endswith("/scripts/firstmate.py") for arg in argv) and
-                                any(operation in argv for operation in ("submit", "gather")) and root in argv and
-                                not any(term in command for term in ("\n", ";", "&&", "||", chr(96)))):
-                                event = {"kind": "gather" if "gather" in argv else "submit"}
+                                any(operation in argv for operation in ("submit", "gather")) and
+                                (root in argv or (run.get("client_path") and run["client_path"] in argv))):
+                                if "gather" in argv and run.get("workflow") == "dynamic":
+                                    if "--request-id" not in argv or argv[argv.index("--request-id") + 1:] != [request.get("body", {}).get("request_id")]:
+                                        continue
+                                event = {"kind": "gather" if "gather" in argv else "submit",
+                                         "output_pipeline": formatted,
+                                         "context_only": not any(flag in argv for flag in
+                                             ("--root", "--generation", "--home", "--firstmate-root", "--primitive"))}
                         if event is not None:
                             event["invoked_at"] = record.get("timestamp")
                             pending[block.get("id")] = event
@@ -90,6 +121,8 @@ def read_order(namespace, home, run):
         except (ValueError, TypeError):
             return float("inf")
     submissions = [event for event in events if event["kind"] == "submit" and event.get("success")]
+    if run.get("workflow") == "dynamic":
+        submissions = [event for event in submissions if event.get("returned_request_id") == request.get("body", {}).get("request_id")]
     gathers = [event for event in events if event["kind"] == "gather"]
     first = min((timestamp(event["invoked_at"]) for event in gathers), default=float("-inf"))
     acknowledged = request.get("gathered_at")
@@ -103,6 +136,14 @@ def read_order(namespace, home, run):
             "read_both_before_first_gather": before(first),
             "read_both_before_owner_acknowledgement": before(ack),
             "recognized_gather_count": len(gathers),
+            "context_only_calls": bool(submissions and gathers) and all(
+                event.get("context_only") for event in submissions + gathers),
+            "custom_skill_read_before_submit": any(
+                event["kind"] == "read" and event.get("file") == "custom-skill" and event.get("success")
+                and event.get("unlimited") and event.get("full_content_observed") and
+                timestamp(event.get("result_at")) < min(
+                    (timestamp(item["invoked_at"]) for item in submissions), default=float("-inf"))
+                for event in events),
             "successful_submissions": len(submissions),
             "same_child_replay": len(submissions) >= 2 and all(
                 event.get("returned_child") == child and
@@ -139,6 +180,12 @@ def assess(run, *, restart, minimum_waiting_span):
         "watcher_waiting_span": minimum_waiting_span == 0 or (span >= minimum_waiting_span and len(locks) == 1 and None not in locks),
         "no_watcher_exit_while_pending": restart or not run.get("watcher_ended_while_pending", False),
     }
+    if run.get("enabled_project") is not None:
+        result["normal_spawn_attached"] = run["enabled_project"] is True
+        result["launch_context_client_calls"] = run.get("read_order", {}).get("context_only_calls") is True
+    if run.get("custom_marker_present") is not None:
+        result["retained_custom_workflow"] = run["custom_marker_present"] and (
+            run.get("read_order", {}).get("custom_skill_read_before_submit") is True)
     if restart:
         replacement = run.get("replacement", {})
         current = run.get("metadata", {}).get(run["root"], {}).get("spawn_gen")
@@ -148,3 +195,47 @@ def assess(run, *, restart, minimum_waiting_span):
     return {"passed": all(result.values()), "checks": result,
             "minimum_waiting_span_seconds": minimum_waiting_span, "restart_requested": restart,
             "waiting_samples": len(waiting), "waiting_span_seconds": round(span, 3)}
+
+
+def final_check_order(namespace, home, run, receipt_path):
+    """Observe this root's literal final test command after Review acknowledgement."""
+    root = run["root"]
+    cwd = run.get("metadata", {}).get(root, {}).get("worktree")
+    review = next((r for r in run.get("requests", []) if r.get("primitive") == "Review"), {})
+    acknowledged = review.get("gathered_at")
+    if not cwd or not isinstance(acknowledged, (int, float)):
+        return {"passed": False, "reason": "missing Review acknowledgement"}
+    expected = ["python3", "-B", "-m", "unittest", "discover", "-v", ">", str(receipt_path), "2>&1"]
+    observations = []
+    for path in (namespace / "claude/projects").rglob("*.jsonl"):
+        if path.is_symlink() or not path.resolve().is_relative_to(namespace):
+            continue
+        pending = {}
+        for line in path.read_text(encoding="utf-8").splitlines():
+            try:
+                record = json.loads(line)
+                at = datetime.fromisoformat(record.get("timestamp", "")).timestamp()
+            except (ValueError, TypeError):
+                continue
+            if record.get("cwd") != cwd or record.get("isSidechain") is True:
+                continue
+            content = record.get("message", {}).get("content")
+            if not isinstance(content, list):
+                continue
+            for block in content:
+                if not isinstance(block, dict):
+                    continue
+                if block.get("type") == "tool_use" and block.get("name") == "Bash":
+                    try:
+                        argv = shlex.split(block.get("input", {}).get("command", ""))
+                    except ValueError:
+                        argv = []
+                    if argv == expected and at > acknowledged:
+                        event = {"invoked_at": at, "after_review_gather": True, "success": False}
+                        observations.append(event)
+                        pending[block.get("id")] = event
+                elif block.get("type") == "tool_result" and block.get("tool_use_id") in pending:
+                    event = pending[block["tool_use_id"]]
+                    event.update(success=block.get("is_error") is not True, completed_at=at)
+    return {"passed": any(e.get("success") and e.get("completed_at", 0) >= e["invoked_at"] for e in observations),
+            "events": observations}

@@ -19,12 +19,14 @@ fm_task_group_read() { # <home> <task> [state]
   local home=$1 task=$2 state=${3:-$1/state} raw fields
   FM_TASK_GROUP_COMPONENT=false
   FM_TASK_GROUP_PENDING=false
+  FM_TASK_GROUP_COMPOSITION_PENDING=false
   FM_TASK_GROUP_CLEANUP_ALLOWED=false
   FM_TASK_GROUP_ROOT=
   FM_TASK_GROUP_CHILD=
   FM_TASK_GROUP_CHILD_GEN=
   FM_TASK_GROUP_RESULT_READY=false
   FM_TASK_GROUP_LAUNCH_ACTIVE=false
+  FM_TASK_GROUP_MEMBERS=
   FM_TASK_GROUP_DETAIL='task-group record unavailable; reconcile before continuing'
   fm_task_group_present "$home" "$task" "$state" || return 1
   raw=$(fm_task_group_python "$_FM_TASK_GROUP_DIR/fm-task-group.py" --home "$home" waiting "$task" 2>/dev/null) || return 2
@@ -43,8 +45,32 @@ if type(launch) is not bool: raise ValueError("launch_active")
 ready=d.get("result_ready",False)
 if type(ready) is not bool: raise ValueError("result_ready")
 if launch and (d["component"] or not d["pending"] or ready or d.get("request_state")!="launching"): raise ValueError("inconsistent launch activity")
-for v in (d["component"],d["pending"],d["cleanup_allowed"],d.get("child_task_id") or "-",d.get("child_generation") or "-",ready,d.get("root") or "-",launch):
+composition=d.get("composition_pending",False)
+if type(composition) is not bool or (composition and (d["component"] or d["cleanup_allowed"])): raise ValueError("composition_pending")
+for v in (d["component"],d["pending"],d["cleanup_allowed"],d.get("child_task_id") or "-",d.get("child_generation") or "-",ready,d.get("root") or "-",launch,composition):
     print(str(v).lower() if type(v) is bool else v)
+members=d.get("requests")
+if members is not None:
+    if d["component"] or not isinstance(members,list) or len(members)>32: raise ValueError("requests")
+    pending=[]
+    for member in members:
+        if not isinstance(member,dict): raise ValueError("member")
+        for k in ("pending","cleanup_allowed","component","result_ready","launch_active","gathered"):
+            if type(member.get(k)) is not bool: raise ValueError(k)
+        if member["component"] or member["root"]!=d["root"]: raise ValueError("member root")
+        if member["cleanup_allowed"]==member["pending"] or member["gathered"]==member["pending"]: raise ValueError("member custody")
+        for k in ("child_task_id","child_generation"):
+            v=member.get(k) or ""
+            if not isinstance(v,str) or (v and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}",v)): raise ValueError(k)
+        if member["request_state"] not in ("launching","uncertain","launched","complete"): raise ValueError("member state")
+        if member["result_ready"] != (member["request_state"]=="complete"): raise ValueError("member result")
+        if member["launch_active"] and (not member["pending"] or member["result_ready"] or member["request_state"]!="launching"): raise ValueError("member launch")
+        if member["pending"]: pending.append(member)
+    if bool(pending)!=d["pending"]: raise ValueError("aggregate pending")
+    if d["result_ready"] != (bool(pending) and all(m["result_ready"] for m in pending)): raise ValueError("aggregate result")
+    for member in pending:
+        print("|".join((member.get("child_task_id") or "-",member.get("child_generation") or "-",
+                        str(member["result_ready"]).lower(),str(member["launch_active"]).lower())))
 ' 2>/dev/null) || return 2
   {
     IFS= read -r FM_TASK_GROUP_COMPONENT
@@ -55,6 +81,8 @@ for v in (d["component"],d["pending"],d["cleanup_allowed"],d.get("child_task_id"
     IFS= read -r FM_TASK_GROUP_RESULT_READY
     IFS= read -r FM_TASK_GROUP_ROOT
     IFS= read -r FM_TASK_GROUP_LAUNCH_ACTIVE
+    IFS= read -r FM_TASK_GROUP_COMPOSITION_PENDING
+    FM_TASK_GROUP_MEMBERS=$(cat)
   } <<EOF
 $fields
 EOF
@@ -79,7 +107,7 @@ fm_task_group_guard() { # <home> <task> <state> <promote|teardown>
     return 1
   fi
   if [ "$FM_TASK_GROUP_CLEANUP_ALLOWED" != true ]; then
-    printf 'REFUSED: task-group task %s has ungathered or uncertain work; gather its retained result before teardown.\n' "$task" >&2
+    printf 'REFUSED: task-group task %s has ungathered or uncertain work or unfinished workflow Review; gather its retained results and finish the selected workflow before teardown.\n' "$task" >&2
     return 1
   fi
 }
@@ -92,7 +120,7 @@ fm_task_group_event_scoped() { # <home> <task> <state>
   if fm_task_group_read "$1" "$2" "$3"; then rc=0; else rc=$?; fi
   [ "$rc" -ne 1 ] || return 1
   [ "$rc" -eq 0 ] || return 0
-  [ "$FM_TASK_GROUP_COMPONENT" = true ] || [ "$FM_TASK_GROUP_PENDING" = true ]
+  [ "$FM_TASK_GROUP_COMPONENT" = true ] || [ "$FM_TASK_GROUP_PENDING" = true ] || [ "$FM_TASK_GROUP_COMPOSITION_PENDING" = true ]
 }
 
 # 0 = group state projected into CLASS/DETAIL; 1 = ordinary current-state path.
@@ -120,6 +148,35 @@ fm_task_group_current() { # <home> <task> [state]
     FM_TASK_GROUP_DETAIL="root endpoint is $live; reconcile its accepted component before replacement"
     return 0
   fi
+  if [ -n "$FM_TASK_GROUP_MEMBERS" ]; then
+    local members=$FM_TASK_GROUP_MEMBERS saw_waiting=false
+    while IFS='|' read -r FM_TASK_GROUP_CHILD FM_TASK_GROUP_CHILD_GEN FM_TASK_GROUP_RESULT_READY FM_TASK_GROUP_LAUNCH_ACTIVE; do
+      [ "$FM_TASK_GROUP_CHILD" != - ] || FM_TASK_GROUP_CHILD=
+      [ "$FM_TASK_GROUP_CHILD_GEN" != - ] || FM_TASK_GROUP_CHILD_GEN=
+      fm_task_group_child_current "$home" "$task" "$state" "$root_gen"
+      [ "$FM_TASK_GROUP_CLASS" != group-attention ] || return 0
+      [ "$FM_TASK_GROUP_CLASS" != waiting ] || saw_waiting=true
+    done <<EOF
+$members
+EOF
+    [ "$(fm_task_group_generation "$state/$task.meta")" = "$root_gen" ] || { FM_TASK_GROUP_CLASS=group-attention; return 0; }
+    if [ "$saw_waiting" = true ]; then
+      FM_TASK_GROUP_CLASS=waiting
+      FM_TASK_GROUP_DETAIL='waiting for all accepted components; gathered results remain retained'
+    else
+      FM_TASK_GROUP_CLASS=group-ready
+      FM_TASK_GROUP_DETAIL='retained component results await request-specific gather acknowledgements'
+    fi
+    return 0
+  fi
+  fm_task_group_child_current "$home" "$task" "$state" "$root_gen"
+}
+
+# Reuse the same endpoint/activity checks for every pending dynamic component.
+# A single uncertain or inactive component keeps the root at group-attention.
+fm_task_group_child_current() { # <home> <root> <state> <root-generation>
+  local home=$1 task=$2 state=$3 root_gen=$4 child_meta child_line child_state live gen
+  FM_TASK_GROUP_CLASS=group-attention
   if [ "$FM_TASK_GROUP_RESULT_READY" = true ]; then
     [ "$(fm_task_group_generation "$state/$task.meta")" = "$root_gen" ] || return 0
     FM_TASK_GROUP_CLASS=group-ready

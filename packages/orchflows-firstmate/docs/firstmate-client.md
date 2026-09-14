@@ -1,15 +1,15 @@
 # Experimental FirstMate Work and Review client
 
-This client implements the package side of protocol `firstmate-task-group`, version `1`, scopes `local-readonly-work` and `local-readonly-review`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
+This client implements the package side of protocol `firstmate-task-group`, version `1`, scopes `local-readonly-work`, `local-readonly-review` and `local-dynamic`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
 
-The current contract permits one read-only Work component or one explicitly selected Review component from a local normal root scout in Herdr. FirstMate attaches a complete snapshot of this fork and a clean local Git input commit before launching the root. The project must have no origin. The component inherits the root's Claude/Codex harness, model and effort. Review requires Linux and an attachment admitted by FirstMate with primitive Review and review_policy explicit-audit. Writers, nesting, multiple components, component continuation, remote homes, model overrides and the other three core workflows remain gated. Example libraries remain inactive migration fixtures.
+The client supports legacy one-component read-only Work/Review attachments and an explicitly admitted bounded dynamic workflow from a normal Linux root scout. FirstMate retains the complete fork, selected custom libraries and accepted input commits. The component inherits the root's Claude/Codex harness, model and effort. The project must satisfy FirstMate's clean local Git/no-origin admission. Nesting, component continuation, model overrides, remote homes, ship/no-mistakes delivery, Build and SelfImprove remain gated. Optional examples remain migration source rather than certified workflows.
 
 ## Primitive and review authority
 
-The root client defaults to Work. For an admitted audit, supply --primitive
-Review before submit, status or gather. The client must see the controller's
-advertised Review capability and the same selected primitive and policy in the
-attachment. A Work attachment cannot be upgraded by changing the request body,
+FirstMate records Work or Review in each launch context. The returned attachment
+selects legacy single-primitive or dynamic behavior; a dynamic context remains Work. For Review it must see the
+controller's advertised Review capability and the same selected primitive and
+policy in the attachment. A legacy Work attachment cannot be upgraded by changing the request body,
 a prompt, an environment variable or a client flag.
 
 FirstMate's administrator admits a standalone audit before the root launches:
@@ -26,25 +26,119 @@ candidate, or authorize repairs. The reviewer applies the retained package's
 Review guidance and returns findings without changing project files. Only the
 root writes and delivers its ordinary scout audit report.
 
+## Bounded dynamic profile
+
+New dynamic enablement requires scripts/firstmate-client.json declaring schema 1,
+launch_context_schema 1 and workflows ["dynamic"]. Retained dev.5 capability
+metadata still selects its original context contract; a missing declaration
+retains the older explicit client route. The controller handshake keeps protocol
+version 1 and local-readonly-work scope, adding workflows ["dynamic"] and
+review_policies containing workflow-review alongside advertised Work and Review.
+
+The returned dynamic view uses scope local-dynamic. Its attachment must have
+exactly the supported profile values: workflow dynamic, primitive Work,
+review_policy workflow-review, readonly false and max_components 32. Existing
+root, epoch, package path and digest checks still apply. Linux is required.
+These checks admit this profile only; arbitrary workflow names and expanded
+component limits refuse.
+
+Write a dynamic request with exactly four fields:
+
+~~~json
+{"request_id":"maker-1","assignment":"Implement the assigned change with retained Make guidance and return check evidence.","primitive":"Work","writable":true}
+~~~
+
+Read-only investigation selects Work/writable false. The one independent audit
+selects Review/writable false. Review cannot be writable. Per-request primitive
+selection belongs in this JSON; the client's authority flag --primitive remains
+the launch attachment primitive and cannot override context. Other dispatch
+controls remain unsupported.
+
+FirstMate freezes the current clean root worktree commit for every new request.
+Each request retains its own input_commit; a writer must commit its result and
+returns output_commit. Read and gather the result, then use ordinary Git in the
+root's assigned worktree to join the intended commit range. For example, inspect
+the commits between input_commit and output_commit before cherry-picking that
+range. Resolve conflicts and verify the joined candidate there. The package does
+not own a separate writer or merge mechanism.
+
+Status without an ID returns an aggregate requests list of full request views.
+Use stable request IDs to select results:
+
+~~~sh
+python3 -B <snapshot>/scripts/firstmate.py status --request-id maker-1
+python3 -B <snapshot>/scripts/firstmate.py gather --request-id maker-1
+~~~
+
+Dynamic gather always requires --request-id. Read the complete selected report
+and result first. Gather every prior Work, join useful output, run checks and
+commit the exact clean candidate before requesting the fresh independent Review.
+Its input_commit identifies that candidate. Gather the Review, then make one
+repair/check pass directly or through scoped Work requests; a second Review is
+not admitted. Keep total components within 32, including Review and repair work.
+
+A selected complete custom skill can compose the same bounded primitives with
+the same policy and limits. FirstMate's existing intake, spawn, worktree, inbox,
+recovery and delivery owners remain authoritative. Component completion returns
+to the root; it does not run root delivery or introduce ship/no-mistakes review
+gates.
+
 ## Inputs and invocation
 
-Use Python 3.11+ inside the same operating environment as FirstMate. A Windows Python process is not a bridge to a WSL fleet. The task attachment and launch context supply these explicit inputs:
-
-| Input | Meaning |
-| --- | --- |
-| `<snapshot>` | The attachment's retained `package_path`; invoke its client, not the mutable source or an installed normal Orchflows package |
-| `<firstmate-code>` | Prepared experimental FirstMate code root containing `bin/fm-task-group.py` |
-| `<firstmate-home>` | Owning FirstMate home, distinct from the Orchflows package home |
-| `<root>` / `<generation>` | Normal root scout ID and its current `spawn_gen`, including after replacement |
-| `<request-file>` | UTF-8 JSON file in the root's assigned temporary directory, outside the input and package snapshot |
+Use Python 3.11+ inside the same operating environment as FirstMate. A Windows
+Python process is not a bridge to a WSL fleet. FirstMate's spawn owner supplies
+`ORCHFLOWS_FIRSTMATE_CONTEXT` and identifies the exact retained package snapshot
+in the launch instructions. Workers use its client directly:
 
 ```sh
-python -B <snapshot>/scripts/firstmate.py --firstmate-root <firstmate-code> --home <firstmate-home> --root <root> --generation <generation> status
-python -B <snapshot>/scripts/firstmate.py --firstmate-root <firstmate-code> --home <firstmate-home> --root <root> --generation <generation> submit --request <request-file>
-python -B <snapshot>/scripts/firstmate.py --firstmate-root <firstmate-code> --home <firstmate-home> --root <root> --generation <generation> gather
+python3 -B <snapshot>/scripts/firstmate.py status
+python3 -B <snapshot>/scripts/firstmate.py submit --request <request-file>
+python3 -B <snapshot>/scripts/firstmate.py gather
 ```
 
-The request has exactly these two fields:
+Place the UTF-8 request file in the root's assigned temporary directory, outside
+the input and package snapshot. Inspect status before dispatch: legacy Work requires Work; standalone Review
+requires Review/explicit-audit; dynamic requires its exact workflow-review profile. The environment
+provides invocation context, not authorization.
+
+FirstMate publishes one immutable context file per launch after publishing that
+launch's metadata. Relaunch receives a new context with the new generation and
+the same retained attachment. An old worker keeps its original generation and
+must refuse when FirstMate considers it stale. The client never replaces that
+generation by reading mutable task metadata.
+
+The context is a regular UTF-8 JSON file of at most 16 KiB with exactly these
+fields; duplicate keys, unknown fields and symlinks refuse:
+
+| Field | Meaning |
+| --- | --- |
+| `schema` | Integer `1` |
+| `firstmate_root` | Absolute canonical prepared FirstMate directory containing `bin/fm-task-group.py` |
+| `home` | Absolute canonical owning FirstMate directory, distinct from the package home |
+| `root` | Attached normal root scout task ID |
+| `generation` | This launch's `spawn_gen` |
+| `primitive` | `Work` or `Review`, matching the admitted attachment; dynamic uses Work |
+| `package_path` | Absolute canonical retained snapshot directory; it must equal the running client's package root |
+
+All directory fields must exist and contain no symlinks. Root and generation
+must be valid FirstMate identifiers. The client validates this context before
+contacting the controller. `--context <context-file>` explicitly selects a launch
+context instead of the environment value.
+
+The previous explicit invocation remains available for administrator fixtures
+and older integrations. Without launch context it defaults to Work; an explicit
+audit supplies `--primitive Review`:
+
+```sh
+python3 -B <snapshot>/scripts/firstmate.py --firstmate-root <firstmate-code> --home <firstmate-home> --root <root> --generation <generation> status
+```
+
+The same explicit inputs work for submit and gather. A context cannot be mixed
+with any manual authority flag (`--firstmate-root`, `--home`, `--root`,
+`--generation` or `--primitive`), including when the context comes from the
+environment. Missing context and incomplete explicit authority refuse.
+
+A legacy single Work/Review request has exactly these two fields:
 
 ```json
 {"request_id":"inspect-1","assignment":"Inspect the attached source without edits. Apply the named Make guidance from the retained package and return findings with file references."}
@@ -58,11 +152,13 @@ The client calls only the controller, using a subprocess argument list and expli
 
 Successful commands return the controller's JSON view, including the root, generation, attachment and current request record. Retain the request's child handle. Status is an observation, and does not acknowledge completion. Once FirstMate reports a complete retained result, `gather` verifies its bytes and acknowledges it for later FirstMate cleanup. Use the returned `report_path` and `result_path`; the component result remains separate from the root's report and outer delivery.
 
-FirstMate owns the one-component reservation and request identity. An identical repeat returns its recorded disposition; a changed body cannot reuse the same ID, and a different ID cannot bypass an existing reservation. A replacement root uses its current generation to inspect or gather the original request. The client never automatically retries or replaces a launch.
+FirstMate owns component reservations and request identity. An identical repeat returns its recorded disposition; a changed body cannot reuse the same ID. Legacy attachments retain one reservation, while dynamic admits multiple distinct IDs within its bounded policy. A replacement root uses its newly supplied launch context to inspect or gather the original request. The client never automatically retries or replaces a launch.
 
 Controller errors pass through as JSON with their exit code. Client refusals exit `2`. A timeout or malformed reply after submission is uncertain: a component may already exist even when its handle was not returned. Inspect FirstMate status and use its recovery owner. Do not resubmit a changed request, launch through another tool or infer that killing the controller terminated its child. `--timeout SECONDS` sets a finite positive bound per controller call; the default is 420 seconds, allowing the current FirstMate bridge's 360-second bound. A slow launch may outlive the transport timeout.
 
 The component uses FirstMate's separate `complete` command with its current child generation and a bounded report in its recorded task temporary directory, as specified by its launch overlay. The root uses its normal FirstMate reporting and delivery path. FirstMate alone handles waiting, notification, endpoint cleanup and recovery; this client installs no service and provides no alternate scheduler.
+
+Writer results also retain an immutable output_ref in the shared Git database. FirstMate publishes that ref before the result, and validates it before gather or cleanup. It preserves the full output ancestry through component/root teardown. These archival refs are not pruned automatically; a future explicit result-pruning owner must manage refs and retained records together. A missing or changed ref requires owner reconciliation.
 
 ## Evidence boundary
 

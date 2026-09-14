@@ -1,8 +1,20 @@
 # Experimental FirstMate task-group integration
 
-This distribution admits one local read-only Work component or one explicitly authorized Linux Review component to FirstMate at `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`. It is the FirstMate-owned execution half of `packages/orchflows-firstmate/`; the package itself never launches a harness. See the [Stage 1 contract](../../docs/stage1-contract.md) for admission, immutable input, uncertainty and delivery boundaries.
+The dev.6 increment adds [bounded dynamic composition](../../docs/dynamic-composition.md)
+through the existing request/result, launch, Treehouse and lifecycle owners.
+Multiple Work results can be joined and reviewed once in a Linux scout; writer
+commits retain immutable archival Git refs through cleanup.
+[Current verification](../../docs/dynamic-verification.md) records checks and workers separately.
 
-The distribution patches seven existing owners and adds controller, storage, launch and lifecycle files. `manifest.json` lists the complete deployable patch/overlay inventory. Preparation validates the complete inventory, clones a clean pinned checkout, applies the patch, and adds the overlay. It neither installs dependencies nor changes a live FirstMate home.
+The preceding dev.5 increment adds [one-time project enablement](../../docs/normal-launch.md).
+Ordinary scout spawn attaches the retained fork/custom libraries, and relaunch
+supplies immutable client context. Use that route for new projects; the manual
+attachment route below remains available for older callers and isolated tests.
+[The owner mapping](../../docs/firstmate-owner-mapping.md) records what is reused.
+
+The legacy profile admits one local read-only Work component or one explicitly authorized Linux Review component to FirstMate at `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`. It is the FirstMate-owned execution half of `packages/orchflows-firstmate/`; the package itself never launches a harness. See the [Stage 1 contract](../../docs/stage1-contract.md) for admission, immutable input, uncertainty and delivery boundaries.
+
+The distribution patches existing launch, policy and lifecycle owners and adds controller, storage and launch glue. `manifest.json` lists the complete deployable patch/overlay inventory. Preparation validates the complete inventory, clones a clean pinned checkout, applies the patch, and adds the overlay. It neither installs dependencies nor changes a live FirstMate home.
 
 For current development, use the [Ubuntu/WSL check runner](../../docs/linux-development.md). It verifies the pinned research input, creates an LF checkout on the Linux filesystem, calls this distribution's preparation tool and runs both owned suites with isolated homes. Native Windows development is deferred.
 
@@ -38,7 +50,7 @@ The inherited FirstMate regression runner is `bin/fm-test-run.sh`; use its fixtu
 
 On Linux, current launch supervision checks the original parent lock claims, process identities and ancestry before treating a launching request as waiting. Unknown or abandoned custody remains attention. Attached POSIX teardown also refuses missing process-cleanup evidence and preserves worktree/task records. The [continuation verification](../../docs/stage1-continuation-verification.md) records the 81-case combined suite and separates fixtures from actual runtime acceptance.
 
-The Review extension requires explicit primitive Review and policy explicit-audit at attachment; see the [Review contract](../../docs/review-contract.md). Writers, multiple components, nesting, promotion and remote homes remain rejected. All upstream Orchflows example files remain available for migration; their presence does not certify runtime parity. No global install or published release is performed by this distribution.
+The Review extension requires explicit primitive Review and policy explicit-audit at attachment; see the [Review contract](../../docs/review-contract.md). Legacy attachments still refuse writers and additional components; explicit dynamic attachments use the bounded profile above. Nesting, ship delivery, promotion and remote homes remain unavailable. All upstream Orchflows example files remain available for migration; their presence does not certify runtime parity. No global install or published release is performed by this distribution.
 
 
 For attached Linux Claude workers, the spawn/relaunch owner now supplies

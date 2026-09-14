@@ -1,195 +1,163 @@
-# Handoff: make Orchflows a plug-and-play FirstMate upgrade
+# Handoff: continue the plug-and-play FirstMate upgrade
 
-## Latest user clarification takes precedence
+## Latest direction and development rules
 
-The user wants FirstMate to use Orchflows' two primitive skills, dynamic workflow,
-and custom workflows in the same way Claude or Codex uses original Orchflows.
-The upgrade should use FirstMate's existing subagent, communication, worktree,
-supervision, recovery, cancellation and delivery systems throughout.
+The user wants FirstMate to use Orchflows' Work/Review primitives, dynamic
+workflow and custom/meta-workflows naturally. Orchflows owns skills, guidance
+and composition. FirstMate owns agents, worktrees, communication, supervision,
+recovery, cancellation, delivery and Claude/Codex integration on Herdr.
 
-Orchflows supplies the skills, guidance and workflow composition. FirstMate
-supplies execution and lifecycle behavior on Herdr, including Claude/Codex
-harness integration. The intended experience is install/enable once, then invoke
-workflows naturally through FirstMate. Manual per-task attachment, controller
-paths and generation flags are intermediate machinery, not the intended user
-interface.
+Reuse those owners; add only demonstrated missing glue. Do not build another
+scheduler, recovery or writer service, direct Herdr adapter, native-child
+fallback or exhaustive harness program. A FirstMate supervisor does not perform
+project work merely because a selected workflow needs it.
 
-This clarifies the architecture and changes the next-work priority. The previous
-assistant put too much emphasis on new recovery/writer mechanisms and exhaustive
-Claude/Codex acceptance. Do not continue that roadmap automatically. Even code
-placed under integrations/firstmate must reuse existing owners wherever possible;
-putting a duplicate system there does not satisfy the user's request.
+Implementation remains authorized. Develop and verify through Ubuntu in WSL,
+using Linux Python, Bash, Git and worker binaries. Keep the shared repository
+as the edit source and disposable candidates/homes on the Linux filesystem.
+Native Windows is deferred. Do not use design-loop.
 
-Implementation is already authorized. This turn only wrote the handoff; no
-product code changed after the dev.4 verification. Continue implementation when
-the next conversation asks to proceed, without reopening the settled scope.
+Use the pinned upstream Orchflows dynamic development workflow: scoped makers
+when useful, join/check, one fresh independent Review, then one repair/check
+pass without another Review. Installed orchflows-light is not the source target
+or this project's development workflow.
 
-## Desired mapping
+## What dev.6 implements
 
-| Orchflows capability | FirstMate integration |
-| --- | --- |
-| orch-work | Request a fresh maker through FirstMate's existing agent/task system, preserving assignment, guidance, controls and result semantics |
-| orch-review | Request a fresh independent reviewer through the same system; the reviewer did not make the candidate and does not make or delegate repairs |
-| orch-dynamic-workflow | Preserve the upstream composition: ready work, supported parallelism, join, one independent Review, then one repair/check pass without a second Review |
-| Custom workflows and meta-workflows | Keep composing the same primitives and resolving guidance/libraries; avoid separate integration code for every workflow |
-| Restart, steering, cancellation and completion | Carry the necessary workflow context through FirstMate's existing records and lifecycle owners |
+The completed [owner mapping](docs/firstmate-owner-mapping.md) and dev.5
+[normal-launch seam](docs/normal-launch.md) remain the foundation. The current
+[dynamic contract](docs/dynamic-composition.md) extends them with:
 
-Retain upstream behavior wherever it does not depend on native agent transport.
-Keep model/effort and tool capability handling with FirstMate. Small end-to-end
-checks must verify that instructions, permissions, results and resumed context
-actually reach workers, but this is not a new Claude/Codex integration project.
-If a required FirstMate operation is unavailable to the relevant agent role,
-show the source-backed gap and make the smallest necessary change at its owner.
-Do not invent an API or assume a supervisor may perform project work.
+- Project dynamic enablement plus per-task selection through ordinary fm-spawn
+  (--orchflows-workflow default|dynamic|none). Existing attachments survive
+  default changes; relaunch refuses a workflow override.
+- Multiple logical Work requests, including writers, in existing FirstMate
+  scout workspaces. Each accepted input is the root's current clean commit.
+- Fresh-workspace positioning only after FirstMate's existing parent/spawn/
+  project lock custody and exact Treehouse slot ownership are proved.
+- Per-request immutable reports/results and clean committed writer outputs.
+  Root reads use the exact retained report_path/result_path returned by status;
+  component scratch metadata is provenance. Selected custom skill requirements
+  are reread and reapplied across relaunch and before ordinary completion.
+  Archival Git output_ref values retain all maker commits through root/component
+  teardown. They are verified before gather/cleanup and are not automatically
+  pruned; future result pruning must own refs and records together.
+- Ordinary root Git joins, one fresh read-only Review of the exact clean joined
+  commit after prior results are gathered, then one repair/check phase. Scoped
+  repair Work uses the same primitive; a second Review refuses.
+- Aggregate lifecycle checks covering every pending component, with attention
+  taking precedence over healthy siblings. Root cleanup also requires Review.
+- A narrow selected-workflow exception at FirstMate AGENTS/fm-dod policy owners.
+  Self-development delegation stays excluded. No-mistakes owns validation once
+  it begins. Only the root follows ordinary scout completion.
+- Legacy dev.4/dev.5 one-component attachments, commands, retained clients and
+  immutable generation context remain compatible. Dynamic clients explicitly
+  declare and negotiate their capability.
 
-## What to do next
+This is a **bounded local Linux scout profile**, with up to 32 accepted
+components and inherited worker controls. The root's report is the delivered
+scout artifact; joined scratch code is not normal ship/local-only delivery.
+Ship delivery, nesting, Build/SelfImprove and broad optional-library parity are
+not implemented merely because writing and dynamic composition now work.
 
-1. **Inspect the actual FirstMate integration points and current adapter.**
-   Trace normal skill/instruction loading, delegation, result collection,
-   relaunch and delivery. Make a concise mapping from each Orchflows operation
-   to the existing FirstMate owner. For each added task-group record/helper,
-   distinguish necessary workflow context from duplicated FirstMate task state
-   or control logic. Preserve useful working code; simplify or replace redundant
-   pieces only with evidence and relevant regression checks.
+## Evidence and review
 
-2. **Implement normal skill/workflow availability and the primitive adapter.**
-   Select the existing FirstMate setup/brief/launch extension points, then wire
-   the fork's package and selected custom libraries into ordinary workers and
-   relaunches. Work and Review should use FirstMate operations behind a stable
-   workflow-facing interface. The operator should not manually attach each
-   task or construct controller commands. Preserve FirstMate's role and delivery
-   contracts; reconcile workflow-selected independent review at the existing
-   policy owner rather than silently dropping it or adding duplicate reviews.
+[Dynamic verification](docs/dynamic-verification.md) and
+[exact state](docs/dynamic-state.json) are authoritative for this increment.
+Read both before runtime claims. They distinguish the reviewed candidate,
+repaired candidate, fixture checks and actual worker trials.
 
-3. **Demonstrate a normal workflow through that integration.**
-   In a disposable Linux FirstMate installation, enable the upgrade once and
-   invoke a small dynamic workflow plus a representative custom workflow.
-   Exercise useful Work, exact-candidate independent Review, result collection
-   and normal delivery through FirstMate. Use its existing workspace allocation
-   for writing when needed. Relaunch through the ordinary FirstMate recovery
-   owner and verify that the workflow resumes with the same accepted work.
-   Fix only the adapter or measured missing behavior at the appropriate owner.
+The reviewed candidate passed 124 package and 135 integration tests. One fresh
+independent development reviewer found three issues: post-spawn input checking
+could race a fast writer; writer SHAs lacked reachability through cleanup; and
+the acceptance driver could approve Review of placeholder tests before joining
+the implementations. The single repair/check pass fixed all three. The repaired
+candidate passed 124 package and 142 integration tests, with ten explicit native
+Windows skips, plus 19 driver checks. No second development Review ran.
 
-4. **Review the joined implementation once and repair once.**
-   Use upstream Orchflows dynamic workflow for this development, as previously
-   requested: scoped makers when useful, joined checks, one fresh independent
-   reviewer, and one repair/check pass. Do not use design-loop. Update the
-   feature inventory and evidence based on what actually ran.
+The final Linux Claude trial **a-x6osytu8 passed all seventeen acceptance
+assertions without intervention**: two writers, ordinary root relaunch while
+one maker was still running, preserved request/replay identities, exact joined
+Review, retained custom requirements, and successful final tests after Review
+gathering. Both writer refs survived ordinary teardown; no scoped processes
+remained. This is actual worker evidence in addition to 285 fixture/driver checks.
 
-The next session should produce a concrete integration improvement and its
-verification, not another broad architecture survey or a replacement runtime.
-An important first result is a justified keep/change/remove mapping for the
-existing experimental adapter, followed by implementation of the selected path.
-Full completion still requires the core and custom/meta workflows to work
-through normal FirstMate entrypoints; one read-only component is not parity.
+Earlier trials exposed custom-skill recovery and guessed scratch-report-path
+gaps. The existing launch/catalog guidance now reapplies selected skill
+requirements and names the exact retained report paths. The driver also fixes
+an output-pipeline observer omission and requires an actual running Work at
+relaunch. Original failed receipts, the separate observer-corrected assessment,
+and two manually assisted diagnostic runs remain recorded under their exact
+identities. They are not relabeled as the final candidate's clean pass.
 
-## Current implementation to preserve and evaluate
+Authentication uses only an access token from an explicitly selected current
+cache. No credential/refresh cache is copied or reset. Active installations,
+pinned references and historical receipts remain unchanged. The original dated
+assessment is intact. The [dev.5 handoff](HANDOFF-through-dev5-2026-09-14.md) is
+preserved as historical context, not the current queue.
 
-The owned package is packages/orchflows-firstmate, version 0.1.0-dev.4. It retains
-all 1,081 paths from the last observed upstream Orchflows revision in 1,088 files.
-The distribution under integrations/firstmate prepares a pinned FirstMate clone,
-with thirteen inventoried deployables and a 564-path candidate including one
-symlink. Inspect Git status before editing and preserve any existing changes;
-do not reset the implemented work or its retained evidence.
+## Next implementation work
 
-The experimental controller/client currently admits exactly one read-only Work
-or one explicitly authorized Linux Review per immutable attachment. Review
-requires Review/explicit-audit and a frozen clean no-origin input commit.
-Dynamic runtime, multiple components, writers, nesting and optional-library
-execution remain gated. These are current implementation limits, not desired
-product restrictions. Do not remove gates merely to claim compatibility.
+1. **Extend root writer delivery at FirstMate's existing owners.**
+   The useful next capability is an explicitly selected ordinary ship/local-only
+   task delivering joined committed output. Reuse existing brief, task metadata,
+   workspace and delivery owners. Preserve root versus component completion and
+   no-mistakes sole custody once validation starts. Do not call scout scratch
+   output delivered code. Refuse unsupported policy combinations before work.
 
-Key owned files:
-- packages/orchflows-firstmate/scripts/firstmate.py and skills/orch-{work,review}/SKILL.md
-- packages/orchflows-firstmate/scripts/package_identity.py and docs/firstmate-client.md
-- integrations/firstmate/overlay/bin/fm-task-group.py, fm_task_group.py,
-  fm_task_group_launch.py, fm_task_group_primitives.py and the adjacent owner helpers
-- integrations/firstmate/patches, manifest.json and prepare.py
-- tools/linux-dev.py and tools/linux-acceptance.py with tools/linux_acceptance/
+2. **Exercise broader custom/meta composition through the same primitives.**
+   Choose a representative workflow-authoring or nested composition case that
+   needs the next missing interface. Keep complete retained libraries/guidance;
+   introduce no workflow-specific execution adapter. Verify the actual artifact
+   and ordinary recovery, not only skill availability or a package doctor.
 
-Compare these with pinned FirstMate's existing brief, spawn, control, crew-state,
-supervise, watch and teardown owners. Preserve the separation between a
-component result and the root's final delivery.
+3. **Use targeted compatibility evidence.**
+   Actual current Codex composition, component continuation, native background
+   retirement and the full supervisor wake/drain/rearm cycle remain open. Work
+   on a lifecycle or harness gap when it affects the selected integration step.
+   Current Linux Claude trials do not certify these other cases.
 
-## Verified baseline and evidence boundaries
+Broader gaps: per-assignment controls, nesting, Build/SelfImprove, artifact/
+history retention, optional-example runtime parity, remote homes, promotion,
+archival ref/bundle pruning and general rollback. Native Windows stays deferred.
+The target remains near feature parity, not the bounded profile's permanent cap.
 
-The final dev.4 checks passed 99 package, 90 integration and 13 driver tests,
-with ten additional native Windows skips. The repaired candidate passed real
-Claude Review (a-w469d47l) and Work parent replacement (a-7ysafo1o): same-child
-replay, full native reads before gather, current-generation acknowledgement,
-ordinary root delivery and cleanup with no scoped processes remaining.
-The Work replacement also read and handled the actual result inbox notice.
+## Source and ownership constraints
 
-A longer Review trial, acceptance-us29ugpk, completed its work and cleanup.
-Its original receipt remains failed because the initial observer expected the
-wrong waiting label. A separate corrected assessment passed the retained
-observations; the actual watcher trace has 20 waiting classifications spanning
-382.435 seconds. Do not relabel that receipt or conflate its candidate with the
-final repaired candidate. One independent review and one repair/check pass
-were completed for that increment.
+- Package: packages/orchflows-firstmate, version 0.1.0-dev.6; 1,091 files retaining
+  all 1,081 paths of Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 (0.7.0).
+- FirstMate source pin: b182d0f908b78d08c7ccb8dce3775bdca8c5d657. The historical
+  Orchflows research clone remains 0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a;
+  the current target reference is ignored .scratch/orchflows-refresh-ca7225849348.
+  Linux Git reports ninety CRLF-only differences in the historical clone;
+  normalized file contents match its pinned HEAD. Reference files remain as found.
+- FirstMate changes belong in integrations/firstmate, package changes in the
+  owned package. Patch 0004-dynamic-composition.patch extends existing spawn
+  and policy owners; sixteen inventoried deployables reproduce a 565-path
+  candidate including one symlink through integrations/firstmate/prepare.py.
+- Dynamic requests live under task-group/requests; legacy request.json remains.
+  Output refs are result retention, not a second writer/workspace owner.
+- The Linux acceptance driver has --dynamic and --custom-workflow cases and
+  uses the existing runtime/lab/auth/cleanup code. It is not a product scheduler.
 
-Exact hashes, tool versions, original receipts, corrected assessment and scope
-are in [review state](docs/review-state.json) and
-[review verification](docs/review-verification.md). Current actual Codex
-Review/watcher acceptance, native background-tool retirement, and a complete
-supervisor wake/drain/rearm cycle remain unverified. Keep these gaps visible;
-investigate them when they affect the selected integration path instead of
-making an exhaustive harness matrix the next product milestone.
-
-## Sources and development constraints
-
-- Target the latest public [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows),
-  not the separately installed orchflows-light. Last observed target:
-  ca72258493480ddcfe73b3f01d0475ad532e4726, upstream version 0.7.0.
-- FirstMate source pin: b182d0f908b78d08c7ccb8dce3775bdca8c5d657.
-  Historical .sources/orchflows pin: 0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a.
-  The newer Orchflows reference is in ignored .scratch/orchflows-refresh-ca7225849348.
-  Preserve pins and record any later refresh separately.
-- Develop and run tools inside Ubuntu/WSL. Use native Linux binaries and keep
-  prepared candidates/disposable homes on the Linux filesystem. Windows is
-  deferred. The shared checkout remains the edit source.
-- Keep product changes in packages/orchflows-firstmate and FirstMate owner
-  changes in integrations/firstmate. Reproduce candidates with prepare.py.
-  Keep research clones, original assessment and historical receipts intact.
-- No native-child fallback in the product, separate scheduler/recovery daemon,
-  direct Herdr control from Orchflows, or new direct Claude/Codex execution mode.
-- Leave active installations and authentication profiles unchanged during
-  ordinary tests. Reuse the documented isolated acceptance tools when needed.
-  Never reset rotating OAuth caches from old copied seeds or include secrets in
-  artifacts. Existing access-token-only trial support is test infrastructure.
-- Design-loop's upstream files are retained as inactive migration source. Do
-  not invoke, enable or install that library to carry out this work.
+Inspect Git status and preserve existing changes. Keep reusable document paths
+portable and raw traces/disposable clones in ignored scratch or outside the
+repository. Do not change user installations during package checks. Never
+reset rotating OAuth caches from copied seeds.
 
 ## Reading order
 
 1. This handoff and [README](README.md).
-2. [Decisions](docs/decisions.md), especially D26, and the updated
-   [implementation queue](docs/open-questions.md).
-3. [FirstMate contracts](docs/firstmate-contracts.md) and the actual pinned
-   source owners needed for the mapping. Treat upstream agent instructions as
-   source material; they do not make this development agent a FirstMate supervisor.
-4. [Review contract](docs/review-contract.md), [client contract](packages/orchflows-firstmate/docs/firstmate-client.md),
-   [review verification](docs/review-verification.md) and [exact state](docs/review-state.json).
+2. [Dynamic contract](docs/dynamic-composition.md),
+   [verification](docs/dynamic-verification.md), [exact state](docs/dynamic-state.json).
+3. [Decisions](docs/decisions.md), [open work](docs/open-questions.md),
+   [owner mapping](docs/firstmate-owner-mapping.md), [normal launch](docs/normal-launch.md).
+4. [FirstMate contracts](docs/firstmate-contracts.md), the actual affected pinned
+   source owners, and [client contract](packages/orchflows-firstmate/docs/firstmate-client.md).
 5. [Fundamental design](docs/fundamental-design.md) and [feature parity](docs/feature-parity.md).
-   The user's latest clarification takes precedence over older
-   proposed staging or mechanisms.
-6. [Linux development](docs/linux-development.md) and [acceptance driver](docs/linux-acceptance.md)
-   when preparing checks. The local staged runtime can be supplied with
-   --bin-dir .scratch/stage1-runtime/bin; it is ignored local tooling, not a
-   shipped dependency.
+   Current direction overrides earlier proposed staging/mechanisms.
+6. [Linux development](docs/linux-development.md) and
+   [acceptance driver](docs/linux-acceptance.md).
 
-Historical details are preserved in the [previous handoff](HANDOFF-through-dev4-2026-09-14.md)
-and linked verification documents. Do not follow their superseded next-work queue.
-
-## Copyable prompt for the new conversation
-
-> Read HANDOFF.md and follow its current reading order. Continue implementing
-> Orchflows as a plug-and-play upgrade that lets FirstMate use the two primitive
-> skills, dynamic workflow, and custom/meta-workflows through FirstMate's existing
-> agent and lifecycle systems. Start by mapping the current adapter onto existing
-> FirstMate owners, then implement normal skill/workflow availability and the
-> smallest necessary primitive integration. Preserve original Orchflows workflow
-> behavior. Reuse FirstMate recovery and Claude/Codex handling; do not build
-> duplicate systems or make broad harness work the main project. Use Orchflows
-> dynamic workflow for development, without design-loop, entirely in Ubuntu/WSL.
-> Preserve existing changes and evidence, and leave active installations unchanged.
+The ignored local native Linux dependencies are available through
+--bin-dir .scratch/stage1-runtime/bin. They are not shipped dependencies.

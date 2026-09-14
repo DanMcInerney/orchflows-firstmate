@@ -18,6 +18,9 @@ def main():
     parser.add_argument("--bin-dir", type=Path, action="append", default=[], help="Explicit native Linux dependency directory; repeatable")
     parser.add_argument("--work-root", type=Path, default=Path("/tmp/of-accept"))
     parser.add_argument("--primitive", choices=("Work", "Review"), default="Work")
+    parser.add_argument("--dynamic", action="store_true", help="Two writer Work results, joined candidate, one Review and checks")
+    parser.add_argument("--enabled", action="store_true", help="Enable the project once; ordinary spawn attaches it")
+    parser.add_argument("--custom-workflow", action="store_true", help="Invoke a retained custom one-primitive workflow (requires --enabled)")
     parser.add_argument("--restart", action="store_true", help="Replace the root through FirstMate while its component is pending")
     parser.add_argument("--replace-after", type=int, default=15, help="Seconds after observing the launched component")
     parser.add_argument("--component-delay", type=int, help="Foreground sleep; defaults to 60 with --restart, otherwise 330")
@@ -26,6 +29,12 @@ def main():
     parser.add_argument("--claude-access-token-file", type=Path, help="Explicit user-owned Claude cache: read only accessToken/expiresAt")
     parser.add_argument("--access-token-expires-at", type=float, help="Unix expiration of CLAUDE_CODE_OAUTH_TOKEN when known")
     args = parser.parse_args()
+    if args.dynamic:
+        args.enabled = True
+        if args.primitive != "Work":
+            parser.error("--dynamic selects Work plus Review; omit --primitive Review")
+    if args.custom_workflow and not args.enabled:
+        parser.error("--custom-workflow requires --enabled")
     if args.component_delay is None:
         args.component_delay = 60 if args.restart else 330
     if args.minimum_waiting_span is None:
@@ -45,7 +54,11 @@ def main():
     if args.command == "doctor":
         print(json.dumps(probe, indent=2, sort_keys=True))
         return 0
-    trial = Trial(args, probe, search_path)
+    if args.dynamic:
+        from linux_acceptance.dynamic import DynamicTrial
+        trial = DynamicTrial(args, probe, search_path)
+    else:
+        trial = Trial(args, probe, search_path)
     print(f"Private acceptance workspace: {trial.namespace}", flush=True)
     okay = False
     try:

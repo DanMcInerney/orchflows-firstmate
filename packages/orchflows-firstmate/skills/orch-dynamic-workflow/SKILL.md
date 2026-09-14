@@ -1,13 +1,21 @@
 ---
 name: orch-dynamic-workflow
-description: Compose work and one final independent review inside a FirstMate task group; execution integration is pending.
+description: Compose scoped Work, join an exact candidate, then request one independent Review and one repair/check pass through FirstMate.
 ---
 
-**Execution blocked:** the experimental [FirstMate task-group contract](../../docs/architecture.md#firstmate-execution-gate) does not support this workflow. Report this missing capability and stop before running this workflow. Do not use native Agent/spawn tools, direct fleet/Herdr commands or normal Orchflows as a fallback. Package setup/doctor success does not satisfy this gate.
+**Conditional experimental execution:** run `python3 -B <snapshot>/scripts/firstmate.py status` in FirstMate's supplied launch environment and follow the [client contract](../../docs/firstmate-client.md). Execution requires a normal Linux root scout with the exact retained fork and an attachment declaring `workflow: dynamic`, `primitive: Work`, `review_policy: workflow-review`, `readonly: false` and `max_components: 32`. The controller must advertise dynamic, Work, Review and workflow-review. A single Work or standalone Review attachment cannot run this composition. Report unsupported requirements and stop; never use native Agent/spawn tools, direct fleet/Herdr commands or normal Orchflows as a fallback.
 
-## Intended FirstMate contract (not executable)
+## Bounded Linux dynamic composition
 
-Once the contract is implemented, establish the intended result and checks, resolve [guidance](../../docs/architecture.md#guidance-selection), dependencies and assignment choices, and compose the smallest useful workflow. The root crewmate may make an already-clear change when its scope/settings permit; independent assignments use [orch-work](../orch-work/SKILL.md) component tasks through FirstMate. Join and verify the candidate, then use [orch-review](../orch-review/SKILL.md) once, followed by one repair pass and its checks without another review. Preserve that review contract: FirstMate must explicitly authorize it for the current delivery stage. If the selected delivery policy disallows it, report the incompatibility rather than omit review. FirstMate retains final delivery and merge authority.
+State the intended result and checks, investigate missing information, and resolve the relevant [guidance](../../docs/architecture.md#guidance-selection) and retained dependencies once. Choose the smallest useful composition. The authorized root crewmate can make an already-clear change in its own assigned worktree. Use [orch-work](../orch-work/SKILL.md) for useful independent assignments, with clear ownership, applicable Make guidance and ready inputs. This never permits a FirstMate supervisor to perform project work.
+
+Each new request freezes the root's current clean committed input through FirstMate. Use distinct stable request IDs and explicit Work/Review and writable choices in the request JSON. FirstMate owns component allocation, worktrees, inherited worker settings, inbox notification, recovery and cancellation. Status without an ID lists the retained requests; status/gather with --request-id selects one. A root relaunch keeps accepted work and uses its new immutable launch context. Read each complete report and result before gathering. Do not launch replacements after an uncertain outcome.
+
+Join accepted writer commits in the root worktree with ordinary Git cherry-pick, resolve conflicts, and verify the combined result. Gather every prior component before Review; commit the exact clean candidate. Use [orch-review](../orch-review/SKILL.md) once with the intended outcome, actual candidate and retained Review guidance. The fresh reviewer returns findings without repairs or delegation.
+
+Gather that review, then make one repair pass and its checks, directly where authorized or through scoped new Work components. Do not request a second Review. Keep total components within 32, reserving capacity for the reviewer and needed repair work. Verify the final revision and produce the ordinary root report describing what was made, checked and remains unresolved. FirstMate retains delivery and merge authority.
+
+A selected retained custom workflow may compose these same bounded primitives and guidance; it gets no separate adapter or runtime. The current profile does not admit nested components, component continuation, model/effort overrides, remote homes, ship/no-mistakes delivery, Build, SelfImprove or design-loop. Unsupported requirements must remain visible instead of being silently omitted.
 
 ## Upstream migration baseline (inactive)
 

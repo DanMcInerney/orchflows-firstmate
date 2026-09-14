@@ -1,5 +1,9 @@
 # Fundamental design: Orchflows for FirstMate running in Herdr
 
+The dev.6 continuation extends this seam to bounded Linux dynamic composition;
+see [dynamic contract](dynamic-composition.md) and [current verification](dynamic-verification.md).
+Earlier one-component restrictions below describe the dev.5 baseline.
+
 **Latest user clarification — September 14, 2026:** the desired product is a
 plug-and-play FirstMate upgrade. Preserve Orchflows' Work/Review, dynamic and
 custom/meta-workflow behavior while using FirstMate's existing execution,
@@ -10,6 +14,9 @@ availability. Add only a source-backed missing integration capability.
 This supersedes the earlier priority of broad harness/lifecycle engineering and
 any implication that every mechanism proposed below needs a new implementation.
 See [current handoff](../HANDOFF.md) and D26 in [decisions](decisions.md).
+The dev.5 continuation implements the [normal launch seam](normal-launch.md)
+after the [owner audit](firstmate-owner-mapping.md); future composition work
+must build on those FirstMate owners.
 
 **Recommendation:** make this an independently distributed Orchflows fork whose compositions run inside a normal FirstMate root crewmate. Replace native-child creation in `orch-work` and `orch-review` with **FirstMate-owned component tasks in Herdr**. FirstMate owns every endpoint and lifecycle operation; the crewmate still chooses the workflow, makes authorized direct changes, joins results, and reports the outer deliverable. This needs a supported FirstMate task-group integration, not just plugin installation.
 
@@ -23,7 +30,7 @@ The user's September 14 direction is **Ubuntu in WSL, Linux first**. Perform dev
 
 ## Baseline and evidence
 
-The user confirmed on September 14, 2026 that this fork should adapt the latest public `DanMcInerney/orchflows`. The owned package is now dev.4 at source target `ca72258493480ddcfe73b3f01d0475ad532e4726`, upstream version 0.7.0. Its added experimental `design-loop` library is retained as inactive migration source and was not used to perform this work, as requested. The table below preserves the historical Stage 1 baseline. [Refresh verification](upstream-refresh-verification.md) records the changed package separately; earlier trial identities remain unchanged.
+The user confirmed on September 14, 2026 that this fork should adapt the latest public `DanMcInerney/orchflows`. The owned package is now dev.5 at source target `ca72258493480ddcfe73b3f01d0475ad532e4726`, upstream version 0.7.0. Its added experimental `design-loop` library is retained as inactive migration source and was not used to perform this work, as requested. The table below preserves the historical Stage 1 baseline. [Refresh verification](upstream-refresh-verification.md) records the changed package separately; earlier trial identities remain unchanged.
 
 | Input | Exact identity | What it establishes |
 | --- | --- | --- |

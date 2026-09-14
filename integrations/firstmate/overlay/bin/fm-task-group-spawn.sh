@@ -7,9 +7,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 mode=launch
 case "${1:-}" in
   --submit) [ "$#" -eq 4 ] || exit 2; mode=submit; root=$2 generation=$3 request=$4 ;;
-  --gather) [ "$#" -eq 3 ] || exit 2; mode=gather; root=$2 generation=$3 ;;
+  --gather) { [ "$#" -eq 3 ] || [ "$#" -eq 4 ]; } || exit 2; mode=gather; root=$2 generation=$3 request_id=${4:-} ;;
   --capture-lock) [ "$#" -eq 3 ] || exit 2; mode=capture; root=$2 generation=$3 ;;
   --observe-lock) [ "$#" -eq 3 ] || exit 2; mode=observe; root=$2 generation=$3 ;;
+  --verify-position) [ "$#" -eq 6 ] || exit 2; mode=position; root=$2 generation=$3 child=$4 project=$5 worktree=$6 ;;
   --verify-lock) [ "$#" -eq 3 ] || exit 2; mode=verify; root=$2 generation=$3 ;;
   *)
     [ "$#" -eq 7 ] || { echo 'task-group launch expects ROOT GEN CHILD PROJECT HARNESS MODEL EFFORT' >&2; exit 2; }
@@ -62,7 +63,7 @@ if [ "$mode" = observe ]; then
   . "$SCRIPT_DIR/fm-task-group-custody.sh"
   fm_task_group_custody_observe "$root" "$generation" "$control_lock" "$meta_lock" "$meta"
   exit $?
-elif [ "$mode" = verify ] || [ "$mode" = capture ]; then
+elif [ "$mode" = verify ] || [ "$mode" = capture ] || [ "$mode" = position ]; then
   inherited_custody || { echo 'task-group internal operation has no parent lock custody' >&2; exit 1; }
 elif ! inherited_custody; then
   fm_lock_try_acquire "$control_lock" || { echo 'parent lifecycle operation in progress' >&2; exit 1; }
@@ -78,6 +79,22 @@ fi
 [ "$(fm_meta_get "$meta" backend)" = herdr ] && [ "$(fm_meta_get "$meta" kind)" = scout ] || exit 1
 [ "$(fm_meta_get "$meta" task_group_role)" = root ] || exit 1
 case "$mode" in
+  position)
+    # The existing spawn owns both locks and the exact Treehouse slot claim.
+    # A worker or unrelated callback cannot reposition another task's worktree.
+    . "$SCRIPT_DIR/fm-task-group-custody.sh"
+    [[ "$child" =~ ^tg-[a-f0-9]{20}$ ]] || exit 1
+    [ "$(fm_meta_get "$meta" project)" = "$project" ] || exit 1
+    spawn_lock="$FM_HOME/state/.spawn-$child.lock"
+    spawn_owner=$(cat "$spawn_lock/pid" 2>/dev/null) || exit 1
+    fm_pid_alive "$spawn_owner" || exit 1
+    fm_task_group_custody_ancestor "$PPID" "$spawn_owner" || exit 1
+    project_lock=$(fm_treehouse_project_lock_path "$project") || exit 1
+    [ "$(cat "$project_lock/pid" 2>/dev/null)" = "$spawn_owner" ] || exit 1
+    fm_treehouse_pool_slot "$project" "$worktree" || exit 1
+    fm_treehouse_slot_owner_state "$worktree" "$child"
+    [ "$FM_TREEHOUSE_SLOT_OWNER" = mine ] && [ "$FM_TREEHOUSE_SLOT_OWNER_HOME" = "$FM_HOME" ] || exit 1
+    exit 0 ;;
   verify) exit 0 ;;
   capture)
     . "$SCRIPT_DIR/fm-task-group-custody.sh"
@@ -87,7 +104,9 @@ case "$mode" in
     fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" internal-submit "$root" --generation "$generation" --request "$request"
     exit $? ;;
   gather)
-    fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" internal-gather "$root" --generation "$generation"
+    gather_args=()
+    [ -z "$request_id" ] || gather_args+=(--request-id "$request_id")
+    fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" internal-gather "$root" --generation "$generation" "${gather_args[@]}"
     exit $? ;;
 esac
 [ "$(fm_meta_get "$meta" project)" = "$project" ] || exit 1
@@ -104,7 +123,7 @@ session=$(fm_meta_get "$meta" herdr_session)
 . "$SCRIPT_DIR/fm-tasks-axi-lib.sh"
 . "$SCRIPT_DIR/fm-backlog-transition-lib.sh"
 if fm_backlog_transition_applies "$FM_HOME/config" "$FM_HOME/data" scout; then
-  "$SCRIPT_DIR/fm-tasks-axi.sh" add "$child" "Read-only Work component for $root" --kind scout
+  "$SCRIPT_DIR/fm-tasks-axi.sh" add "$child" "Orchflows component for $root" --kind scout
 else
   transition_status=$?
   [ "$transition_status" -eq 1 ] || { echo 'task-group backlog admission could not be resolved' >&2; exit "$transition_status"; }

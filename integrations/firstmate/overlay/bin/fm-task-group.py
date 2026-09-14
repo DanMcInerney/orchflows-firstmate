@@ -9,7 +9,7 @@ import sys
 sys.dont_write_bytecode = True
 
 from fm_task_group import TaskGroups
-from fm_task_group_launch import launch_check, launch_meta, launch_overlay
+from fm_task_group_launch import launch_check, launch_meta, launch_overlay, launch_position
 from fm_task_group_policy import claude_permissions
 from fm_task_group_store import GroupError, identifier, read_json, safe_path
 
@@ -39,24 +39,41 @@ def main(argv=None):
     attach.add_argument("--package", required=True)
     attach.add_argument("--project", required=True)
     attach.add_argument("--primitive", choices=("Work", "Review"), default="Work")
-    attach.add_argument("--review-policy", choices=("none", "explicit-audit"), default="none")
+    attach.add_argument("--review-policy", choices=("none", "explicit-audit", "workflow-review"), default="none")
+    attach.add_argument("--workflow", choices=("dynamic",))
+    enable = commands.add_parser("enable", help="Enable one read-only primitive and libraries for a project's future scouts")
+    enable.add_argument("--package", required=True)
+    enable.add_argument("--project", required=True)
+    enable.add_argument("--primitive", choices=("Work", "Review"), default="Work")
+    enable.add_argument("--review-policy", choices=("none", "explicit-audit", "workflow-review"), default="none")
+    enable.add_argument("--library", action="append", default=[])
+    enable.add_argument("--workflow", choices=("dynamic",))
+    disable = commands.add_parser("disable", help="Disable a default; keep existing task attachments")
+    disable.add_argument("--project", required=True)
     for verb in ("submit", "status", "gather", "complete", "internal-submit", "internal-gather"):
         child = commands.add_parser(verb)
         child.add_argument("task")
         child.add_argument("--generation", required=True)
         if verb in ("submit", "internal-submit"):
             child.add_argument("--request", required=True)
+        if verb in ("status", "gather", "internal-gather"):
+            child.add_argument("--request-id")
         if verb == "complete":
             child.add_argument("--report", required=True)
-    for verb in ("launch-check", "launch-overlay", "launch-meta", "waiting", "launch-claude-permissions"):
+    for verb in ("launch-check", "launch-overlay", "launch-meta", "waiting", "launch-claude-permissions", "auto-attach", "launch-context", "launch-position"):
         child = commands.add_parser(verb)
         child.add_argument("task")
-        if verb == "launch-claude-permissions":
+        if verb in ("launch-claude-permissions", "launch-context"):
             child.add_argument("--generation", required=True)
-        if verb == "launch-check":
+        if verb == "auto-attach":
+            child.add_argument("--workflow", choices=("default", "dynamic", "none"), default="default")
+        if verb == "launch-position":
+            child.add_argument("--worktree", required=True)
+        if verb in ("launch-check", "auto-attach"):
             for argument in ("kind", "backend", "harness", "project"):
                 child.add_argument("--" + argument, required=True)
-            child.add_argument("--worktree")
+            if verb == "launch-check":
+                child.add_argument("--worktree")
     args = parser.parse_args(argv)
     try:
         if args.command == "protocol":
@@ -64,7 +81,8 @@ def main(argv=None):
                               "experimental": True, "scope": "local-readonly-work",
                               "runtime_verified": False,
                               "primitives": ["Work", "Review"],
-                              "review_policies": ["explicit-audit"],
+                              "review_policies": ["explicit-audit", "workflow-review"],
+                              "workflows": ["dynamic"],
                               "commands": ["attach", "submit", "status", "gather", "complete",
                                            "waiting", "launch-check", "launch-meta", "launch-overlay"]}))
             return 0
@@ -80,13 +98,33 @@ def main(argv=None):
                 arguments = ["--" + args.command, args.task, args.generation]
                 if args.command == "submit":
                     arguments.append(str(safe_path(args.request)))
+                elif args.request_id is not None:
+                    arguments.append(identifier(args.request_id, "request ID"))
                 return bridge_call(owner, arguments)
-        if args.command == "attach":
-            result = owner.attach(args.task, args.package, args.project, args.primitive, args.review_policy)
+        if args.command in ("enable", "disable", "auto-attach", "launch-context", "launch-position"):
+            import fm_orchflows
+            if args.command == "enable":
+                result = fm_orchflows.enable(owner, args.package, args.project, args.primitive,
+                                            args.review_policy, args.library, workflow=args.workflow)
+            elif args.command == "disable":
+                result = fm_orchflows.disable(owner, args.project)
+            elif args.command == "auto-attach":
+                fm_orchflows.auto_attach(owner, args.task, args.kind, args.backend, args.harness, args.project, workflow=args.workflow)
+                return 0
+            elif args.command == "launch-position":
+                launch_position(owner, args.task, args.worktree)
+                return 0
+            else:
+                print(fm_orchflows.launch_context(owner, args.task, args.generation))
+                return 0
+        elif args.command == "attach":
+            if args.workflow == "dynamic" and args.review_policy == "none":
+                args.review_policy = "workflow-review"
+            result = owner.attach(args.task, args.package, args.project, args.primitive, args.review_policy, workflow=args.workflow)
         elif args.command == "internal-submit":
             result = owner.submit(args.task, args.generation, read_json(args.request))
         elif args.command in ("status", "internal-gather"):
-            result = owner.status(args.task, args.generation, gather=args.command == "internal-gather")
+            result = owner.status(args.task, args.generation, gather=args.command == "internal-gather", request_id=args.request_id)
         elif args.command == "complete":
             result = owner.complete(args.task, args.generation, args.report)
         elif args.command == "waiting":

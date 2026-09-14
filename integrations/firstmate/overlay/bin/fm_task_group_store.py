@@ -189,6 +189,61 @@ def clean_commit(project, expected=None):
     return head
 
 
+
+def clean_descendant(project, input_commit, expected=None):
+    """Accept committed writer output only from the exact assigned Git lineage."""
+    head = clean_commit(project, expected)
+    try:
+        git(project, "merge-base", "--is-ancestor", input_commit, head)
+    except GroupError as error:
+        raise GroupError("Git output must descend from its frozen input commit") from error
+    return head
+
+
+
+def retained_output_ref(home, root, epoch, child):
+    """Archive identity does not depend on a component branch or spawn generation."""
+    namespace = digest(canonical([str(safe_path(home, directory=True)),
+                                  identifier(root, "root ID"), epoch]))
+    return "refs/firstmate/orchflows/" + namespace + "/" + identifier(child, "component ID")
+
+
+def retained_output_target(project, ref):
+    # An owned archive is a direct immutable ref, never a caller-selected symref.
+    if git(project, "symbolic-ref", "-q", ref, accepted=(0, 1)):
+        raise GroupError("retained writer output ref must not be symbolic")
+    return git(project, "rev-parse", "--verify", "--quiet", ref, accepted=(0, 1))
+
+
+def verify_retained_output(project, ref, output_commit, input_commit):
+    if retained_output_target(project, ref) != output_commit:
+        raise GroupError("retained writer output ref is missing or changed")
+    if git(project, "cat-file", "-t", output_commit) != "commit":
+        raise GroupError("retained writer output is not a Git commit")
+    git(project, "merge-base", "--is-ancestor", input_commit, output_commit)
+
+
+def retain_output(project, ref, output_commit, input_commit):
+    """Publish once with Git CAS; later result pruning must also own this ref.
+
+    Component and root teardown never remove these refs. They retain the entire
+    output ancestry independently of branch deletion, worktree pooling and reflogs.
+    """
+    current = retained_output_target(project, ref)
+    if current and current != output_commit:
+        raise GroupError("retained writer output ref is immutable")
+    if not current:
+        try:
+            # --no-deref and the all-zero old value cannot overwrite another ref.
+            git(project, "update-ref", "--no-deref", ref, output_commit, "0" * len(output_commit))
+        except GroupError:
+            # A lost successful reply or same-identity publisher may be retried,
+            # but an existing different result is never overwritten.
+            if retained_output_target(project, ref) != output_commit:
+                raise
+    verify_retained_output(project, ref, output_commit, input_commit)
+    return ref
+
 def package_inventory(package):
     package = safe_path(package, directory=True)
     files, total = [], 0
