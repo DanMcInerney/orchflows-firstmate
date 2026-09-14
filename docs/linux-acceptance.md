@@ -202,3 +202,48 @@ each ready maker. Relaunch eligibility requires a gathered Work and another Work
 still running, recorded as pending_work. A later running Review cannot satisfy
 this acceptance window. Failed or manually assisted diagnostic runs remain separate
 from clean acceptance even when their final artifact is correct.
+
+## Ordinary local-only delivery
+
+Add --local-only to the dynamic case to select an ordinary ship root. The
+fixture uses the existing local-only brief and fm-spawn --mode local-only,
+with yolo on only in its disposable private home. It checks the exact ready
+signal, immutable delivery binding, clean fm/<task> branch, component
+return-to-parent disposition, exact Review and final test evidence.
+
+Only after those checks pass does the driver invoke FirstMate's existing
+fm-merge-local.sh entrypoint to land the fixture. Ordinary teardown follows.
+The driver then verifies that local main still equals the final delivered
+commit, executes the delivered behavior/tests, and verifies retained writer
+refs. A report or scratch writer commit cannot pass as landed code. Failed
+landing or cleanup keeps its failure and retained namespace; it does not use
+forced teardown.
+
+~~~sh
+python3 -B tools/linux-acceptance.py run \
+  --candidate "$FIRSTMATE_CANDIDATE" --package packages/orchflows-firstmate \
+  --bin-dir "$LINUX_RUNTIME_BIN" --dynamic --local-only --custom-workflow --restart \
+  --component-delay 180 --minimum-waiting-span 0 --timeout 1200 \
+  --claude-access-token-file "$SELECTED_CLAUDE_CACHE"
+~~~
+
+The local-only driver also supports doctor and non-live fixture preparation.
+Run all driver checks with
+python3 -B -m unittest discover -s tools -p 'test_*.py' -v.
+The local delivery assertions supplement the earlier composition and native
+read observers; they do not replace them. See
+[local delivery verification](local-delivery-verification.md) for executed
+results and exact source/candidate identities.
+
+The acceptance driver defaults to the user-selected Claude Sonnet 5 at high
+effort. Pass --model claude-sonnet-5 --effort high explicitly when recording a
+run. It supplies these controls to FirstMate's ordinary root spawn; FirstMate
+inherits them for components and preserves them across relaunch. The dynamic
+receipt checks all four task metadata profiles. Actual native model observations
+remain separate evidence. This does not change an active user's Claude settings.
+
+The literal client observer also accepts a trailing 2>&1 output redirect,
+including before a formatter. It does not treat file redirection, shell lists or
+substitution as literal invocation evidence. When correcting an observer after
+a run, preserve the original receipt and write a separate reassessment; an
+administrative delivery/cleanup retry is distinct from an uninterrupted pass.

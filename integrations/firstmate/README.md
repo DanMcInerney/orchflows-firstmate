@@ -1,5 +1,13 @@
 # Experimental FirstMate task-group integration
 
+The dev.7 extension admits an explicitly selected ordinary ship/local-only root
+through the existing dynamic primitives and delivery owners. It binds the root's
+kind, mode and branch across relaunch; components still return to their parent.
+Existing local merge and teardown guards enforce the retained delivery.
+See [local delivery](../../docs/local-delivery.md) and
+[verification](../../docs/local-delivery-verification.md) for exact scope and evidence.
+Earlier dev.6 and legacy boundaries below remain historical context.
+
 The dev.6 increment adds [bounded dynamic composition](../../docs/dynamic-composition.md)
 through the existing request/result, launch, Treehouse and lifecycle owners.
 Multiple Work results can be joined and reviewed once in a Linux scout; writer

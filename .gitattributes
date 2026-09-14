@@ -4,7 +4,7 @@
 .gitattributes text eol=lf
 # Preserve the integration distribution's recorded byte identities.
 integrations/** -text whitespace=cr-at-eol
-# Unified patches require a space on blank context lines.
-integrations/**/*.patch whitespace=-blank-at-eol
+# Unified patches require blank context lines, including at the end of a patch.
+integrations/**/*.patch whitespace=-blank-at-eol,-blank-at-eof
 # Preserve the retained package bytes and their recorded cross-platform fingerprints.
 packages/orchflows-firstmate/** -text whitespace=cr-at-eol

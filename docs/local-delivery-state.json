@@ -1,0 +1,794 @@
+{
+  "schema": 1,
+  "status": "final source checks passed; actual Sonnet 5/high composition, relaunch, local landing and cleanup verified with observer correction and resumed cleanup",
+  "base_commit": "d465c1a4d90e7144137a08073a79e5fd9c2cf451",
+  "upstream_orchflows": "ca72258493480ddcfe73b3f01d0475ad532e4726",
+  "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "package_version": "0.1.0-dev.7",
+  "reviewed_candidate": {
+    "files": 566,
+    "sha256": "0c3045ffd6126b9e04899112ae8583023c9ec249b91e6c89ce328d9980e3ab12",
+    "symlinks": 1
+  },
+  "reviewed_package": {
+    "files": 1091,
+    "sha256": "c7d1a760e72636d1425c564f9252ce0a54625f29de3618ca795b0d975a7851ec",
+    "symlinks": 0
+  },
+  "reviewed_checks": [
+    {
+      "name": "reference-clone",
+      "exit": 0,
+      "seconds": 0.649
+    },
+    {
+      "name": "reference-checkout",
+      "exit": 0,
+      "seconds": 0.084
+    },
+    {
+      "name": "prepare",
+      "exit": 0,
+      "seconds": 0.228
+    },
+    {
+      "name": "package",
+      "exit": 0,
+      "seconds": 21.373,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 128,
+        "run": 128,
+        "skipped": [],
+        "unexpected_skips": []
+      }
+    },
+    {
+      "name": "integration",
+      "exit": 0,
+      "seconds": 83.342,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 149,
+        "run": 159,
+        "skipped": [
+          {
+            "reason": "native Windows permission normalization",
+            "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+          }
+        ],
+        "unexpected_skips": []
+      }
+    }
+  ],
+  "reviewed_raw_checks": ".scratch/local-delivery/check-bsxdyx_b",
+  "driver_tests_passed": 23,
+  "independent_review": {
+    "count": 1,
+    "status": "complete; single repair/check pass includes cleanup finding and subsequent actual spawn-order correction",
+    "second_review": false,
+    "repair_passes": 1,
+    "findings": [
+      {
+        "priority": "P2",
+        "issue": "root cleanup accepted a switched landed branch while the immutable delivery branch remained unlanded",
+        "repair": "teardown validates promised branch ancestry and repository; retained branch plus existing exact-generation backlog-close evidence and Treehouse claims preserve retries"
+      },
+      {
+        "priority": "known instruction correction",
+        "issue": "owned package AGENTS still prohibited dynamic execution",
+        "repair": "shared package gate now names supported dynamic scout and explicitly selected local-only ship profiles"
+      }
+    ],
+    "reviewer_checks": {
+      "delivery_owner": 7,
+      "dynamic_client": 17,
+      "acceptance_driver": 23
+    },
+    "probe": ".scratch/local-delivery/review-branch-probe.json",
+    "repair_checks": {
+      "local_delivery": 11,
+      "existing_lifecycle": 13
+    },
+    "runtime_followup": {
+      "trial": "a-rn6116ra",
+      "issue": "strict branch check preceded the ordinary ship brief worker-side branch creation",
+      "repair": "allow only clean isolated detached input with no existing promised branch during fresh launch; root guidance requires ordinary branch creation before client calls; dispatch and relaunch remain strict",
+      "regression_tests_passed": 12,
+      "second_review": false
+    },
+    "runtime_observer_followup": {
+      "issue": "trailing stderr-to-stdout duplication hid first gather from observer",
+      "repair": "normalize only trailing 2>&1; preserve rejection of other redirections, shell lists and substitutions; keep durable first-ack check",
+      "checks_passed": 23,
+      "second_review": false
+    }
+  },
+  "upstream_paths_retained": 1081,
+  "preparation_failures": [
+    {
+      "run": "check-1txm41ik",
+      "reason": "snapshot captured a changed overlay before refreshed manifest; preparation refused; no tests ran"
+    }
+  ],
+  "live_acceptance": [
+    {
+      "trial": "a-oc4jnkcf",
+      "status": "failed",
+      "scope": "non-live driver brief fixture against exact dev6 candidate",
+      "raw_evidence": ".scratch/local-delivery/a-oc4jnkcf",
+      "receipt_sha256": "cd22dd9593034205346ba63529a2d9d7a766e00cca7b136c99223deb576139e9",
+      "cleanup_passed": true,
+      "authentication": null,
+      "candidate": {
+        "files": 565,
+        "sha256": "baa0b518142f215d0b7e3c6a7e7fa7dcffd31512771db4d4f431e1c0647b28e3",
+        "symlinks": 1
+      },
+      "package": {
+        "files": 1091,
+        "sha256": "50462e272be1537f741e59dab20d45aa98b6cab16c1caf50688aaff5ffcc52aa",
+        "symlinks": 0
+      },
+      "driver": {
+        "files": 8,
+        "sha256": "de42202ceb39308d4246ea0c17b8ba5ca4cb20c095889fb20c450dc45b686407",
+        "symlinks": 0
+      },
+      "failure": "driver passed --yolo to brief owner; corrected to supply it only at spawn"
+    },
+    {
+      "trial": "a-o_ju_8ue",
+      "status": "fixture-prepared-no-live-run",
+      "scope": "non-live driver brief fixture against exact dev6 candidate",
+      "raw_evidence": ".scratch/local-delivery/a-o_ju_8ue",
+      "receipt_sha256": "b0a86a923534f59825d4d44e63f831e74b082990bdd268085487cd46f43c5995",
+      "cleanup_passed": true,
+      "authentication": null,
+      "candidate": {
+        "files": 565,
+        "sha256": "baa0b518142f215d0b7e3c6a7e7fa7dcffd31512771db4d4f431e1c0647b28e3",
+        "symlinks": 1
+      },
+      "package": {
+        "files": 1091,
+        "sha256": "50462e272be1537f741e59dab20d45aa98b6cab16c1caf50688aaff5ffcc52aa",
+        "symlinks": 0
+      },
+      "driver": {
+        "files": 8,
+        "sha256": "eae40d4427b3c05761c8dbad58ca6c23931a23e896449bf132ab4996eb5bb12c",
+        "symlinks": 0
+      }
+    },
+    {
+      "trial": "a-o6jcf27_",
+      "status": "failed",
+      "scope": "repaired dev7 preflight; no workers launched",
+      "raw_evidence": ".scratch/local-delivery/a-o6jcf27_",
+      "receipt_sha256": "3567d4d8c74759ddbbcaa6d0beedc6e6b092105ed3cfd2ea6c31f04795c59c9b",
+      "cleanup_passed": true,
+      "authentication": null,
+      "failure": "Access-token lifetime is shorter than the requested timeout plus 180 seconds",
+      "candidate": {
+        "files": 566,
+        "sha256": "bf7ab56dc46b2aa8a6da438ce00074b400ee5debc97b7c4e5626f60d8251740d",
+        "symlinks": 1
+      },
+      "package": {
+        "files": 1091,
+        "sha256": "c7bbccf974a9aa068fab7af4c3f8986577294fee8aafd8257005af36d01148f2",
+        "symlinks": 0
+      },
+      "driver": {
+        "files": 8,
+        "sha256": "f2bed1783012197868b2d7a902c5fb9a903c8320df518b170b4f787109597fb5",
+        "symlinks": 0
+      }
+    },
+    {
+      "trial": "a-bk2n349u",
+      "status": "failed",
+      "scope": "repaired dev7 preflight; no workers launched",
+      "raw_evidence": ".scratch/local-delivery/a-bk2n349u",
+      "receipt_sha256": "b19a54c42adad57e3b16173f7a64969bd4384e05a133ea33ebc18270a39b4946",
+      "cleanup_passed": true,
+      "authentication": null,
+      "failure": "Access-token lifetime is shorter than the requested timeout plus 180 seconds",
+      "candidate": {
+        "files": 566,
+        "sha256": "bf7ab56dc46b2aa8a6da438ce00074b400ee5debc97b7c4e5626f60d8251740d",
+        "symlinks": 1
+      },
+      "package": {
+        "files": 1091,
+        "sha256": "c7bbccf974a9aa068fab7af4c3f8986577294fee8aafd8257005af36d01148f2",
+        "symlinks": 0
+      },
+      "driver": {
+        "files": 8,
+        "sha256": "f2bed1783012197868b2d7a902c5fb9a903c8320df518b170b4f787109597fb5",
+        "symlinks": 0
+      }
+    },
+    {
+      "trial": "a-rn6116ra",
+      "status": "failed",
+      "scope": "actual native ordinary spawn attempt; rejected before worker creation",
+      "raw_evidence": ".scratch/local-delivery/a-rn6116ra",
+      "receipt_sha256": "ff4f2638c4abba0f53d6f2e461f292511ec54ec7e4c17121ae4bd723cdc9390f",
+      "cleanup_passed": false,
+      "cleanup": [
+        {
+          "exit": 0,
+          "operation": "lab-teardown",
+          "session": "fm-lab-work-1265831-1644"
+        },
+        {
+          "exit": 0,
+          "operation": "private-sentinel-stop"
+        }
+      ],
+      "scoped_processes_remaining": [],
+      "authentication": {
+        "credential_file_copied": false,
+        "method": "explicit cache access-token-only read",
+        "refresh_token_copied": false,
+        "remaining_seconds": 642
+      },
+      "failure": "ordinary spawn rejected immutable root branch identity before worker launch",
+      "acceptance": {
+        "checks": {
+          "all_results_gathered": false,
+          "committed_on_expected_branch": false,
+          "components_return_to_parent": false,
+          "context_only_calls": false,
+          "exact_ready_branch_signal": false,
+          "full_reads_before_each_gather": false,
+          "immutable_local_delivery_attachment": false,
+          "input_checkout_unchanged": true,
+          "normal_spawn_attached": true,
+          "ordinary_root_done": false,
+          "ordinary_ship_local_only_metadata": false,
+          "ready_branch_clean_fast_forward": false,
+          "retained_composed_custom_skill": false,
+          "retained_integrity": false,
+          "root_spawn_succeeded": false,
+          "same_child_replays": false,
+          "two_work_one_review": false
+        },
+        "passed": false
+      },
+      "note": "Cleanup process operations passed and scoped inventory was empty; delivery/ref post-cleanup checks correctly failed because nothing was delivered.",
+      "candidate": {
+        "files": 566,
+        "sha256": "bf7ab56dc46b2aa8a6da438ce00074b400ee5debc97b7c4e5626f60d8251740d",
+        "symlinks": 1
+      },
+      "package": {
+        "files": 1091,
+        "sha256": "c7bbccf974a9aa068fab7af4c3f8986577294fee8aafd8257005af36d01148f2",
+        "symlinks": 0
+      },
+      "driver": {
+        "files": 8,
+        "sha256": "f2bed1783012197868b2d7a902c5fb9a903c8320df518b170b4f787109597fb5",
+        "symlinks": 0
+      }
+    },
+    {
+      "trial": "a-lf4thn46",
+      "status": "failed",
+      "scope": "actual Sonnet 5/high custom dynamic ship with running-Work root relaunch; original driver stopped before landing on observer omission",
+      "raw_evidence": ".scratch/local-delivery/a-lf4thn46",
+      "receipt_sha256": "ade8db08c66fbed9e4018b91824d48dc48b977ec19b7bfc48f03ff3ae730d58b",
+      "cleanup_passed": false,
+      "scoped_processes_remaining": [],
+      "authentication": {
+        "credential_file_copied": false,
+        "method": "explicit cache access-token-only read",
+        "refresh_token_copied": false,
+        "remaining_seconds": 28597
+      },
+      "worker_profile": {
+        "effort": "high",
+        "model": "claude-sonnet-5"
+      },
+      "acceptance": {
+        "checks": {
+          "accepted_work_survived_relaunch": true,
+          "all_results_gathered": true,
+          "clean_final_candidate": true,
+          "committed_on_expected_branch": true,
+          "components_return_to_parent": true,
+          "context_only_calls": false,
+          "exact_ready_branch_signal": true,
+          "full_reads_before_each_gather": false,
+          "immutable_local_delivery_attachment": true,
+          "input_checkout_unchanged": true,
+          "joined_behavior_and_tests": true,
+          "local_delivery_survived_relaunch": true,
+          "maker_running_at_relaunch": true,
+          "normal_spawn_attached": true,
+          "ordinary_root_done": true,
+          "ordinary_ship_local_only_metadata": true,
+          "ready_branch_clean_fast_forward": true,
+          "requested_worker_profile": true,
+          "retained_composed_custom_skill": true,
+          "retained_integrity": true,
+          "reviewed_joined_candidate": true,
+          "root_final_check_receipt": true,
+          "root_spawn_succeeded": true,
+          "same_child_replays": true,
+          "two_work_one_review": true
+        },
+        "passed": false
+      },
+      "elapsed_seconds": 752.92,
+      "failure": "observer treated trailing 2>&1 as request-id argv; full reads preceded actual first gather/owner acknowledgement; landing skipped and guard preserved root",
+      "clean_uninterrupted_pass": false,
+      "candidate": {
+        "files": 566,
+        "sha256": "8a1f2545dd3fe02d1cac8a628191a23af3fdc187b47c069ed369655e999ce014",
+        "symlinks": 1
+      },
+      "package": {
+        "files": 1091,
+        "sha256": "c7bbccf974a9aa068fab7af4c3f8986577294fee8aafd8257005af36d01148f2",
+        "symlinks": 0
+      },
+      "driver": {
+        "files": 8,
+        "sha256": "f48435dea0e570ec12ba001d9bb393d7360e6eb00ec47eedf19d47ec88f7e036",
+        "symlinks": 0
+      }
+    }
+  ],
+  "native_runtime": {
+    "claude": {
+      "version": "2.1.269 (Claude Code)",
+      "exit": 0,
+      "sha256": "25e44883f54419569a3d739f38cbbdaebe83b09895da0f343e1b003710a4775b"
+    },
+    "herdr": {
+      "version": "herdr 0.7.4",
+      "exit": 0,
+      "sha256": "bc0fc02d4ba500f9cac2353a43e67fe036785ecca6eb55378e050fac3c103059"
+    },
+    "treehouse": {
+      "version": "v2.0.1",
+      "exit": 0,
+      "sha256": "07a54f318c4b17f200cf34a679ad63c66bc05166461de9c33fa83ed39301338d"
+    }
+  },
+  "reviewed_driver": {
+    "tests_passed": 23,
+    "scope": "driver unit checks on the reviewed candidate; actual runtime evidence recorded separately",
+    "files": 8,
+    "symlinks": 0,
+    "sha256": "f2bed1783012197868b2d7a902c5fb9a903c8320df518b170b4f787109597fb5",
+    "entrypoint_sha256": "83b9c4f4218409d126482ae2b8d36828deef6b902dbd25001e15735bacfe9303"
+  },
+  "source_coverage": {
+    "pin": "ca72258493480ddcfe73b3f01d0475ad532e4726",
+    "tracked_upstream_paths": 1081,
+    "missing_paths": [],
+    "reference_files_modified": false
+  },
+  "distribution_file_entries": 19,
+  "distribution_patches": 6,
+  "driver_preflight_argument_refusal": "A later --timeout 420 call omitted the shorter component-delay and was refused by argparse before workspace creation; retried with --component-delay 0.",
+  "final_driver": {
+    "files": 8,
+    "symlinks": 0,
+    "sha256": "d69aa813abdd4fa0d2bce1fad0cc2c6fe213762d768c543cb8420c7d739279ed",
+    "tests_passed": 23,
+    "entrypoint_sha256": "47dd222b345a0cf34b431ddbb146016c9098a0c27d9997177c17e74158f13bb0"
+  },
+  "cleanup_repaired_candidate": {
+    "files": 566,
+    "sha256": "bf7ab56dc46b2aa8a6da438ce00074b400ee5debc97b7c4e5626f60d8251740d",
+    "symlinks": 1
+  },
+  "cleanup_repaired_package": {
+    "files": 1091,
+    "sha256": "c7bbccf974a9aa068fab7af4c3f8986577294fee8aafd8257005af36d01148f2",
+    "symlinks": 0
+  },
+  "cleanup_repaired_integration_inputs": {
+    "files": 40,
+    "sha256": "ed00f9f206d2f328f41d5f57fcb07ec9be74ad630ef1aa1abf040999e0b5e582",
+    "symlinks": 0
+  },
+  "cleanup_repaired_checks": [
+    {
+      "exit": 0,
+      "name": "reference-clone",
+      "seconds": 0.703
+    },
+    {
+      "exit": 0,
+      "name": "reference-checkout",
+      "seconds": 0.075
+    },
+    {
+      "exit": 0,
+      "name": "prepare",
+      "seconds": 0.236
+    },
+    {
+      "exit": 0,
+      "name": "package",
+      "seconds": 18.892,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 128,
+        "run": 128,
+        "skipped": [],
+        "unexpected_skips": []
+      }
+    },
+    {
+      "exit": 0,
+      "name": "integration",
+      "seconds": 90.54,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 153,
+        "run": 163,
+        "skipped": [
+          {
+            "reason": "native Windows permission normalization",
+            "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+          }
+        ],
+        "unexpected_skips": []
+      }
+    }
+  ],
+  "cleanup_repaired_raw_checks": ".scratch/local-delivery/check-cvpflx14",
+  "cleanup_repaired_check_receipt_sha256": "3b5ef1f62c407260fd7a449a36f9d75693dfd9371d06c25d4a2dd5c49544738b",
+  "cleanup_repaired_total_checks_passed": 304,
+  "distribution_overlays": 13,
+  "final_candidate": {
+    "files": 566,
+    "sha256": "8a1f2545dd3fe02d1cac8a628191a23af3fdc187b47c069ed369655e999ce014",
+    "symlinks": 1
+  },
+  "final_package": {
+    "files": 1091,
+    "sha256": "c7bbccf974a9aa068fab7af4c3f8986577294fee8aafd8257005af36d01148f2",
+    "symlinks": 0
+  },
+  "final_integration_inputs": {
+    "files": 40,
+    "sha256": "0879282e0a0e44df4a9d22995116503a638ffb4f0af9f546a2e118ba0b39e5b0",
+    "symlinks": 0
+  },
+  "final_checks": [
+    {
+      "exit": 0,
+      "name": "reference-clone",
+      "seconds": 0.494
+    },
+    {
+      "exit": 0,
+      "name": "reference-checkout",
+      "seconds": 0.073
+    },
+    {
+      "exit": 0,
+      "name": "prepare",
+      "seconds": 0.254
+    },
+    {
+      "exit": 0,
+      "name": "package",
+      "seconds": 19.641,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 128,
+        "run": 128,
+        "skipped": [],
+        "unexpected_skips": []
+      }
+    },
+    {
+      "exit": 0,
+      "name": "integration",
+      "seconds": 94.351,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 154,
+        "run": 164,
+        "skipped": [
+          {
+            "reason": "native Windows permission normalization",
+            "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+          }
+        ],
+        "unexpected_skips": []
+      }
+    }
+  ],
+  "final_raw_checks": ".scratch/local-delivery/check-vxnq9bgq",
+  "final_check_receipt_sha256": "2825178bb50bdbd495b3882f806c04008069c4e34d529ff4358422b54cd9dbd7",
+  "final_total_checks_passed": 305,
+  "runtime_gate": {
+    "status": "completed with documented observer correction and administrative resume",
+    "trial": "a-lf4thn46",
+    "corrected_candidate_live_run": true,
+    "local_delivery_passed": true,
+    "clean_uninterrupted_driver_pass": false,
+    "next_feature": "representative broader custom/meta composition through the same FirstMate owners"
+  },
+  "linux_environment": {
+    "filesystem": "ext4",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "driver_before_model_selection": {
+    "files": 8,
+    "symlinks": 0,
+    "sha256": "f2bed1783012197868b2d7a902c5fb9a903c8320df518b170b4f787109597fb5",
+    "tests_passed": 23,
+    "entrypoint_sha256": "83b9c4f4218409d126482ae2b8d36828deef6b902dbd25001e15735bacfe9303"
+  },
+  "worker_profile": {
+    "model": "claude-sonnet-5",
+    "effort": "high",
+    "source": "explicit user instruction; FirstMate root flags inherited by components"
+  },
+  "runtime_completion": {
+    "status": "passed through observer-corrected assessment and resumed ordinary delivery/cleanup",
+    "clean_uninterrupted_driver_pass": false,
+    "additional_model_runs": 0,
+    "observer_correction": {
+      "changed_product_code": false,
+      "reason": "observer treated trailing 2>&1 as request-id argv; full reads preceded actual first gather/owner acknowledgement; landing skipped and guard preserved root",
+      "assessment_sha256": "2f7016151372b171705fb1e1663d006afb16638d199402baef47326753320164",
+      "raw_evidence": ".scratch/local-delivery/a-lf4thn46-resumed/observer-corrected-assessment.json",
+      "acceptance": {
+        "checks": {
+          "accepted_work_survived_relaunch": true,
+          "all_results_gathered": true,
+          "clean_final_candidate": true,
+          "committed_on_expected_branch": true,
+          "components_return_to_parent": true,
+          "context_only_calls": true,
+          "exact_ready_branch_signal": true,
+          "full_reads_before_each_gather": true,
+          "immutable_local_delivery_attachment": true,
+          "input_checkout_unchanged": true,
+          "joined_behavior_and_tests": true,
+          "local_delivery_survived_relaunch": true,
+          "maker_running_at_relaunch": true,
+          "normal_spawn_attached": true,
+          "ordinary_root_done": true,
+          "ordinary_ship_local_only_metadata": true,
+          "ready_branch_clean_fast_forward": true,
+          "requested_worker_profile": true,
+          "retained_composed_custom_skill": true,
+          "retained_integrity": true,
+          "reviewed_joined_candidate": true,
+          "root_final_check_receipt": true,
+          "root_spawn_succeeded": true,
+          "same_child_replays": true,
+          "two_work_one_review": true
+        },
+        "passed": true
+      }
+    },
+    "landing": {
+      "raw_evidence": ".scratch/local-delivery/a-lf4thn46-resumed",
+      "receipt_sha256": "e021f6259baec02fed0849c8225573d062445a59a12939ee77898dc8928949eb",
+      "result": {
+        "branch": "fm/accept-lf4thn46",
+        "default_after": "46be7d716157d756d2f337eac178801e120dfb5a",
+        "default_before": "1bccd85d5a73a392cd6ae4e67935d498f9108c03",
+        "landed": true,
+        "merge_exit": 0,
+        "ready_commit": "46be7d716157d756d2f337eac178801e120dfb5a",
+        "root_status": "done: ready in branch fm/accept-lf4thn46"
+      },
+      "cleanup_initially_refused": "prior lab teardown removed reliable endpoint inspection; landed code remained protected"
+    },
+    "cleanup_retry": {
+      "raw_evidence": ".scratch/local-delivery/a-lf4thn46-cleanup",
+      "receipt_sha256": "6da84df006c643166b315ab37bccf81ed4a38c60c724805bbf170544dacf66ea",
+      "root_teardown_exit": 0,
+      "retired_endpoint_confirmed_absent": true,
+      "cleanup_passed": true,
+      "cleanup": [
+        {
+          "exit": 0,
+          "operation": "lab-teardown",
+          "session": "fm-lab-work-1293893-27000"
+        },
+        {
+          "exit": 0,
+          "operation": "private-sentinel-stop"
+        }
+      ],
+      "scoped_processes_remaining": [],
+      "delivered_code": {
+        "checks": {
+          "landed_behavior_and_tests": true,
+          "landed_checkout_clean": true,
+          "landed_exact_final_commit": true,
+          "root_metadata_removed": true
+        },
+        "passed": true
+      },
+      "writer_refs": {
+        "label-maker-v1": true,
+        "stock-maker-v1": true
+      }
+    },
+    "original_receipt_unchanged": true,
+    "native_worker_profile": {
+      "requested": {
+        "effort": "high",
+        "model": "claude-sonnet-5"
+      },
+      "response_models": {
+        "claude-sonnet-5": 218
+      },
+      "native_profiles_sha256": "5080223fb2c5074076c223209327f88c773cf9f833c0a98090d54c826dd55e04",
+      "custom_reread_sha256": "8430a7768ff09ce8f387806107ab5874c7ca9a3dd00f8c943088302c51eedd05",
+      "custom_skill_read_after_relaunch": true
+    },
+    "final_acceptance": {
+      "checks": {
+        "accepted_work_survived_relaunch": true,
+        "all_results_gathered": true,
+        "clean_final_candidate": true,
+        "committed_on_expected_branch": true,
+        "components_return_to_parent": true,
+        "context_only_calls": true,
+        "exact_ready_branch_signal": true,
+        "full_reads_before_each_gather": true,
+        "immutable_local_delivery_attachment": true,
+        "input_checkout_unchanged": true,
+        "joined_behavior_and_tests": true,
+        "local_delivery_survived_relaunch": true,
+        "maker_running_at_relaunch": true,
+        "normal_spawn_attached": true,
+        "ordinary_local_landing": true,
+        "ordinary_root_done": true,
+        "ordinary_ship_local_only_metadata": true,
+        "ready_branch_clean_fast_forward": true,
+        "requested_worker_profile": true,
+        "retained_composed_custom_skill": true,
+        "retained_integrity": true,
+        "reviewed_joined_candidate": true,
+        "root_final_check_receipt": true,
+        "root_spawn_succeeded": true,
+        "same_child_replays": true,
+        "two_work_one_review": true
+      },
+      "passed": true
+    }
+  },
+  "driver_before_stderr_correction": {
+    "files": 8,
+    "symlinks": 0,
+    "sha256": "f48435dea0e570ec12ba001d9bb393d7360e6eb00ec47eedf19d47ec88f7e036",
+    "tests_passed": 23,
+    "entrypoint_sha256": "47dd222b345a0cf34b431ddbb146016c9098a0c27d9997177c17e74158f13bb0"
+  }
+}

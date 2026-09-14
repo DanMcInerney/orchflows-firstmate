@@ -1,12 +1,14 @@
 {
   "schema": 1,
   "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
-  "status": "experimental bounded Linux dynamic Work/Review composition and retained custom workflows; runtime evidence separate",
+  "status": "experimental bounded Linux dynamic Work/Review composition with explicit ordinary ship/local-only root delivery; runtime evidence separate",
   "patches": [
     "patches/0001-readonly-task-groups.patch",
     "patches/0002-linux-foreground-claude.patch",
     "patches/0003-normal-workflow-launch.patch",
-    "patches/0004-dynamic-composition.patch"
+    "patches/0004-dynamic-composition.patch",
+    "patches/0005-local-only-root-delivery.patch",
+    "patches/0006-local-delivery-cleanup.patch"
   ],
   "files": [
     {
@@ -19,35 +21,39 @@
     },
     {
       "path": "overlay/bin/fm-task-group-spawn.sh",
-      "sha256": "a64f7c1def934901a07f7b7edd3c0d935c725e5a88ef094ddab0e8f497a6b5d7"
+      "sha256": "5fe737206450510d735caa70c370e8934254bc56f04fa7bd5fc9a49c9905f771"
     },
     {
       "path": "overlay/bin/fm-task-group-state.sh",
-      "sha256": "edbdf1ec7eae55e37c65f561b71e71186fccab7a1ef8832557fdafab5ac2ed6e"
+      "sha256": "bf253e637796ca6cb8ca5fd21596745307842cb03f5e49db3f7206b41b105ff0"
     },
     {
       "path": "overlay/bin/fm-task-group.py",
-      "sha256": "9ff64528c6bf409b3f8bb5295f79b6f692b1817cbada7c120be209a20fad5c29"
+      "sha256": "b3ce3768fe37bdc93a65356b3a4780f1eea920fa3541a28dfa71d4aa55a90319"
     },
     {
       "path": "overlay/bin/fm_orchflows.py",
-      "sha256": "2c2f80d76015bcc94812bfd78a7e6e53a341286fd5cdc1ef47fbc1138b02f283"
+      "sha256": "2bb30e3f9cb6b53230c06cd1e1ad97144debc73fe727ecaaacb45473cb1ee5a2"
     },
     {
       "path": "overlay/bin/fm_task_group.py",
-      "sha256": "6174508af679075f36e6863fe6ad40021a4c9aa70ce2a80960c7136123b92a9e"
+      "sha256": "d2e1b2b99292e9ff1b728a2b22717722a2798f117f002fb76843fe2ceaca0e93"
+    },
+    {
+      "path": "overlay/bin/fm_task_group_delivery.py",
+      "sha256": "7771b1ca0cf8601133bc500c39c116b1cfece1cc567ecea3184aeec08ede8e45"
     },
     {
       "path": "overlay/bin/fm_task_group_launch.py",
-      "sha256": "21246786f806a049b158a50b7a33ee70c26043c5e4fe4d53defe487aa4393e8f"
+      "sha256": "a69b94849104ff5f7a4216ef1b8d64d2de18c50700418b6868f68755db3f1762"
     },
     {
       "path": "overlay/bin/fm_task_group_policy.py",
-      "sha256": "5c422767d3c6c00a80eb24571db5512244aa87983052718afd2c36cc1c05b007"
+      "sha256": "6f1a367ed5462c473a45efcfb7a9a9cfcade9e6ae7ecb363d5fec1a09cbf4bdc"
     },
     {
       "path": "overlay/bin/fm_task_group_primitives.py",
-      "sha256": "f6c4180bf669b29222ad6c37d361c587750f3409c774db64e366c011c738e3f4"
+      "sha256": "1f5a42e309a4e0e430903e1784dd4211fcf8e5437c3a3179b5e5a46f7bdc1012"
     },
     {
       "path": "overlay/bin/fm_task_group_runtime.py",
@@ -72,6 +78,14 @@
     {
       "path": "patches/0004-dynamic-composition.patch",
       "sha256": "0369b56440c6f01dbf23e6d176774616d59c43fb8895ffe048f0d496cfa603f0"
+    },
+    {
+      "path": "patches/0005-local-only-root-delivery.patch",
+      "sha256": "f7350c9eff8d13fce1fd114779f97af38cb9c57af5a12c8aa61250eaa8ce61af"
+    },
+    {
+      "path": "patches/0006-local-delivery-cleanup.patch",
+      "sha256": "e071c0c686d7c14ce0d60de64ae1226288338758dd23c5c06eba042f4cacb846"
     }
   ]
 }

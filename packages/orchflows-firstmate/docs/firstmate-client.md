@@ -1,8 +1,8 @@
 # Experimental FirstMate Work and Review client
 
-This client implements the package side of protocol `firstmate-task-group`, version `1`, scopes `local-readonly-work`, `local-readonly-review` and `local-dynamic`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
+This client implements the package side of protocol `firstmate-task-group`, version `1`, scopes `local-readonly-work`, `local-readonly-review`, `local-dynamic` and `local-dynamic-ship-local-only`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
 
-The client supports legacy one-component read-only Work/Review attachments and an explicitly admitted bounded dynamic workflow from a normal Linux root scout. FirstMate retains the complete fork, selected custom libraries and accepted input commits. The component inherits the root's Claude/Codex harness, model and effort. The project must satisfy FirstMate's clean local Git/no-origin admission. Nesting, component continuation, model overrides, remote homes, ship/no-mistakes delivery, Build and SelfImprove remain gated. Optional examples remain migration source rather than certified workflows.
+The client supports legacy one-component read-only Work/Review attachments and an explicitly admitted bounded dynamic workflow from a normal Linux root scout or explicitly selected ordinary ship/local-only root. FirstMate retains the complete fork, selected custom libraries and accepted input commits. The component inherits the root's Claude/Codex harness, model and effort. The project must satisfy FirstMate's clean local Git/no-origin admission. Nesting, component continuation, model overrides, remote homes, direct-PR and no-mistakes delivery, promotion, Build and SelfImprove remain gated. Optional examples remain migration source rather than certified workflows.
 
 ## Primitive and review authority
 
@@ -25,6 +25,31 @@ compose Work followed by Review in the same attachment, freeze a dirty writer
 candidate, or authorize repairs. The reviewer applies the retained package's
 Review guidance and returns findings without changing project files. Only the
 root writes and delivers its ordinary scout audit report.
+
+## Explicit local-only root delivery
+
+An ordinary ship selects dynamic explicitly through FirstMate's existing spawn
+owner with `--mode local-only --orchflows-workflow dynamic`. New default ship
+tasks remain unchanged. Package capability metadata and controller protocol must
+both advertise `root_deliveries: ["ship-local-only"]`. A retained dev.6 package
+cannot acquire ship behavior by enabling or attaching it again.
+
+The attachment and exact-generation launch context retain
+`root_delivery: {"kind":"ship","mode":"local-only","branch":"fm/<id>"}`.
+Root metadata records `task_group_delivery=ship-local-only`; current root kind,
+mode and actual symbolic branch must match the attachment across status, replay,
+new requests, gathering and relaunch. Missing root delivery preserves the scout
+contract. The ship view uses `local-dynamic-ship-local-only`, which retained
+scout-only clients refuse.
+
+Work and Review components remain scouts returning committed results or reports
+to their parent. Only the root delivers: commit the complete clean joined result
+on `fm/<id>`, record `done: ready in branch fm/<id>` and stop. Requested diagnostic
+reports use recorded tasktmp. FirstMate's existing merge authority and
+`fm-merge-local.sh` land the branch; the existing task-group guard refuses pending
+results, unfinished Review and incompatible delivery before landing. No-mistakes
+owns all validation once it begins; this selected profile cannot switch to that
+pipeline or dispatch through changed delivery metadata.
 
 ## Bounded dynamic profile
 
@@ -115,7 +140,7 @@ fields; duplicate keys, unknown fields and symlinks refuse:
 | `schema` | Integer `1` |
 | `firstmate_root` | Absolute canonical prepared FirstMate directory containing `bin/fm-task-group.py` |
 | `home` | Absolute canonical owning FirstMate directory, distinct from the package home |
-| `root` | Attached normal root scout task ID |
+| `root` | Attached normal root task ID |
 | `generation` | This launch's `spawn_gen` |
 | `primitive` | `Work` or `Review`, matching the admitted attachment; dynamic uses Work |
 | `package_path` | Absolute canonical retained snapshot directory; it must equal the running client's package root |

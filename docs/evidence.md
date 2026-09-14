@@ -370,3 +370,58 @@ ordinary replacement while one Work remained running, retained custom requiremen
 exact joined Review, final tests after gather and normal completion/cleanup. Both
 writer refs survived teardown and the scoped process inventory was empty. Earlier
 failed and manually assisted trials remain recorded separately.
+
+## September 14 continuation: ordinary local-only root delivery
+
+**Dependency and source:** the user requested waiting for the in-flight PR.
+PR #3 merged as d465c1a4d90e7144137a08073a79e5fd9c2cf451 before this increment
+began. FirstMate remains pinned to b182d0f908b78d08c7ccb8dce3775bdca8c5d657;
+dev.7 retains all 1,081 upstream Orchflows paths. The original dev.6 handoff is
+preserved byte-for-byte as [historical context](../HANDOFF-through-dev6-2026-09-14.md).
+
+**Implemented owner glue:** explicit dynamic ship/local-only selection adds an
+immutable root delivery binding and capability negotiation. Components retain
+their parent-return contract; the root follows the existing brief, ready branch,
+merge-local and teardown owners. Default ships remain ordinary. Unsupported
+selected delivery profiles refuse. No new dispatch, workspace, recovery, merger
+or no-mistakes run parser was introduced. [Local delivery](local-delivery.md)
+defines the exact admission and cleanup contract.
+
+**Executed development checks:** one fresh independent Review found that a
+worktree branch switch could hide an unlanded promised branch during cleanup.
+The single repair/check pass validates that retained ref and repository and
+preserves existing detach/slot-return retry behavior. Actual ordinary spawn
+then exposed a check that ran before worker-side branch creation. The same
+repair pass now allows only pristine detached input during initial launch,
+with strict later client/relaunch/delivery checks. No second development Review
+ran. The final candidate passed 128 package, 154 Linux integration and 23 driver
+tests: 305 passed checks, with ten explicit native Windows skips.
+
+**Actual runtime evidence:** two authentication preflights refused insufficient
+token lifetime without workers. Attempt a-rn6116ra passed authentication but
+ordinary spawn rejected the branch before worker creation; that source gap was
+corrected. Its original receipt remains unchanged.
+
+After the user refreshed Ubuntu authentication, a-lf4thn46 ran on Sonnet 5/high
+as explicitly requested. Two writers, root replacement while one maker ran,
+retained custom-skill rereading, exact joined Review and post-Review checks
+produced the correct ready branch. Its original driver receipt failed because
+the observer misparsed a normal trailing 2>&1 redirect on the first gather.
+Full native reads preceded both that call and durable acknowledgement. A narrow
+observer correction passed all 25 pre-landing assertions on the preserved trace.
+
+The exact ready commit then landed through the existing merge-local owner.
+After restoring structured endpoint inspection through the same private lab
+owner, ordinary cleanup succeeded. All six delivered-code tests pass; both
+writer refs survive and no scoped processes remain. These administrative
+follow-ups ran no additional models. The final evidence adds ordinary landing
+as the 26th assertion and records cleanup/code/ref checks separately. This is
+a documented corrected assessment and resumed delivery, not an uninterrupted
+final-driver pass. Original failed and follow-up receipts retain separate hashes.
+
+[Verification](local-delivery-verification.md) and [exact state](local-delivery-state.json)
+keep reviewed, cleanup-repaired and final candidate identities distinct.
+Current Codex composition, direct-PR/no-mistakes, nested/meta authoring and the
+remaining lifecycle/release gaps remain open. Pinned references, active
+installations and rotating credential caches remain unchanged; design-loop
+was not used.

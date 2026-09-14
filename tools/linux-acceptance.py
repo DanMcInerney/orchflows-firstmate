@@ -18,7 +18,10 @@ def main():
     parser.add_argument("--bin-dir", type=Path, action="append", default=[], help="Explicit native Linux dependency directory; repeatable")
     parser.add_argument("--work-root", type=Path, default=Path("/tmp/of-accept"))
     parser.add_argument("--primitive", choices=("Work", "Review"), default="Work")
+    parser.add_argument("--model", default="claude-sonnet-5", help="Explicit Claude model inherited by every component")
+    parser.add_argument("--effort", choices=("low", "medium", "high", "xhigh", "max"), default="high")
     parser.add_argument("--dynamic", action="store_true", help="Two writer Work results, joined candidate, one Review and checks")
+    parser.add_argument("--local-only", action="store_true", help="Deliver the dynamic result through an ordinary ship/local-only root")
     parser.add_argument("--enabled", action="store_true", help="Enable the project once; ordinary spawn attaches it")
     parser.add_argument("--custom-workflow", action="store_true", help="Invoke a retained custom one-primitive workflow (requires --enabled)")
     parser.add_argument("--restart", action="store_true", help="Replace the root through FirstMate while its component is pending")
@@ -29,6 +32,8 @@ def main():
     parser.add_argument("--claude-access-token-file", type=Path, help="Explicit user-owned Claude cache: read only accessToken/expiresAt")
     parser.add_argument("--access-token-expires-at", type=float, help="Unix expiration of CLAUDE_CODE_OAUTH_TOKEN when known")
     args = parser.parse_args()
+    if args.local_only and not args.dynamic:
+        parser.error("--local-only requires --dynamic")
     if args.dynamic:
         args.enabled = True
         if args.primitive != "Work":
