@@ -1,0 +1,428 @@
+diff --git a/bin/fm-classify-lib.sh b/bin/fm-classify-lib.sh
+index 5bbb158..3be7201 100755
+--- a/bin/fm-classify-lib.sh
++++ b/bin/fm-classify-lib.sh
+@@ -64,6 +64,10 @@ case $- in *u*) _fm_classify_nounset=on ;; *) _fm_classify_nounset=off ;; esac
+ [ "$_fm_classify_nounset" = on ] || set +u
+ unset _fm_classify_nounset
+ 
++# One opt-in owner for task-group state; ordinary tasks take its presence-only path.
++# shellcheck source=bin/fm-task-group-state.sh
++. "$_FM_CLASSIFY_LIB_DIR/fm-task-group-state.sh"
++
+ # Captain-relevant status verbs. A status line carrying any of these is work
+ # firstmate must see. Lines without these verbs are no-verb signals: the watcher
+ # absorbs them only with positive provably-working evidence, while the daemon uses
+@@ -1805,6 +1809,10 @@ crew_absorb_class() {  # <id>
+   line=$("$FM_CREW_STATE_BIN" "$id" 2>/dev/null) || true
+   case "$line" in state:*) ;; *) printf 'none'; return ;; esac
+   state=${line#state: }; state=${state%% *}
++  if [ "$state" = waiting ] && [ "${line#*source: }" != "$line" ]; then
++    src=${line#*source: }; src=${src%% *}
++    [ "$src" != task-group ] || { printf 'waiting'; return; }
++  fi
+   if [ "$state" = paused ]; then printf 'paused'; return; fi
+   if [ "$state" = working ]; then
+     src=${line#*source: }; src=${src%% *}
+@@ -1926,6 +1934,8 @@ crew_worktree_written_since() {  # <id> <state> <anchor-file>
+ # 0 (benign/absorb) if EVERY task referenced by a no-verb "signal:" wake is provably
+ # working; 1 (actionable/surface) if any is not, or no task can be resolved. Pass the
+ # same space-separated file list the caller classified with the span read above.
++# Authoritative task-group waiting also absorbs here; it means a live launch
++# transaction or component owns progress, not an external or unproved pause.
+ # Files are mapped to task ids by stripping the .status / .turn-ended suffix;
+ # a no-verb wake with nothing
+ # provably working must surface, so an empty/unresolvable list returns 1.
+@@ -1956,7 +1966,15 @@ signal_crew_provably_working() {  # <file> ...
+     esac
+     case " $seen " in *" $task "*) continue ;; esac
+     seen="$seen $task"
+-    crew_is_provably_working "$task" || return 1
++    # This predicate is used only after the caller excludes actionable status
++    # events. A task-group root waiting for proved component activity needs no
++    # supervisor intervention for a routine note or mechanical turn-end. Keep
++    # the general crew_is_provably_working predicate strict: the root itself is
++    # not thereby executing, and unknown/ready groups must still surface.
++    case "$(crew_absorb_class "$task")" in
++      working|waiting) ;;
++      *) return 1 ;;
++    esac
+   done
+   [ -n "$seen" ] || return 1
+   return 0
+diff --git a/bin/fm-crew-state.sh b/bin/fm-crew-state.sh
+index 1512cf8..0c979a8 100755
+--- a/bin/fm-crew-state.sh
++++ b/bin/fm-crew-state.sh
+@@ -150,6 +150,13 @@ HARNESS=$(meta_value harness)
+ REMOTE_HOST=$(meta_value remote_host)
+ [ -n "$KIND" ] || KIND=ship
+ 
++# Group records are authoritative about unfinished composition. A root waiting
++# on a positively active child is neither done nor an external paused wait.
++if fm_task_group_current "$FM_HOME" "$ID" "$STATE"; then
++  emit "$FM_TASK_GROUP_CLASS" task-group "$FM_TASK_GROUP_DETAIL"
++fi
++TASK_GROUP_COMPONENT=${FM_TASK_GROUP_COMPONENT:-false}
++
+ # A torn-down (or never-created) worktree has no current state to read. A
+ # remote secondmate's recorded worktree is a path on ITS host, so the local
+ # probe proves nothing for it - the remote arm below reads the true source.
+@@ -853,6 +860,9 @@ fi
+ # `unknown` verdict as the "not a state" test needs no second verb list here.
+ if [ -n "$LOG_VERB" ]; then
+   LOG_STATE=$(map_log_state "$LOG_LINE")
++  if [ "$TASK_GROUP_COMPONENT" = true ] && [ "$LOG_STATE" = done ]; then
++    emit group-attention task-group 'component wrote done without a retained result; outer delivery belongs to its root'
++  fi
+   if [ "$LOG_STATE" != unknown ]; then
+     emit "$LOG_STATE" status-log "$(status_line_note "$LOG_LINE")"
+   fi
+diff --git a/bin/fm-promote.sh b/bin/fm-promote.sh
+index f0154d5..001f3f8 100755
+--- a/bin/fm-promote.sh
++++ b/bin/fm-promote.sh
+@@ -46,6 +46,8 @@ DATA="${FM_DATA_OVERRIDE:-$FM_HOME/data}"
+ . "$SCRIPT_DIR/fm-secondmate-parent-lib.sh"
+ # shellcheck source=bin/fm-secondmate-registry-lib.sh
+ . "$SCRIPT_DIR/fm-secondmate-registry-lib.sh"
++# shellcheck source=bin/fm-task-group-state.sh
++. "$SCRIPT_DIR/fm-task-group-state.sh"
+ 
+ MODE=
+ YOLO=
+@@ -132,6 +134,7 @@ if ! fm_backlog_record_present "$META" "task record" "$STATE"; then
+   exit 1
+ fi
+ grep -qx 'kind=scout' "$META" || { echo "error: task $ID is not a scout task (kind=scout not in meta)" >&2; exit 1; }
++fm_task_group_guard "$FM_HOME" "$ID" "$STATE" promote || exit 1
+ 
+ SCOUT_BRIEF="$DATA/$ID/brief.md"
+ if fm_brief_task_placeholders_present "$SCOUT_BRIEF"; then
+diff --git a/bin/fm-spawn.sh b/bin/fm-spawn.sh
+index 366f0c1..291f456 100755
+--- a/bin/fm-spawn.sh
++++ b/bin/fm-spawn.sh
+@@ -1201,6 +1201,10 @@ if [ "${#POS[@]}" -gt 0 ] && [ "${POS[0]}" != "$idpart" ] && case "$idpart" in *
+ fi
+ ID=${POS[0]}
+ fm_task_id_creation_valid "$ID" || { echo "error: invalid task id" >&2; exit 2; }
++# Refuse an unsupported native worker before locks, relaunch stop, endpoint or
++# Treehouse allocation. Recheck inside the locked attachment boundary below.
++. "$SCRIPT_DIR/fm-task-group-runtime.sh"
++fm_task_group_native_worker_guard "$FM_HOME" "$ID" "$STATE" spawn || exit 1
+ if [ -e "$STATE" ] || [ -L "$STATE" ]; then
+   fm_backlog_directory_present "$STATE" "state directory" || {
+     echo "error: spawn refused: $FM_BACKLOG_TRANSITION_ERROR" >&2
+@@ -1545,7 +1549,7 @@ launch_template() {
+     # __CLAUDEPERMFLAG__ is the permission flag config/claude-permission-mode
+     # selects (header above): --dangerously-skip-permissions by default, or
+     # --permission-mode auto for a captain who refuses bypass mode.
+-    claude) printf '%s' 'CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false CLAUDE_CODE_SEND_FEEDBACK=0 claude __CLAUDEPERMFLAG__ --settings '\''{"feedbackDrafts":"off","attribution":{"commit":"","pr":"","sessionUrl":false}}'\'' __MODELFLAG____EFFORTFLAG__"$(__OPINPUT__ encode launch-brief < __BRIEF__)"' ;;
++    claude) printf '%s' 'CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false CLAUDE_CODE_SEND_FEEDBACK=0 claude __CLAUDEPERMFLAG__ --settings __CLAUDESETTINGS__ __MODELFLAG____EFFORTFLAG__"$(__OPINPUT__ encode launch-brief < __BRIEF__)"' ;;
+     codex)
+       if [ "$kind" = secondmate ]; then
+         printf '%s' 'codex __MODELFLAG____EFFORTFLAG__--dangerously-bypass-approvals-and-sandbox "$(__OPINPUT__ encode launch-brief < __BRIEF__)"'
+@@ -2348,6 +2352,26 @@ if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ] && [ "$BACKEND" != orca ];
+   SPAWN_TREEHOUSE_PROJECT_LOCK_HELD=1
+ fi
+ [ -f "$BRIEF" ] || { echo "error: task $ID has no brief at inaccessible data path $BRIEF" >&2; exit 1; }
++# Task-group attachment is a FirstMate-owned input, validated inside this
++# launch transaction before any endpoint exists. Ordinary tasks do not load
++# the experimental controller or require its Python dependencies.
++TASK_GROUP_BOUND=0
++TASK_GROUP_META=
++if [ -e "$FM_HOME/data/$ID/task-group/attachment.json" ] \
++   || [ -L "$FM_HOME/data/$ID/task-group/attachment.json" ] \
++   || [ -e "$FM_HOME/data/$ID/task-group-component.json" ] \
++   || [ -L "$FM_HOME/data/$ID/task-group-component.json" ] \
++   || [ -n "$(fm_meta_get "$STATE/$ID.meta" task_group_role 2>/dev/null || true)" ]; then
++  TASK_GROUP_BOUND=1
++  . "$SCRIPT_DIR/fm-task-group-runtime.sh"
++  fm_task_group_native_worker_guard "$FM_HOME" "$ID" "$STATE" spawn || exit 1
++  [ "$STATE" = "$FM_HOME/state" ] && [ "$DATA" = "$FM_HOME/data" ] || {
++    echo "error: task groups require the owning home's default state/data paths" >&2; exit 1;
++  }
++  fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-check "$ID" \
++    --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" >/dev/null || exit 1
++  TASK_GROUP_META=$(fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-meta "$ID") || exit 1
++fi
+ if [ "$KIND" = ship ] || [ "$KIND" = scout ]; then
+   if fm_brief_task_placeholders_present "$BRIEF"; then
+     echo "error: $BRIEF still contains {TASK} or {FIRSTMATE_SPEC}; fill ## Captain's intent and ## Firstmate spec before spawn" >&2
+@@ -2378,6 +2402,9 @@ if [ "$KIND" = ship ] || [ "$KIND" = scout ]; then
+     cat "$SOURCE_BRIEF" &&
+       printf '\n' &&
+       fm_brief_worker_role &&
++      if [ "$TASK_GROUP_BOUND" = 1 ]; then
++        fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-overlay "$ID" || exit 1
++      fi &&
+       if [ "$KIND" = ship ] && [ "$MODE" = no-mistakes ]; then
+         fm_brief_intent_overlay "$CAPTAIN_INTENT"
+       fi
+@@ -3365,6 +3392,13 @@ fi
+ if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ]; then
+   freshen_spawn_worktree_base "$WT" || exit 1
+ fi
++if [ "$TASK_GROUP_BOUND" = 1 ]; then
++  # Pool allocation can select a different commit. Verify the actual candidate
++  # before trust registration, harness wiring, metadata or command delivery.
++  fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-check "$ID" \
++    --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" \
++    --worktree "$WT" >/dev/null || exit 1
++fi
+ 
+ # Pre-register Claude's workspace trust for the directory this launch starts in,
+ # at the first point that directory is known and before any per-task state is
+@@ -3928,8 +3962,15 @@ preserve_relaunch_meta() {
+     echo "home=$PROJ_ABS"
+     echo "projects=$SECONDMATE_PROJECTS"
+   fi
++  if [ "$TASK_GROUP_BOUND" = 1 ]; then
++    printf '%s\n' "$TASK_GROUP_META"
++  fi
+   if [ "$RELAUNCH" -eq 1 ]; then
+-    preserve_relaunch_meta
++    if [ "$TASK_GROUP_BOUND" = 1 ]; then
++      preserve_relaunch_meta | awk -F= '$1 !~ /^task_group_/ && $1 != "result_disposition"'
++    else
++      preserve_relaunch_meta
++    fi
+   fi
+   if [ "$SPAWN_CONTROL_PARENT" = 1 ] && [ -n "${FM_CONTROL_RELAUNCH_TX:-}" ]; then
+     echo "control_relaunch_tx=$FM_CONTROL_RELAUNCH_TX"
+@@ -4038,6 +4079,16 @@ EFFORTFLAG=$(effort_flag_for_harness "$HARNESS" "$EFFORT" "$MODEL") || exit 1
+ LAUNCH=${LAUNCH//__MODELFLAG__/$MODELFLAG}
+ LAUNCH=${LAUNCH//__EFFORTFLAG__/$EFFORTFLAG}
+ LAUNCH=${LAUNCH//__CLAUDEPERMFLAG__/$CLAUDE_PERM_FLAG}
++CLAUDE_SETTINGS='{"feedbackDrafts":"off","attribution":{"commit":"","pr":"","sessionUrl":false}}'
++if [ "$HARNESS" = claude ] && [ "$TASK_GROUP_BOUND" = 1 ]; then
++  # Translate only this attachment's declared inputs/outputs into native file
++  # grants. Keep the selected permission mode and ordinary settings intact.
++  TASK_GROUP_CLAUDE_PERMISSIONS=$(fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" \
++    launch-claude-permissions "$ID" --generation "$SPAWN_GEN") || exit 1
++  CLAUDE_SETTINGS=$(jq -cn --argjson base "$CLAUDE_SETTINGS" --argjson permissions "$TASK_GROUP_CLAUDE_PERMISSIONS" \
++    '$base + {permissions: $permissions}') || exit 1
++fi
++LAUNCH=${LAUNCH//__CLAUDESETTINGS__/"$(shell_quote "$CLAUDE_SETTINGS")"}
+ if [ "$HARNESS" = rovo ]; then
+   ROVOCONFIGOVERRIDE=$(rovo_config_override_flag "$EFFORT" "$DATA" "$STATE" "$ID") || {
+     echo "error: could not resolve this task's home paths for rovo's allowedExternalPaths grant" >&2
+diff --git a/bin/fm-supervise-daemon.sh b/bin/fm-supervise-daemon.sh
+index 0a036ac..05764f9 100755
+--- a/bin/fm-supervise-daemon.sh
++++ b/bin/fm-supervise-daemon.sh
+@@ -356,6 +356,12 @@ classify_signal() {  # <reason-after-colon> <state>
+     case "$f" in *.status) ;; *) continue ;; esac
+     [ -e "$f" ] || [ -L "$f" ] || continue
+     task=$(basename "$f"); task="${task%.status}"
++    if fm_task_group_current "${FM_HOME:-${state%/state}}" "$task" "$state"; then
++      case "$FM_TASK_GROUP_CLASS" in
++        waiting|component-ready) continue ;;
++        *) distilled="${distilled}$task: $FM_TASK_GROUP_CLASS: $FM_TASK_GROUP_DETAIL | "; rel=1; continue ;;
++      esac
++    fi
+     record=$(status_span_first_actionable_record "$f" \
+       "$(status_seen_offset "$state" "$task")")
+     rc=$?
+@@ -376,6 +382,9 @@ classify_signal() {  # <reason-after-colon> <state>
+       && printf '%s\t%s\t%s\n' "$task" "$endpoint" "$ident" >> "$FM_STATUS_SPAN_ENDPOINT_FILE"
+     if [ "$rc" -eq 0 ]; then
+       event=${rest#*$'\t'}
++      if fm_task_group_event_scoped "${FM_HOME:-${state%/state}}" "$task" "$state"; then
++        event="task-group event (requires parent-scoped handling, not outer delivery): $event"
++      fi
+       distilled="${distilled}$(basename "$f"): ${event} | "
+       rel=1
+       continue
+@@ -408,6 +417,13 @@ classify_signal() {  # <reason-after-colon> <state>
+ classify_stale() {  # <window> <state> [<span-record> <span-status>]
+   local win=$1 state=$2 record=${3-} rc=${4-} task last event rest
+   task=$(window_to_task "$win" "$state")
++  if fm_task_group_current "${FM_HOME:-${state%/state}}" "$task" "$state"; then
++    case "$FM_TASK_GROUP_CLASS" in
++      waiting|component-ready) printf 'self|%s: %s' "$FM_TASK_GROUP_CLASS" "$FM_TASK_GROUP_DETAIL" ;;
++      *) printf 'escalate|%s: %s' "$FM_TASK_GROUP_CLASS" "$FM_TASK_GROUP_DETAIL" ;;
++    esac
++    return
++  fi
+   if [ -z "$rc" ]; then
+     record=$(status_span_first_actionable_record "$state/$task.status" \
+       "$(status_seen_offset "$state" "$task")")
+@@ -1066,6 +1082,13 @@ housekeeping() {  # <state>
+     fi
+     task=$(window_to_task "$win" "$state")
+     last=$(last_status_line "$state/$task.status")
++    if fm_task_group_current "${FM_HOME:-${state%/state}}" "$task" "$state"; then
++      case "$FM_TASK_GROUP_CLASS" in
++        waiting|component-ready) stale_marker_remove "$win" "$state" ;;
++        *) if escalate_add "$state" "$task: $FM_TASK_GROUP_CLASS: $FM_TASK_GROUP_DETAIL"; then stale_marker_remove "$win" "$state"; fi ;;
++      esac
++      continue
++    fi
+     if [ -n "$last" ] && status_is_paused_or_captain_held "$last"; then
+       reconcile_pause_tracking "$win" "$state" "$last"
+       continue
+@@ -1194,6 +1217,9 @@ housekeeping() {  # <state>
+       rest=${record#*$'\t'}; ident=${rest%%$'\t'*}
+       if [ "$rc" -eq 0 ]; then
+         event=${rest#*$'\t'}
++        if fm_task_group_event_scoped "${FM_HOME:-${state%/state}}" "$task" "$state"; then
++          event="task-group event (requires parent-scoped handling, not outer delivery): $event"
++        fi
+         if escalate_add "$state" "$(basename "$f"): $event (catch-all scan)"; then
+           mark_status_seen "$state" "$task" "$endpoint" "$ident" || true
+         fi
+diff --git a/bin/fm-teardown.sh b/bin/fm-teardown.sh
+index 1c94623..38279ef 100755
+--- a/bin/fm-teardown.sh
++++ b/bin/fm-teardown.sh
+@@ -305,6 +305,10 @@ while [ "$#" -gt 0 ]; do
+   esac
+   shift
+ done
++# Native endpoint disappearance cannot prove detached workers stopped. Refuse
++# before leases, task locks or any cleanup, including explicit --force requests.
++. "$SCRIPT_DIR/fm-task-group-runtime.sh"
++fm_task_group_native_worker_guard "$FM_HOME" "$ID" "$STATE" teardown || exit 1
+ fm_backlog_directory_present "$STATE" "state directory" || {
+   echo "error: teardown refused: $FM_BACKLOG_TRANSITION_ERROR" >&2
+   exit 1
+@@ -420,6 +424,25 @@ fm_backlog_record_present "$META" "task record" "$STATE" || {
+   echo "error: teardown refused after locking: $FM_BACKLOG_TRANSITION_ERROR" >&2
+   exit 1
+ }
++# Even --force does not discard a Stage 1 group behind its owning request. This
++# bounded PoC supports gathered-result cleanup; cancellation needs a later API.
++# shellcheck source=bin/fm-task-group-state.sh
++. "$SCRIPT_DIR/fm-task-group-state.sh"
++fm_task_group_guard "$FM_HOME" "$ID" "$STATE" teardown || exit 1
++TEARDOWN_TASK_GROUP_BOUND=0
++if fm_task_group_present "$FM_HOME" "$ID" "$STATE"; then TEARDOWN_TASK_GROUP_BOUND=1; fi
++TEARDOWN_TASK_GROUP_COMPONENT=${FM_TASK_GROUP_COMPONENT:-false}
++TEARDOWN_TASK_GROUP_ROOT=${FM_TASK_GROUP_ROOT:-}
++if [ "$TEARDOWN_TASK_GROUP_COMPONENT" = true ]; then
++  # waiting verified the gathered result's identity and report digest. Keep its
++  # parent-owned report as the backlog link after either task record is retired.
++  if [ "$FM_TASK_GROUP_RESULT_READY" != true ] || [ "$FM_TASK_GROUP_CHILD" != "$ID" ] \
++     || [ -z "$TEARDOWN_TASK_GROUP_ROOT" ] \
++     || [ "$(fm_backlog_data_absolute "$DATA")" != "$(fm_backlog_data_absolute "$FM_HOME/data")" ]; then
++    echo "REFUSED: component $ID has no validated retained report in this home's data directory" >&2
++    exit 1
++  fi
++fi
+ TEARDOWN_META_KIND=$(fm_meta_get "$META" kind)
+ [ -n "$TEARDOWN_META_KIND" ] || TEARDOWN_META_KIND=ship
+ TEARDOWN_CLEANUP_RECOVERY=$(fm_meta_get "$META" cleanup_recovery)
+@@ -1399,6 +1422,11 @@ BACKLOG_DONE_ARGS=()
+ backlog_done_args() {
+   local data_relative
+   BACKLOG_DONE_ARGS=()
++  if [ "$TEARDOWN_TASK_GROUP_COMPONENT" = true ]; then
++    data_relative=$(fm_backlog_data_relative "$DATA") || return 1
++    BACKLOG_DONE_ARGS=(--report "$data_relative/$TEARDOWN_TASK_GROUP_ROOT/task-group/results/$ID/report.md")
++    return 0
++  fi
+   case "$KIND" in
+     scout)
+       data_relative=$(fm_backlog_data_relative "$DATA") || return 1
+@@ -1919,6 +1947,10 @@ $dir_pids"
+ 
+ reap_task_backend_process_group() {  # <label>
+   local label=$1 leader leader_start pgid current_pgid own_pgid
++  if [ "${TEARDOWN_TASK_GROUP_BOUND:-0}" = 1 ]; then
++    echo "REFUSED: lsof is unavailable; Stage 1 task-group cleanup for $ID cannot prove worktree/tasktmp process cleanup. Install working lsof in the validated POSIX worker runtime and retry; preserving task data, worktree and tasktmp." >&2
++    return 1
++  fi
+   if [ "$BACKEND" != tmux ]; then
+     echo "warning: lsof is unavailable; cannot resolve a process-group fallback for $BACKEND task $ID" >&2
+     return 0
+@@ -1973,7 +2005,7 @@ reap_task_worktree_processes() {  # <label> <dir>...
+   shift
+   if ! command -v lsof >/dev/null 2>&1; then
+     reap_task_backend_process_group "$label"
+-    return 0
++    return $?
+   fi
+   while [ "$pass" -le "$max_passes" ]; do
+     if ! task_pids_under_roots "$@"; then
+@@ -3107,7 +3139,7 @@ if [ "$KIND" = secondmate ] && [ "$FORCE" = "--force" ]; then
+   cleanup_firstmate_home_children "$HOME_PATH" || exit $?
+ fi
+ 
+-if [ "$KIND" = scout ] && [ "$FORCE" != "--force" ]; then
++if [ "$KIND" = scout ] && [ "$TEARDOWN_TASK_GROUP_COMPONENT" != true ] && [ "$FORCE" != "--force" ]; then
+   REPORT="$DATA/$ID/report.md"
+   if [ ! -f "$REPORT" ]; then
+     echo "REFUSED: scout task $ID has no report at $REPORT." >&2
+@@ -3287,9 +3319,9 @@ fi
+ # not by task-worktree cleanup.
+ if [ "$KIND" != secondmate ] && teardown_owns_worktree; then
+   conclude_task_no_mistakes_run "$WT"
+-  reap_task_worktree_processes worktree "$WT" "$TASK_TMP"
++  reap_task_worktree_processes worktree "$WT" "$TASK_TMP" || exit 1
+ elif [ "$KIND" != secondmate ]; then
+-  reap_task_worktree_processes tasktmp "$TASK_TMP"
++  reap_task_worktree_processes tasktmp "$TASK_TMP" || exit 1
+ fi
+ 
+ # Fix 3 (see script header): sweep remote job workers abandoned by an already
+diff --git a/bin/fm-watch.sh b/bin/fm-watch.sh
+index bdd720a..fd1d441 100755
+--- a/bin/fm-watch.sh
++++ b/bin/fm-watch.sh
+@@ -1175,6 +1175,31 @@ pause_state_class() {  # <window> <task>
+   printf '%s' "$class"
+ }
+ 
++# The child keeps its own ordinary supervision. Only its root's stale timer is
++# suppressed, and only after a current group projection. Attention/result-ready
++# transitions queue a durable check before recording that they were surfaced.
++task_group_watch_check() { # <window> <task>
++  local win=$1 task=$2 key marker observation reason
++  fm_task_group_current "$FM_HOME" "$task" "$STATE" || return 1
++  key=$(window_key "$win")
++  marker="$STATE/.task-group-observed-$task"
++  clear_pause_tracking "$key"
++  if [ "$FM_TASK_GROUP_CLASS" = waiting ]; then
++    rm -f "$marker"
++    return 0
++  fi
++  # A completed component is routed through the retained result/inbox owner.
++  # It cannot become an outer scout delivery merely because its pane is idle.
++  [ "$FM_TASK_GROUP_CLASS" != component-ready ] || return 0
++  observation="$FM_TASK_GROUP_CLASS: $FM_TASK_GROUP_DETAIL"
++  [ "$(cat "$marker" 2>/dev/null || true)" != "$observation" ] || return 0
++  reason="check: task-group $task: $observation"
++  fm_wake_append check "task-group-$task" "$reason" || exit 1
++  printf '%s' "$observation" > "$marker" || exit 1
++  wake "$reason"
++  return 0
++}
++
+ # The two records of one ordinary crew wait, and why its stale alarm reads both.
+ #
+ # status_is_paused_or_captain_held reads the status LINE a worker wrote, which is
+@@ -2161,7 +2186,13 @@ EOF
+         [ -n "$sf" ] || continue
+         file_reason="$reason"
+         case " $FM_SIGNAL_NEEDS_DECISION_FILES " in *" $f "*) file_reason="needs-decision:$files" ;; esac
+-        fm_wake_append signal "$(basename "$f")" "$file_reason" || exit 1
++        signal_task=${f##*/}; signal_task=${signal_task%.status}; signal_task=${signal_task%.turn-ended}
++        if fm_task_group_event_scoped "$FM_HOME" "$signal_task" "$STATE"; then
++          fm_wake_append check "task-group-$signal_task" \
++            "check: task-group $signal_task changed; inspect its current group state and retained result, not its status log as outer delivery" || exit 1
++        else
++          fm_wake_append signal "$(basename "$f")" "$file_reason" || exit 1
++        fi
+       done <<EOF
+ $pending
+ EOF
+@@ -2229,6 +2260,7 @@ EOF
+     # Steering-inbox loss detection runs before the secondmate stale
+     # exemption below, because a mate's steers land in an inbox too.
+     [ -z "$task" ] || inbox_steer_check "$w" "$task"
++    if [ -n "$task" ] && task_group_watch_check "$w" "$task"; then continue; fi
+     key=$(window_key "$w")
+     last=$(last_status_line "$STATE/$task.status")
+     if ! status_is_paused_or_captain_held "$last" && [ -e "$STATE/.paused-$key" ]; then
