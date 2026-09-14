@@ -2,6 +2,7 @@
 import re
 
 from fm_task_group_launch import role
+from fm_task_group_delivery import validate_root_launch_worktree
 from fm_task_group_store import GroupError, identifier, safe_path
 
 
@@ -27,7 +28,9 @@ def claude_permissions(owner, task, generation):
     identifier(generation, "generation")
     task_role = role(owner, task)
     if task_role == "root":
-        meta, attachment = owner.root_meta(task, generation)
+        # Spawn publishes permissions before the ordinary ship creates its branch.
+        meta, attachment = owner.root_meta(task, generation, check_worktree=False)
+        validate_root_launch_worktree(meta, attachment)
     elif task_role == "component":
         binding, record, attachment = owner.component_context(task)
         meta = owner.component_meta(task, binding, record)

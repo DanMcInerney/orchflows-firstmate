@@ -10,6 +10,7 @@ import sys
 import tempfile
 
 from fm_task_group_launch import role
+from fm_task_group_delivery import LOCAL_DELIVERY, local_delivery, root_delivery, validate_root_launch_worktree
 from fm_task_group_primitives import admit, attachment_primitive, is_dynamic
 from fm_task_group_store import (GroupError, canonical, clean_commit, digest, group_lock,
                                  identifier, package_inventory, read_bytes, read_json,
@@ -125,7 +126,8 @@ def supports_launch_context(package):
     value = read_json(marker)
     expected = {"schema": 1, "launch_context_schema": 1}
     dynamic = {**expected, "workflows": ["dynamic"]}
-    if (value not in (expected, dynamic) or any(type(value.get(key)) is not int for key in expected)):
+    local = {**dynamic, "root_deliveries": [LOCAL_DELIVERY]}
+    if (value not in (expected, dynamic, local) or any(type(value.get(key)) is not int for key in expected)):
         raise GroupError("unsupported retained client capability metadata")
     return True
 
@@ -133,6 +135,11 @@ def supports_launch_context(package):
 def supports_dynamic(package):
     return (supports_launch_context(package) and
             read_json(Path(package) / "scripts/firstmate-client.json").get("workflows") == ["dynamic"])
+
+
+def supports_local_delivery(package):
+    return (supports_dynamic(package) and
+            read_json(Path(package) / "scripts/firstmate-client.json").get("root_deliveries") == [LOCAL_DELIVERY])
 
 
 def enable(owner, package, project, primitive="Work", review_policy="none", libraries=(), workflow=None):
@@ -231,7 +238,7 @@ def disable(owner, project):
         return removed is not None
 
 
-def auto_attach(owner, task, kind, backend, harness, project, workflow="default"):
+def auto_attach(owner, task, kind, backend, harness, project, workflow="default", mode=""):
     """Called by fm-spawn inside its existing launch and project locks."""
     if workflow not in ("default", "dynamic", "none"):
         raise GroupError("workflow selection must be default, dynamic or none")
@@ -241,10 +248,13 @@ def auto_attach(owner, task, kind, backend, harness, project, workflow="default"
         return task_role
     if workflow == "none":
         return None
-    if kind != "scout":
+    local = kind == "ship" and mode == "local-only" and workflow == "dynamic"
+    if kind != "scout" and not local:
         if workflow == "dynamic":
-            raise GroupError("dynamic workflow currently requires a scout")
+            raise GroupError("dynamic workflow requires a scout or explicit ship --mode local-only")
         return None
+    if kind == "scout" and mode:
+        raise GroupError("dynamic scout cannot carry a ship delivery mode")
     project = safe_path(project, directory=True)
     entry = _configuration(owner)["projects"].get(str(project))
     if entry is None:
@@ -264,7 +274,8 @@ def auto_attach(owner, task, kind, backend, harness, project, workflow="default"
     policy = "workflow-review" if selected == "dynamic" else entry["review_policy"]
     if selected == "dynamic" and not supports_dynamic(package):
         raise GroupError("dynamic selection requires declared dynamic client capability")
-    owner.attach(task, package, project, primitive, policy, workflow=selected)
+    owner.attach(task, package, project, primitive, policy, workflow=selected,
+                 delivery=local_delivery(task) if local else None)
     return "root"
 
 
@@ -275,12 +286,15 @@ def launch_context(owner, task, generation):
     _linux(owner)
     # These callbacks can run while submit owns the task-group lock. fm-spawn's
     # existing task locks serialize this root's metadata/context publication.
-    _, attachment = owner.root_meta(task, generation)
+    meta, attachment = owner.root_meta(task, generation, check_worktree=False)
+    validate_root_launch_worktree(meta, attachment)
     if not supports_launch_context(attachment["package_path"]):
         return ""
     value = {"schema": 1, "firstmate_root": str(owner.code_root), "home": str(owner.home),
              "root": task, "generation": generation,
              "primitive": attachment_primitive(attachment), "package_path": attachment["package_path"]}
+    if root_delivery(attachment):
+        value["root_delivery"] = attachment["root_delivery"]
     directory = safe_path(owner.group(task) / "contexts", directory=True, exists=False)
     directory.mkdir(exist_ok=True)
     path = safe_path(directory / (identifier(generation, "generation") + ".json"), exists=False)

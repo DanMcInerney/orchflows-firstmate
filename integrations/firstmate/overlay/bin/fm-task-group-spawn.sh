@@ -76,7 +76,8 @@ elif ! inherited_custody; then
 fi
 [ -f "$meta" ] && [ ! -L "$meta" ] || exit 1
 [ "$(fm_meta_get "$meta" spawn_gen)" = "$generation" ] || { echo 'stale parent generation' >&2; exit 1; }
-[ "$(fm_meta_get "$meta" backend)" = herdr ] && [ "$(fm_meta_get "$meta" kind)" = scout ] || exit 1
+[ "$(fm_meta_get "$meta" backend)" = herdr ] || exit 1
+case "$(fm_meta_get "$meta" kind)" in scout|ship) ;; *) exit 1 ;; esac
 [ "$(fm_meta_get "$meta" task_group_role)" = root ] || exit 1
 case "$mode" in
   position)
@@ -109,6 +110,9 @@ case "$mode" in
     fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" internal-gather "$root" --generation "$generation" "${gather_args[@]}"
     exit $? ;;
 esac
+if [ "$(fm_meta_get "$meta" kind)" = ship ]; then
+  fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" delivery-check "$root" >/dev/null || exit 1
+fi
 [ "$(fm_meta_get "$meta" project)" = "$project" ] || exit 1
 [ "$(fm_meta_get "$meta" harness)" = "$harness" ] || exit 1
 case "$harness" in claude|codex) ;; *) exit 1 ;; esac

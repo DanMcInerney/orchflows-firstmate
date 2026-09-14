@@ -1,37 +1,45 @@
 # orchflows-firstmate
 
-Standalone Orchflows variant for **FirstMate running on Herdr**, with Claude Code and Codex CLI as worker harnesses. The target is near 1:1 feature parity with Orchflows, with revised execution and lifecycle ownership.
+Standalone Orchflows variant for **FirstMate running on Herdr**, with Claude
+Code and Codex CLI as worker harnesses. The target is near feature parity with
+Orchflows through FirstMate's existing agent, workspace, communication, recovery,
+supervision and delivery owners.
 
-**Product goal:** enable the upgrade once and let FirstMate use Orchflows'
-Work, Review, dynamic workflow and custom/meta-workflows naturally. FirstMate's
-existing systems own agents, workspaces, communication, recovery and delivery,
-including Claude/Codex handling. The current increment adds bounded Linux dynamic composition through the existing
-project enablement, catalog, request/result and spawn/relaunch owners; see the
-[handoff](HANDOFF.md).
+The current owned package is **0.1.0-dev.7**, retaining all 1,081 source paths at
+Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 (0.7.0). The experimental
+design-loop library remains inactive migration source and is not used.
 
-The owned package is `0.1.0-dev.6`, refreshed to the latest [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows) observed on September 14: `ca72258493480ddcfe73b3f01d0475ad532e4726`. Its new experimental `design-loop` library is retained as inactive migration source and was not used for this work. [Refresh verification](docs/upstream-refresh-verification.md) and [refresh package state](docs/upstream-refresh-state.json) distinguish package checks from earlier live trials on dev.2.
+**Current increment:** an explicitly selected ordinary Linux ship/local-only
+root can compose Work, join committed results, request one fresh Review of the
+exact clean joined candidate, make one repair/check pass, and deliver its
+ordinary ready branch. FirstMate's existing local merge and teardown owners
+protect that delivery. Dynamic scouts and retained legacy clients preserve
+their previous contracts. See [local delivery](docs/local-delivery.md) and
+[current verification](docs/local-delivery-verification.md).
 
-**Normal launch:** enable the fork and selected complete custom libraries once.
-A Linux scout can select dynamic composition, request multiple Work results,
-join clean maker commits, request one exact-candidate independent Review, then
-make one repair/check pass. Legacy one-primitive attachments retain their
-contract. See [dynamic usage](docs/dynamic-composition.md),
-[owner mapping](docs/firstmate-owner-mapping.md) and
-[current verification](docs/dynamic-verification.md).
+Enable the fork and selected complete custom libraries once; select dynamic
+through ordinary FirstMate spawn. The retained package client uses immutable
+launch context. FirstMate alone owns every component and Herdr endpoint.
+No global installation is performed by package checks.
 
-**Development target: Ubuntu in WSL, Linux first.** Native Windows work is deferred. The preceding dev.4 increment passed 202 package, integration and driver tests (ten additional Windows-only skips), plus real Claude Review and parent-replacement trials; see [Review verification](docs/review-verification.md). Earlier Work/watcher evidence remains in [Linux verification](docs/linux-first-verification.md). [Linux development](docs/linux-development.md) provides the isolated check command and remaining Linux acceptance work.
+**Start with [HANDOFF.md](HANDOFF.md).** Develop and verify inside Ubuntu/WSL,
+with disposable candidates and homes on the Linux filesystem. The shared
+repository is the edit source; native Windows is deferred. The development
+workflow is the pinned upstream Orchflows dynamic workflow: scoped makers,
+joined checks, one fresh independent Review and one repair/check pass.
 
-**Start with [HANDOFF.md](HANDOFF.md).** It contains the next-session assignment and reading order. No memory of the original conversation is required.
-
-The selected design keeps workflow composition in a root crewmate and turns Work/Review into requests for FirstMate-owned component tasks. FirstMate owns every Herdr endpoint, task lifecycle and outer delivery gate. The current implementation additionally admits bounded dynamic Work/Review composition in a local Linux scout. Writer components return committed results for the root to join in its own worktree; the root delivers its ordinary scout report. Ship delivery and nesting remain open. See the [dynamic contract](docs/dynamic-composition.md).
-
-The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/README.md). Package isolation and execution gating are the first implementation step; standalone execution outside FirstMate is not a supported mode. Normal Orchflows is not a runtime dependency.
+The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/README.md).
+Direct-PR/no-mistakes delivery, nesting, Build/SelfImprove, broader custom/meta
+and optional-library execution, current Codex runtime evidence and release
+installation/update/rollback remain open. Source coverage and package checks
+are distinct from actual fleet execution.
 
 | Document | Purpose |
 | --- | --- |
 | [Handoff](HANDOFF.md) | User intent, next assignment, expected outputs and completion criteria |
 | [Fundamental design](docs/fundamental-design.md) | Selected architecture, required FirstMate changes, staged implementation and fixed runtime acceptance |
-| [Dynamic verification](docs/dynamic-verification.md) | Current composition checks, actual workers, review and repair evidence |
+| [Local delivery verification](docs/local-delivery-verification.md) | Current delivery checks, independent Review and actual worker evidence |
+| [Dynamic verification](docs/dynamic-verification.md) | Historical dev.6 scout composition, workers, review and repair evidence |
 | [Review verification](docs/review-verification.md) | Historical bounded Review and recovery evidence |
 | [Linux acceptance driver](docs/linux-acceptance.md) | Reproduce private Claude Work/Review and parent-replacement trials |
 | [Feature parity](docs/feature-parity.md) | Every core feature and optional library, retained source versus migrated behavior |
@@ -58,13 +66,10 @@ The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/
 | [Proposed first increment](docs/proposed-increment.md) | Manual feasibility gate, then a bounded optional worker profile |
 | [Source refresh](docs/source-refresh-2026-09-13.json) | Current clone identities, baseline blob verification and local host inventory |
 
-Status: experimental bounded Linux dynamic scout integration. FirstMate owns
-all dispatch, workspace, recovery and delivery operations. Joined fixture and
-actual worker evidence, the single independent development Review and repair
-outcome are recorded in [current verification](docs/dynamic-verification.md).
-Ship delivery, nesting, Build/SelfImprove, broad optional-library execution and
-full release parity remain unfinished. Development follows the pinned upstream
-Orchflows dynamic workflow; design-loop is not used.
+Status: experimental bounded Linux dynamic integration for scouts and explicitly
+selected ship/local-only roots. [Current verification](docs/local-delivery-verification.md)
+records exactly what was checked and run; it is not a general release or full
+feature-parity claim.
 
 The initial evidence dates to September 13, 2026 (America/New_York). Refresh version-sensitive facts before designing against current upstreams, retaining the pinned baseline for comparison.
 

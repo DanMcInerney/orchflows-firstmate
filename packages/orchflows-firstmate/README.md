@@ -1,6 +1,6 @@
 # Orchflows FirstMate
 
-A standalone Orchflows variant for **FirstMate running in Herdr only**, with Claude Code and Codex CLI as worker harnesses. This development release supplies a thin client for legacy single read-only Work/Review and an explicitly admitted bounded Linux dynamic workflow. **Execution requires the actual controller and an exact retained task attachment.** Build, SelfImprove, nesting and ship delivery remain blocked. The upstream library is preserved for migration.
+A standalone Orchflows variant for **FirstMate running in Herdr only**, with Claude Code and Codex CLI as worker harnesses. This development release supplies a thin client for legacy single read-only Work/Review and an explicitly admitted bounded Linux dynamic workflow. **Execution requires the actual controller and an exact retained task attachment.** An explicitly selected ordinary ship/local-only root can deliver committed output through FirstMate. Build, SelfImprove, nesting and other ship modes remain blocked. The upstream library is preserved for migration.
 
 The target keeps Work, independent Review, dynamic composition, workflow authoring, self-improvement, layered guidance, model/effort choices, example libraries and history inspection. Its fundamental change is execution ownership: a root crewmate composes work, while FirstMate creates and controls component tasks through a task-group contract and owns all Herdr endpoints. [Execution gate and architecture](docs/architecture.md#firstmate-execution-gate).
 
@@ -9,6 +9,8 @@ Source refresh `0.1.0-dev.3` retains upstream `ca72258493480ddcfe73b3f01d0475ad5
 Version `0.1.0-dev.5` adds a launch-bound client context. The matching FirstMate distribution can enable a package and selected custom libraries once for a local project; ordinary scout spawn and relaunch supply the retained skills and client context. Custom workflows remain limited to one admitted read-only Work or Review. Dynamic composition and writers remain gated.
 
 Version `0.1.0-dev.6` adds explicit per-request Work/Review and writable choices for a dynamic attachment. A normal Linux root scout can compose up to 32 components, gather writer commits, join an exact candidate with ordinary Git, request one fresh Review and make one repair/check pass. Selected custom workflows reuse those primitives. FirstMate owns worktrees, communication, recovery and delivery. See the [client contract](docs/firstmate-client.md) for the exact profile and remaining gates.
+
+Version `0.1.0-dev.7` adds explicit dynamic ship/local-only selection. The retained attachment binds root kind, mode and `fm/<id>` branch; package and controller negotiate `ship-local-only` capability. Components remain scouts returning to the parent. The root follows ordinary committed ready-branch delivery, and FirstMate's existing local merge owner refuses unfinished composition. New default ship tasks and retained scout clients keep their existing contracts.
 
 ## Prepare package files
 

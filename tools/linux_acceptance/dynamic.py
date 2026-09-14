@@ -19,6 +19,29 @@ def maker_relaunch_window(requests):
 
 
 class DynamicTrial(Trial):
+    @property
+    def local_only(self):
+        return getattr(self.args, "local_only", False)
+
+    def root_flags(self, *, spawn=False):
+        if self.local_only:
+            return ["--mode", "local-only", *(["--yolo", "on"] if spawn else [])]
+        return ["--scout"]
+
+    def delivery_instructions(self):
+        if self.local_only:
+            return (
+                "You are the ordinary ship root with local-only delivery. Keep the final joined output committed "
+                "on your existing fm/<task-id> branch. Write your diagnostic delivery report only at "
+                "your recorded tasktmp/dynamic-delivery.md; this report is evidence, while the branch is the deliverable. "
+                "Follow the existing local-only Definition of done: do not push, open a PR, run no-mistakes or merge. "
+                "When all required results are gathered, Review and the repair/check pass are complete, and the "
+                "committed branch is clean, append exactly done: ready in branch fm/<task-id> using your actual task ID. "
+                "Stop there; FirstMate owns subsequent landing and cleanup. ")
+        return (
+            "Remain the normal scout root and deliver the ordinary root report. Follow ordinary scout "
+            "completion/captain-hold gate (--none only with no unresolved captain decisions), then append done. ")
+
     def prepare_root(self, project, session):
         home = self.namespace / "claude-fm"
         for name in ("data", "state", "config", "projects"):
@@ -32,14 +55,14 @@ class DynamicTrial(Trial):
         self.owner_home, self.root, self.worker_env = home, root, env
         self.active_homes.append((home, env))
         self.run(["tasks-axi", "add", root, "Compose two makers and an independent review",
-                  "--kind", "scout", "--repo", "acceptance-fixture", "--file", home / "data/backlog.md"],
+                  "--kind", "ship" if self.local_only else "scout", "--repo", "acceptance-fixture", "--file", home / "data/backlog.md"],
                  env=env, cwd=home)
-        self.owner("fm-brief.sh", root, "acceptance-fixture", "--scout", env=env)
+        self.owner("fm-brief.sh", root, "acceptance-fixture", *self.root_flags(), env=env)
         spec = (
             "Use the retained orch-dynamic-workflow skill through FirstMate. Produce two useful isolated Work "
             "results, join them in your assigned worktree, request one fresh independent Review of that exact "
-            "clean candidate, then perform one repair/check pass without a second Review. Remain the normal scout "
-            "root. Only components use component completion; you deliver the ordinary root report. "
+            "clean candidate, then perform one repair/check pass without a second Review. "
+            "Only components use component completion; you deliver through the ordinary root delivery contract below. "
             "Read retained skill/guidance paths from the launch catalog. Use only the retained scripts/firstmate.py "
             "client for submit/status/gather, relying on launch context. Every submit and gather must be a separate "
             "literal python3 -B ABSOLUTE_CLIENT_PATH command, with no wrappers, variables or compound shell syntax. "
@@ -67,8 +90,9 @@ class DynamicTrial(Trial):
             "no variables, compound commands or wrappers). No second Review. Report exact reviewed and final commits, "
             "request/child identities, joins, reviewer findings, repairs and final checks. "
             "Do not modify original project checkout or package, inspect credentials/history, use native children, open a PR "
-            "or merge into the original branch. Follow ordinary scout completion/captain-hold gate (--none only with no "
-            "unresolved captain decisions), then append done. After relaunch use current context to reconcile all "
+            "or merge into the original branch. "
+            + self.delivery_instructions() +
+            "After relaunch use current context to reconcile all "
             "accepted requests and continue this same composition.\n"
         )
         if self.args.restart:
@@ -88,7 +112,7 @@ class DynamicTrial(Trial):
                        "Load the retained core orch-dynamic-workflow skill and use its Work/Review composition for "
                        "the scoped two-function assignment in the task brief. Join the two committed maker results, "
                        "review that exact candidate once and make one repair/check pass. Apply guidance/code.md. "
-                       "Include the receipt marker composed-catalog-accepted in the ordinary final scout report.\n")
+                       "Include the receipt marker composed-catalog-accepted in the final report specified by the task brief.\n")
             spec = ("First use native Read to read and apply acceptance:compose-fixture from the retained catalog. "
                     "Its source changes after enablement; the retained copy is authoritative.\n\n" + spec)
         brief = home / "data" / root / "brief.md"
@@ -107,7 +131,8 @@ class DynamicTrial(Trial):
             raise RuntimeError("Enablement attached a task before normal spawn")
         self.write(self.out / "root-brief.md", brief.read_text())
         self.receipt.update(scope="private Linux Claude dynamic composition acceptance", workflow="dynamic",
-                            entrypoint="enabled-project", custom_workflow=custom)
+                            entrypoint="enabled-project", custom_workflow=custom,
+                            root_delivery="ship/local-only" if self.local_only else "scout/report")
         return home, root, env
 
     def requests(self):
@@ -121,7 +146,7 @@ class DynamicTrial(Trial):
         result = {"root": root, "session": self.session, "workflow": "dynamic", "samples": [], "started_at": time.time()}
         self.receipt["runs"].append(result)
         self.start_watch()
-        spawned = self.owner("fm-spawn.sh", root, project, "--scout", "--backend", "herdr", "--harness", "claude",
+        spawned = self.owner("fm-spawn.sh", root, project, *self.root_flags(spawn=True), "--backend", "herdr", "--harness", "claude",
                              "--orchflows-workflow", "dynamic", env=env, timeout=180, check=False)
         result["spawn_exit"] = spawned.returncode
         self.write(self.out / "spawn.log", spawned.stdout + spawned.stderr)
@@ -135,6 +160,9 @@ class DynamicTrial(Trial):
             completed, pending = maker_relaunch_window(requests)
             if self.args.restart and "replacement" not in result and completed and pending:
                 old = metadata(home / "state" / (root + ".meta"))
+                attachment_path = home / "data" / root / "task-group/attachment.json"
+                delivery_before = {key: old.get(key) for key in ("kind", "mode", "task_group_delivery")}
+                attachment_before = hashlib.sha256(attachment_path.read_bytes()).hexdigest()
                 replaced = self.owner("fm-control.sh", root, "relaunch", "--note",
                     "Resume the exact dynamic composition. Read current status for every accepted request. "
                     "Keep gathered results and joined commits; use existing child IDs and current context. "
@@ -144,6 +172,8 @@ class DynamicTrial(Trial):
                     "accepted": {r["body"]["request_id"]: r["child"] for r in requests},
                     "gathered_before": [r["body"]["request_id"] for r in completed],
                     "pending_work": {r["body"]["request_id"]: r["child"] for r in pending}}
+                if self.local_only:
+                    result["replacement"].update(delivery_before=delivery_before, attachment_before=attachment_before)
                 self.write(self.out / "replacement.log", replaced.stdout + replaced.stderr)
             status = home / "state" / (root + ".status")
             lines = status.read_text().splitlines() if status.exists() else []
@@ -154,6 +184,11 @@ class DynamicTrial(Trial):
                 break
             time.sleep(10)
         self.collect_dynamic(result, project)
+        if self.local_only:
+            from .local_delivery import collect_ready, land
+            collect_ready(self, result, project)
+            if result["acceptance"]["passed"]:
+                land(self, result, project)
         result["elapsed_seconds"] = round(time.time() - result["started_at"], 3)
         return result["acceptance"]["passed"]
 
@@ -189,12 +224,17 @@ class DynamicTrial(Trial):
         worktree = Path(parent.get("worktree", "/nonexistent"))
         status = home / "state" / (root + ".status")
         lines = status.read_text().splitlines() if status.exists() else []
-        report = home / "data" / root / "report.md"
+        report = (Path(parent.get("tasktmp", "/nonexistent")) / "dynamic-delivery.md" if self.local_only
+                  else home / "data" / root / "report.md")
         report_text = report.read_text() if report.exists() else ""
         self.write(self.out / "root-report.md", report_text)
         expected = {"stock-maker-v1", "label-maker-v1", "final-review-v1"}
         checks = {"normal_spawn_attached": attachment.get("workflow") == "dynamic",
                   "root_spawn_succeeded": result["spawn_exit"] == 0,
+                  "requested_worker_profile": len(metas) == 4 and all(
+                      meta.get("harness") == "claude" and all(meta.get(key) == value
+                          for key, value in self.receipt["worker_profile"].items())
+                      for meta in metas.values()),
                   "ordinary_root_done": bool(lines) and lines[-1].startswith("done:"),
                   "two_work_one_review": set(retained) == expected and len(requests) == 3,
                   "all_results_gathered": len(requests) == 3 and all(r.get("gathered") for r in requests),
@@ -280,6 +320,9 @@ class DynamicTrial(Trial):
 
     def cleanup(self):
         super().cleanup()
+        if self.local_only:
+            from .local_delivery import check_landed_after_cleanup
+            check_landed_after_cleanup(self)
         for result in self.receipt.get("runs", []):
             retained = result.get("retained_results", {})
             writers = {key: value for key, value in retained.items() if value.get("writable")}

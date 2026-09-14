@@ -92,9 +92,56 @@ EOF
   return 0
 }
 
+# Validate promised code independently of the mutable current worktree HEAD.
+# Existing backlog and Treehouse owners supply interrupted-cleanup evidence;
+# this guard neither writes a marker nor allocates or returns a workspace.
+fm_task_group_teardown_delivery() { # <home> <root> <state>
+  local home=$1 task=$2 state=$3 meta project worktree branch default marker generation
+  local -a retry_args
+  . "$_FM_TASK_GROUP_DIR/fm-wake-lib.sh"
+  . "$_FM_TASK_GROUP_DIR/fm-backlog-transition-lib.sh"
+  . "$_FM_TASK_GROUP_DIR/fm-tangle-lib.sh"
+  meta="$state/$task.meta"
+  project=$(fm_meta_get "$meta" project)
+  worktree=$(fm_meta_get "$meta" worktree)
+  generation=$(fm_task_group_generation "$meta") || return 1
+  retry_args=()
+  if fm_treehouse_pool_slot "$project" "$worktree"; then
+    fm_treehouse_slot_owner_state "$worktree" "$task"
+    case "$FM_TREEHOUSE_SLOT_OWNER" in
+      mine|absent) ;;
+      other) retry_args+=(--reassigned) ;;
+      *) echo "REFUSED: task-group delivery slot ownership is unreadable" >&2; return 1 ;;
+    esac
+  fi
+  fm_task_group_python "$_FM_TASK_GROUP_DIR/fm-task-group.py" --home "$home" \
+    delivery-check "$task" --teardown "${retry_args[@]}" >/dev/null || return 1
+  branch="refs/heads/fm/$task"
+  if git -C "$project" show-ref --verify --quiet "$branch"; then
+    default=$(fm_default_branch "$project") || return 1
+    if ! git -C "$project" merge-base --is-ancestor "$branch" "refs/heads/$default"; then
+      echo "REFUSED: immutable task-group delivery fm/$task is not landed in local $default; preserve its branch before teardown" >&2
+      return 1
+    fi
+    return 0
+  fi
+  # Older/interrupted teardown may have deleted its branch after landed checks.
+  # Its existing pending-close marker is bound to this home and incarnation.
+  marker=$(fm_backlog_close_marker_path "$state" "$task") || return 1
+  if fm_backlog_close_marker_validate "$marker" "$home/data" "$task" "$state" \
+     && [ "$FM_BACKLOG_CLOSE_VALIDATED_SPAWN_GEN" = "$generation" ] \
+     && [ "${#FM_BACKLOG_CLOSE_VALIDATED_ARGS[@]}" = 2 ] \
+     && [ "${FM_BACKLOG_CLOSE_VALIDATED_ARGS[0]}" = --note ] \
+     && [ "${FM_BACKLOG_CLOSE_VALIDATED_ARGS[1]}" = local%20main ]; then
+    return 0
+  fi
+  echo "REFUSED: immutable task-group delivery fm/$task is missing without its exact-generation local completion marker" >&2
+  return 1
+}
+
 # Used under the caller's existing control/meta locks. Pending includes an
 # uncertain launch and a published result not yet acknowledged by the root.
-fm_task_group_guard() { # <home> <task> <state> <promote|teardown>
+fm_task_group_guard() { # <home> <task> <state> <promote|teardown|merge-local>
   local home=$1 task=$2 state=$3 operation=$4 rc
   if fm_task_group_read "$home" "$task" "$state"; then rc=0; else rc=$?; fi
   [ "$rc" -ne 1 ] || return 0
@@ -106,8 +153,16 @@ fm_task_group_guard() { # <home> <task> <state> <promote|teardown>
     printf 'REFUSED: Stage 1 task-group task %s cannot be promoted.\n' "$task" >&2
     return 1
   fi
+  if [ "$operation" = teardown ] && [ "$FM_TASK_GROUP_COMPONENT" = false ] \
+     && grep -q '^task_group_delivery=ship-local-only$' "$state/$task.meta"; then
+    fm_task_group_teardown_delivery "$home" "$task" "$state" || return 1
+  fi
+  if [ "$operation" = merge-local ]; then
+    fm_task_group_python "$_FM_TASK_GROUP_DIR/fm-task-group.py" --home "$home" \
+      delivery-check "$task" --landing >/dev/null || return 1
+  fi
   if [ "$FM_TASK_GROUP_CLEANUP_ALLOWED" != true ]; then
-    printf 'REFUSED: task-group task %s has ungathered or uncertain work or unfinished workflow Review; gather its retained results and finish the selected workflow before teardown.\n' "$task" >&2
+    printf 'REFUSED: task-group task %s has ungathered or uncertain work or unfinished workflow Review; gather its retained results and finish the selected workflow before %s.\n' "$task" "$operation" >&2
     return 1
   fi
 }

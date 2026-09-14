@@ -2,7 +2,7 @@
 
 This standalone package began as a complete source copy of [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows/tree/0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a) at commit `0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a`, upstream manifest version `0.7.0`. The initial copy contained all 1,064 tracked files. Its preserved local checkout includes CRLF line endings in some text files whose Git blobs use LF; file retention does not imply byte identity to every raw Git blob. Git metadata is not embedded in this package. The upstream LICENSE and all existing third-party notices are retained.
 
-The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.6`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
+The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.7`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
 
 Deliberate foundation changes (version `0.1.0-dev.1`):
 
@@ -52,3 +52,9 @@ Deliberate bounded dynamic increment (version 0.1.0-dev.6):
 - Work, Review and dynamic skill guidance now describes that bounded Linux normal-scout profile. Custom skills reuse the same primitives; nesting, ship delivery, Build, SelfImprove and design-loop remain gated.
 - Package readiness still reports package-only and execution_ready=false. Client fixtures are separate from owner checks and actual worker evidence; FirstMate alone owns launch, workspace allocation, lifecycle and delivery.
 - All 1,081 upstream paths and existing migration inventories remain retained at ca72258493480ddcfe73b3f01d0475ad532e4726. This increment does not refresh upstream sources or modify optional example libraries.
+
+Deliberate local-only root delivery increment (version 0.1.0-dev.7):
+
+- Package/client and FirstMate capabilities explicitly negotiate `ship-local-only`; immutable root delivery includes kind, mode and ordinary `fm/<id>` branch. Legacy contexts and scout attachments retain their contract.
+- Dynamic/Work/Review guidance includes explicitly selected Linux ship/local-only roots, with components returning to their parent and only the root following ordinary ready-branch delivery. Direct-PR, no-mistakes, promotion, nesting and self-development remain excluded.
+- FirstMate spawn/relaunch, task-group guard and local merge owners validate the selected delivery; this package introduces no writer or delivery service.

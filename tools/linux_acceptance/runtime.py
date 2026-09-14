@@ -127,6 +127,8 @@ class Runtime:
         self.receipt = {"schema": 1, "scope": "private Linux Claude one-readonly-component acceptance",
                         "status": "running", "namespace": str(self.namespace),
                         "started_at": time.time(), "environment": probe, "runs": []}
+        self.receipt["worker_profile"] = {"model": getattr(args, "model", "claude-sonnet-5"),
+                                          "effort": getattr(args, "effort", "high")}
         self.env = {
             "HOME": str(self.namespace / "home"), "CLAUDE_CONFIG_DIR": str(self.namespace / "claude"),
             "CODEX_HOME": str(self.namespace / "codex"), "TMPDIR": str(self.namespace / "tmp"),
@@ -195,6 +197,10 @@ class Runtime:
                 raise ValueError("Herdr socket path exceeds Linux capacity; select a shorter --work-root")
 
     def owner(self, name, *args, **kwargs):
+        if name == "fm-spawn.sh":
+            # FirstMate persists these root controls and passes them to components.
+            args = (*args, "--model", self.receipt["worker_profile"]["model"],
+                    "--effort", self.receipt["worker_profile"]["effort"])
         return self.run(["bash", self.candidate / "bin" / name, *args], **kwargs)
 
     def lab(self, *args, **kwargs):

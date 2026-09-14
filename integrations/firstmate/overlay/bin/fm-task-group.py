@@ -11,6 +11,7 @@ sys.dont_write_bytecode = True
 from fm_task_group import TaskGroups
 from fm_task_group_launch import launch_check, launch_meta, launch_overlay, launch_position
 from fm_task_group_policy import claude_permissions
+from fm_task_group_delivery import delivery_check
 from fm_task_group_store import GroupError, identifier, read_json, safe_path
 
 
@@ -60,16 +61,21 @@ def main(argv=None):
             child.add_argument("--request-id")
         if verb == "complete":
             child.add_argument("--report", required=True)
-    for verb in ("launch-check", "launch-overlay", "launch-meta", "waiting", "launch-claude-permissions", "auto-attach", "launch-context", "launch-position"):
+    for verb in ("launch-check", "launch-overlay", "launch-meta", "waiting", "launch-claude-permissions", "auto-attach", "launch-context", "launch-position", "delivery-check"):
         child = commands.add_parser(verb)
         child.add_argument("task")
         if verb in ("launch-claude-permissions", "launch-context"):
             child.add_argument("--generation", required=True)
+        if verb == "delivery-check":
+            child.add_argument("--landing", action="store_true")
+            child.add_argument("--teardown", action="store_true")
+            child.add_argument("--reassigned", action="store_true")
         if verb == "auto-attach":
             child.add_argument("--workflow", choices=("default", "dynamic", "none"), default="default")
         if verb == "launch-position":
             child.add_argument("--worktree", required=True)
         if verb in ("launch-check", "auto-attach"):
+            child.add_argument("--mode", default="")
             for argument in ("kind", "backend", "harness", "project"):
                 child.add_argument("--" + argument, required=True)
             if verb == "launch-check":
@@ -83,6 +89,7 @@ def main(argv=None):
                               "primitives": ["Work", "Review"],
                               "review_policies": ["explicit-audit", "workflow-review"],
                               "workflows": ["dynamic"],
+                              "root_deliveries": ["ship-local-only"],
                               "commands": ["attach", "submit", "status", "gather", "complete",
                                            "waiting", "launch-check", "launch-meta", "launch-overlay"]}))
             return 0
@@ -109,7 +116,7 @@ def main(argv=None):
             elif args.command == "disable":
                 result = fm_orchflows.disable(owner, args.project)
             elif args.command == "auto-attach":
-                fm_orchflows.auto_attach(owner, args.task, args.kind, args.backend, args.harness, args.project, workflow=args.workflow)
+                fm_orchflows.auto_attach(owner, args.task, args.kind, args.backend, args.harness, args.project, workflow=args.workflow, mode=args.mode)
                 return 0
             elif args.command == "launch-position":
                 launch_position(owner, args.task, args.worktree)
@@ -131,8 +138,12 @@ def main(argv=None):
             result = owner.waiting(args.task)
         elif args.command == "launch-claude-permissions":
             result = claude_permissions(owner, args.task, args.generation)
+        elif args.command == "delivery-check":
+            delivery_check(owner, args.task, landing=args.landing,
+                           teardown=args.teardown, reassigned=args.reassigned)
+            return 0
         elif args.command == "launch-check":
-            launch_check(owner, args.task, args.kind, args.backend, args.harness, args.project, args.worktree)
+            launch_check(owner, args.task, args.kind, args.backend, args.harness, args.project, args.worktree, mode=args.mode)
             return 0
         elif args.command == "launch-meta":
             print(launch_meta(owner, args.task), end="")

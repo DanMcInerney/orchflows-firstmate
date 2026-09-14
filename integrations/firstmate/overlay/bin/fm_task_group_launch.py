@@ -8,6 +8,8 @@ from pathlib import Path
 import shlex
 
 from fm_task_group_store import GroupError, clean_commit, git, safe_path
+from fm_task_group_delivery import (LOCAL_DELIVERY, root_delivery, validate_root_worktree,
+                                    validate_root_launch_worktree)
 from fm_task_group_primitives import (attachment_primitive, component_primitive, is_dynamic,
                                       validate_metadata)
 
@@ -38,15 +40,15 @@ def role(owner, task):
     return None
 
 
-def launch_check(owner, task, kind, backend, harness, project, worktree=None):
+def launch_check(owner, task, kind, backend, harness, project, worktree=None, mode=""):
     task_role = role(owner, task)
     if not task_role:
         return
     for variable in ("FM_STATE_OVERRIDE", "FM_DATA_OVERRIDE", "FM_PROJECTS_OVERRIDE", "FM_CONFIG_OVERRIDE"):
         if os.environ.get(variable):
             raise GroupError("Stage 1 task groups do not support custom state/data/config/project paths")
-    if kind != "scout" or backend != "herdr" or harness not in ("claude", "codex"):
-        raise GroupError("task-group launch requires a Herdr scout using Claude or Codex CLI")
+    if backend != "herdr" or harness not in ("claude", "codex"):
+        raise GroupError("task-group launch requires Herdr using Claude or Codex CLI")
     if task_role == "component":
         binding, record, attachment = owner.component_context(task)
         if record["state"] != "launching" or record["harness"] != harness:
@@ -56,6 +58,10 @@ def launch_check(owner, task, kind, backend, harness, project, worktree=None):
         owner.root_meta(binding["parent"], binding["accepted_parent_gen"])
     else:
         attachment = owner.attachment(task)
+    delivery = root_delivery(attachment) if task_role == "root" else None
+    expected_kind, expected_mode = ("ship", "local-only") if delivery else ("scout", "")
+    if (kind, mode) != (expected_kind, expected_mode):
+        raise GroupError("launch kind or mode differs from immutable root/component delivery")
     project = safe_path(project, directory=True)
     if str(project) != attachment["project"]:
         raise GroupError("launch project differs from immutable attachment")
@@ -64,6 +70,15 @@ def launch_check(owner, task, kind, backend, harness, project, worktree=None):
         worktree = safe_path(worktree, directory=True)
         if worktree == project:
             raise GroupError("task-group worker requires its own isolated worktree")
+        if task_role == "root":
+            # Ordinary ship briefs create fm/<id> as the worker's first action.
+            # Fresh spawn therefore validates the detached admitted input; an
+            # existing root must already retain its promised delivery branch.
+            published = (owner.home / "state" / f"{task}.meta").exists()
+            if published:
+                validate_root_worktree({"worktree": str(worktree)}, attachment)
+            else:
+                validate_root_launch_worktree({"worktree": str(worktree)}, attachment)
         if task_role == "component":
             clean_commit(worktree, record.get("input_commit", attachment["input_commit"]))
         elif not (is_dynamic(attachment) and (owner.home / "state" / f"{task}.meta").exists()):
@@ -123,6 +138,8 @@ def launch_meta(owner, task):
                       task_group_hash=binding["body_hash"], result_disposition="parent")
     else:
         attachment = owner.attachment(task)
+    if task_role == "root" and root_delivery(attachment):
+        fields["task_group_delivery"] = LOCAL_DELIVERY
     primitive = (component_primitive(record, attachment) if task_role == "component"
                  else attachment_primitive(attachment))
     if primitive == "Review" or is_dynamic(attachment):
@@ -296,9 +313,22 @@ def review_root_overlay(owner, task, attachment, client, invocation_note):
 
 def dynamic_root_overlay(owner, task, attachment, client, invocation_note):
     package = Path(attachment["package_path"])
+    delivery = root_delivery(attachment)
+    opening = ("You remain a normal local-only ship root delivering committed output on "
+               f"{delivery['branch']} through FirstMate's ordinary ready-branch contract. "
+               "On first launch create that branch as the ordinary brief directs before invoking "
+               "client status or submission. On relaunch preserve the existing branch. "
+               if delivery else "You remain a normal root scout with ordinary FirstMate report delivery. ")
+    completion = ("Keep the complete result committed and clean on " + delivery["branch"] +
+                  ". Follow the brief's local-only definition of done: append done: ready in branch " +
+                  delivery["branch"] + " to your recorded status file and stop. FirstMate's existing merge "
+                  "authority and fm-merge-local owner land it. Do not merge, push or open a PR. "
+                  "Keep diagnostic reports in your recorded tasktmp when requested.\n" if delivery else
+                  "Deliver those custom requirements together with the resulting evidence, joined commit, review "
+                  "identity, repair/check outcome and remaining gaps in your normal scout report at "
+                  f"{owner.home / 'data' / task / 'report.md'}, then follow ordinary root completion.\n")
     return ("# FirstMate task-group dynamic root attachment\n\n"
-            "You remain a normal root scout with ordinary FirstMate report delivery. "
-            "The explicitly selected workflow is dynamic with workflow-review policy. "
+            + opening + "The explicitly selected workflow is dynamic with workflow-review policy. "
             f"The immutable package is {package} (SHA-256 {attachment['package_digest']}). "
             f"Read and apply {package / 'skills' / 'orch-dynamic-workflow' / 'SKILL.md'}, "
             f"{package / 'skills' / 'orch-work' / 'SKILL.md'} and "
@@ -337,10 +367,8 @@ def dynamic_root_overlay(owner, task, attachment, client, invocation_note):
             "using scoped repair Work if useful or repairing directly. Do not request another Review "
             "or repeat the review/repair cycle. Never wait for repeated clean verdicts. "
             "Once no-mistakes validation starts it alone owns review, fixes, tests, documentation, push, PR and CI; "
-            "this scout workflow does not start or replace that pipeline. FirstMate self-development is refused.\n"
+            "this selected workflow does not start or replace that pipeline. FirstMate self-development is refused.\n"
             "Keep unfinished joins pending while FirstMate supervises; do not mark done or paused for a person. "
             "Component completion returns only to you. Before ordinary root completion, reread any selected "
             "retained custom skill and verify its required report content, artifacts and checks are satisfied. "
-            "Deliver those custom requirements together with the resulting evidence, joined commit, review "
-            "identity, repair/check outcome and remaining gaps in your normal scout report at "
-            f"{owner.home / 'data' / task / 'report.md'}, then follow ordinary root completion.\n")
+            + completion)

@@ -1,5 +1,11 @@
 # Fundamental design: Orchflows for FirstMate running in Herdr
 
+The dev.7 [local delivery extension](local-delivery.md) adds explicitly selected
+ordinary ship/local-only roots to the bounded dynamic profile, using FirstMate's
+existing branch, merge and teardown owners. [Current verification](local-delivery-verification.md)
+records its evidence. Other ship modes, nesting and broader authoring remain
+open. Historical increment descriptions below do not override this current scope.
+
 The dev.6 continuation extends this seam to bounded Linux dynamic composition;
 see [dynamic contract](dynamic-composition.md) and [current verification](dynamic-verification.md).
 Earlier one-component restrictions below describe the dev.5 baseline.

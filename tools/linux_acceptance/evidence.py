@@ -6,7 +6,7 @@ import shlex
 
 
 def literal_client_command(command):
-    """Identify the literal first command, allowing only a following output pipeline.
+    """Identify the literal first command, allowing an output pipeline and 2>&1.
 
     A formatter cannot change which root/request that first command invoked.
     Owner acknowledgement remains a separate required observation. Shell lists,
@@ -23,12 +23,19 @@ def literal_client_command(command):
         return [], False
     if any(token in (";", "&&", "||", "&", "<", "<<") for token in tokens):
         return [], False
-    if "|" in tokens:
+    formatted = "|" in tokens
+    if formatted:
         position = tokens.index("|")
         if position == 0 or position == len(tokens) - 1:
             return [], False
-        return tokens[:position], True
-    return tokens, False
+        tokens = tokens[:position]
+    # A trailing stderr-to-stdout duplicate changes output routing, not argv.
+    # Do not admit other redirections or shell lists as invocation evidence.
+    if tokens[-3:] == ["2", ">&", "1"]:
+        tokens = tokens[:-3]
+    if any(token in (">", ">>", ">&", "<&", "<>", "<<<", ";;", "|&") for token in tokens):
+        return [], False
+    return tokens, formatted
 
 
 def read_order(namespace, home, run):
