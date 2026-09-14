@@ -49,8 +49,10 @@ def readiness() -> dict:
             "required_contract": "firstmate-task-group",
             "protocol_version": 1,
             "implemented_scope": "local-readonly-work",
-            "implemented_scopes": ["local-readonly-work", "local-readonly-review"],
+            "implemented_scopes": ["local-readonly-work", "local-readonly-review", "local-dynamic"],
             "review_policy": "explicit-audit",
+            "review_policies": ["explicit-audit", "workflow-review"],
+            "implemented_workflows": ["dynamic"],
             "target": "FirstMate/Herdr only; Claude Code and Codex CLI worker harnesses",
             "reason": "The experimental client requires an actual FirstMate controller and exact task "
                       "attachment. Package checks do not verify operational runtime or broader workflows.",

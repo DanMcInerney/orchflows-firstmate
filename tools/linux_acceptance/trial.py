@@ -67,14 +67,51 @@ class Trial(Runtime):
             "policy and fixture worktree. Follow the normal scout captain-hold completion gate, --none only "
             "when there are no unresolved captain decisions, then append done."
         )
+        enabled = getattr(self.args, "enabled", False)
+        custom = getattr(self.args, "custom_workflow", False)
+        spec = spec.replace(
+            f"client{primitive_args}, attachment.package_path and your current spawn_gen",
+            "client using only the launch-provided ORCHFLOWS_FIRSTMATE_CONTEXT")
+        spec = spec.replace("with literal arguments, this root and current generation.",
+                            "with only the literal gather operation; no authority flags.")
+        library = None
+        if custom:
+            library = self.namespace / "custom-library"
+            skill = library / "skills" / "inspect-facts" / "SKILL.md"
+            skill.parent.mkdir(parents=True)
+            self.write(library / "plugin.json", json.dumps(
+                {"name": "acceptance", "version": "1.0.0", "skills": "./skills/"}))
+            self.write(library / "README.md",
+                       "Depends on the exact retained orchflows-firstmate core supplied by FirstMate.\n")
+            self.write(skill, (
+                "---\nname: inspect-facts\ndescription: Inspect fixture facts through one FirstMate primitive.\n---\n\n"
+                "Read the admitted primitive skill in the retained core root from the launch catalog. "
+                "Use that primitive once for the exact assignment and request ID supplied in the task brief. "
+                "Apply core code Make guidance for Work or Review guidance for Review. "
+                "Collect the retained result, then deliver the ordinary scout report. "
+                "Include the literal receipt marker catalog-fixture-accepted in that report. "
+                "No additional agents or repairs.\n"))
+            spec = spec.replace(
+                f"Read the retained skills/orch-{primitive.lower()}/SKILL.md.",
+                "Read and apply the selected acceptance:inspect-facts custom workflow from the launch catalog using native Read.")
         path = home / "data" / root / "brief.md"
         self.write(path, path.read_text().replace("{TASK}", "Inspect the readonly fixture").replace("{FIRSTMATE_SPEC}", spec))
-        args = ["python3", "-B", self.candidate / "bin/fm-task-group.py", "--home", home,
-                "attach", root, "--package", self.package, "--project", project]
+        args = ["python3", "-B", self.candidate / "bin/fm-task-group.py", "--home", home]
+        args.extend(["enable"] if enabled else ["attach", root])
+        args.extend(["--package", self.package, "--project", project])
+        if library:
+            args.extend(["--library", library])
         if primitive == "Review":
             args.extend(("--primitive", "Review", "--review-policy", "explicit-audit"))
         attached = self.run(args, env=env, timeout=300)
-        self.write(self.out / "attach.json", attached.stdout)
+        self.write(self.out / ("enable.json" if enabled else "attach.json"), attached.stdout)
+        self.receipt["entrypoint"] = "enabled-project" if enabled else "explicit-attachment"
+        self.receipt["custom_workflow"] = custom
+        if library:
+            self.write(library / "skills/inspect-facts/SKILL.md",
+                       "Source changed after enablement; this text must not replace the retained workflow.\n")
+        if enabled and (home / "data" / root / "task-group/attachment.json").exists():
+            raise RuntimeError("Enabled fixture attached a task before ordinary spawn")
         self.write(self.out / "root-brief.md", path.read_text())
         self.receipt["primitive"] = primitive
         self.receipt["request_id"] = request_id
@@ -186,6 +223,17 @@ class Trial(Runtime):
         home, root = self.owner_home, self.root
         request = self.request()
         result["request"] = request
+        attachment_path = home / "data" / root / "task-group/attachment.json"
+        if attachment_path.exists():
+            attachment = json.loads(attachment_path.read_text())
+            if getattr(self.args, "enabled", False):
+                result["enabled_project"] = True
+            result["client_path"] = str(Path(attachment["package_path"]) / "scripts/firstmate.py")
+            if getattr(self.args, "custom_workflow", False):
+                result["custom_skill_path"] = str(Path(attachment["package_path"]) /
+                    "firstmate-libraries/acceptance/skills/inspect-facts/SKILL.md")
+        elif getattr(self.args, "enabled", False):
+            result["enabled_project"] = False
         metas = {path.stem: metadata(path) for path in (home / "state").glob("*.meta")}
         result["metadata"] = metas
         result["component_count"] = sum(value.get("task_group_role") == "component" for value in metas.values())
@@ -195,6 +243,8 @@ class Trial(Runtime):
         text = report.read_text() if report.is_file() else ""
         result["source_findings_present"] = all(term in text for term in ("stock.py", "labels.py", "AB-7", "0"))
         self.write(self.out / "root-report.md", text)
+        if getattr(self.args, "custom_workflow", False):
+            result["custom_marker_present"] = "catalog-fixture-accepted" in text
         result["input_status"] = self.run(["git", "-C", project, "status", "--porcelain", "--untracked-files=all"]).stdout
         result["input_commit_unchanged"] = self.run(["git", "-C", project, "rev-parse", "HEAD"]).stdout.strip() == self.receipt["input_commit"]
         result["worktree_status"] = {}

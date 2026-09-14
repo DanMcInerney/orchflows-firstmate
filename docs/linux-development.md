@@ -1,5 +1,9 @@
 # Ubuntu / WSL development
 
+The dev.6 continuation extends this seam to bounded Linux dynamic composition;
+see [dynamic contract](dynamic-composition.md) and [current verification](dynamic-verification.md).
+Earlier one-component restrictions below describe the dev.5 baseline.
+
 The user selected **Ubuntu in WSL, Linux first** on September 14, 2026. Use native Linux tools for edits, source preparation, checks and actual FirstMate/Herdr worker trials. Native Windows development and acceptance are deferred; the existing Windows refusal guards remain.
 
 The shared repository remains the source of edits. Run commands from its root inside Ubuntu. The check runner stages exact owned package/integration bytes under a private directory on the Linux filesystem, so Git worktrees, process inspection, locks and temporary homes use Linux semantics.
@@ -36,7 +40,12 @@ foreground acceptance profile. It is not background-process custody or a promise
 that arbitrary detached commands can be supervised. See
 [Linux verification](linux-first-verification.md).
 
-Remaining Linux work is Claude parent replacement and delivery on current bytes, Codex ordinary watcher acceptance using its supported owning authentication store, and native background-shell activity/retirement. A foreground-only Claude trial does not prove background-tool supervision. Next come independent Review, writers and the remaining feature migration inventory.
+Current work follows the [normal launch contract](normal-launch.md) and
+[verification](normal-launch-verification.md). The owner audit and automatic
+project enablement/client context are implemented. Full dynamic composition,
+writer joins and custom/meta-workflow parity remain next; current Codex and
+broader lifecycle gaps are tracked separately. Do not restore the superseded
+harness-first roadmap.
 
 FirstMate remains the only owner of component dispatch, Herdr endpoints, lifecycle and outer delivery. The Linux development runner is a test driver, not a fleet scheduler. It never registers plugins, starts workers or changes active installations. Design-loop is not used to perform this work.
 

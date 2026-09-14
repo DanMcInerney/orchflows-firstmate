@@ -1,10 +1,14 @@
 # Orchflows FirstMate
 
-A standalone Orchflows variant for **FirstMate running in Herdr only**, with Claude Code and Codex CLI as worker harnesses. This development release supplies a thin client for one experimental read-only Work component or one explicitly authorized independent Review component through FirstMate's task-group controller. **Execution requires the actual controller and an exact retained task attachment.** Dynamic, Build and SelfImprove remain blocked. The upstream library is preserved for migration.
+A standalone Orchflows variant for **FirstMate running in Herdr only**, with Claude Code and Codex CLI as worker harnesses. This development release supplies a thin client for legacy single read-only Work/Review and an explicitly admitted bounded Linux dynamic workflow. **Execution requires the actual controller and an exact retained task attachment.** Build, SelfImprove, nesting and ship delivery remain blocked. The upstream library is preserved for migration.
 
 The target keeps Work, independent Review, dynamic composition, workflow authoring, self-improvement, layered guidance, model/effort choices, example libraries and history inspection. Its fundamental change is execution ownership: a root crewmate composes work, while FirstMate creates and controls component tasks through a task-group contract and owns all Herdr endpoints. [Execution gate and architecture](docs/architecture.md#firstmate-execution-gate).
 
 Source refresh `0.1.0-dev.3` retains upstream `ca72258493480ddcfe73b3f01d0475ad532e4726`. The added experimental `design-loop` example is inactive migration source; it is not enabled, installed by default or used by this refresh. Version `0.1.0-dev.4` adds the explicitly admitted Linux Review primitive; each attachment still admits only one read-only component.
+
+Version `0.1.0-dev.5` adds a launch-bound client context. The matching FirstMate distribution can enable a package and selected custom libraries once for a local project; ordinary scout spawn and relaunch supply the retained skills and client context. Custom workflows remain limited to one admitted read-only Work or Review. Dynamic composition and writers remain gated.
+
+Version `0.1.0-dev.6` adds explicit per-request Work/Review and writable choices for a dynamic attachment. A normal Linux root scout can compose up to 32 components, gather writer commits, join an exact candidate with ordinary Git, request one fresh Review and make one repair/check pass. Selected custom workflows reuse those primitives. FirstMate owns worktrees, communication, recovery and delivery. See the [client contract](docs/firstmate-client.md) for the exact profile and remaining gates.
 
 ## Prepare package files
 
@@ -22,7 +26,7 @@ The resolver accepts `orchflows` as a compatibility alias **only for this fork's
 
 ## What is preserved
 
-- Work and independent Review remain the two conceptual primitives. The experimental [client](docs/firstmate-client.md) supports one Work or explicitly admitted Review; writers, multi-component composition and the other three skills remain unsupported.
+- Work and independent Review remain the two conceptual primitives. The experimental [client](docs/firstmate-client.md) admits legacy Work/Review and bounded Linux dynamic composition with writer results; broader workflow parity remains unverified.
 - Guidance selection, dotted specializations and assignment-specific model/effort preferences retain their upstream contracts.
 - Setup, library copying, package resolution, filesystem doctor and native transcript inspection remain available as package tools.
 - All example libraries, assets, tests, reports and licenses are retained from the pinned source. They are migration fixtures, not certified FirstMate workflows. `setup --example NAME` copies their original bytes and does not adapt their native dispatch, install commands or dependency resolution.
