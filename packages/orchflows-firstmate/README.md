@@ -1,8 +1,10 @@
 # Orchflows FirstMate
 
-A standalone Orchflows variant for **FirstMate running in Herdr only**, with Claude Code and Codex CLI as worker harnesses. This development release adds a thin client for one experimental read-only Work component through FirstMate's task-group controller. **Execution requires the actual controller and an exact retained task attachment.** The other four core workflows remain blocked. The upstream library is preserved for migration.
+A standalone Orchflows variant for **FirstMate running in Herdr only**, with Claude Code and Codex CLI as worker harnesses. This development release supplies a thin client for one experimental read-only Work component or one explicitly authorized independent Review component through FirstMate's task-group controller. **Execution requires the actual controller and an exact retained task attachment.** Dynamic, Build and SelfImprove remain blocked. The upstream library is preserved for migration.
 
 The target keeps Work, independent Review, dynamic composition, workflow authoring, self-improvement, layered guidance, model/effort choices, example libraries and history inspection. Its fundamental change is execution ownership: a root crewmate composes work, while FirstMate creates and controls component tasks through a task-group contract and owns all Herdr endpoints. [Execution gate and architecture](docs/architecture.md#firstmate-execution-gate).
+
+Source refresh `0.1.0-dev.3` retains upstream `ca72258493480ddcfe73b3f01d0475ad532e4726`. The added experimental `design-loop` example is inactive migration source; it is not enabled, installed by default or used by this refresh. Version `0.1.0-dev.4` adds the explicitly admitted Linux Review primitive; each attachment still admits only one read-only component.
 
 ## Prepare package files
 
@@ -20,7 +22,7 @@ The resolver accepts `orchflows` as a compatibility alias **only for this fork's
 
 ## What is preserved
 
-- Work and independent Review remain the two conceptual primitives. Only the narrow experimental [Work client](docs/firstmate-client.md) can pass its conditional gate; broader Work and the other four skills remain unsupported.
+- Work and independent Review remain the two conceptual primitives. The experimental [client](docs/firstmate-client.md) supports one Work or explicitly admitted Review; writers, multi-component composition and the other three skills remain unsupported.
 - Guidance selection, dotted specializations and assignment-specific model/effort preferences retain their upstream contracts.
 - Setup, library copying, package resolution, filesystem doctor and native transcript inspection remain available as package tools.
 - All example libraries, assets, tests, reports and licenses are retained from the pinned source. They are migration fixtures, not certified FirstMate workflows. `setup --example NAME` copies their original bytes and does not adapt their native dispatch, install commands or dependency resolution.
@@ -185,7 +187,7 @@ The quoted original README below preserves the feature descriptions and source l
 >
 > ## Example workflows
 >
-> These examples show parallel collection, creative production and improvement using the same two skills. Social search, Short video and Evolve are optional libraries: add one with `python scripts/orchflows.py setup --example <name>`, then [install it through your host](docs/hosts.md#register-and-refresh). Each library documents its tool dependencies. Self-improve is included in the core installation.
+> These examples show parallel collection, creative production and improvement using the same two skills. Social search, Short video, Evolve and Design loop are optional libraries: add one with `python scripts/orchflows.py setup --example <name>`, then [install it through your host](docs/hosts.md#register-and-refresh). Each library documents its tool dependencies. Self-improve is included in the core installation.
 >
 > ### Social search
 >
@@ -276,6 +278,14 @@ The quoted original README below preserves the feature descriptions and source l
 > The working **harness** is the maker instructions, tools and search strategy used by the run. Evolve can test a change to that harness against its predecessor, then use the verified revision in later rounds. Its coordinating evaluation and promotion rules stay fixed during that comparison. Harness experiments use one proposer and two fresh makers per test case, with independent review of their outputs. A subjective winner requires confirmation from a second fresh reviewer.
 >
 > The default is three rounds with one challenger per round. A continuous request removes the round cap; the host must keep executing or resume the checkpoint. A plateau changes the search strategy. It does not prove the artifact cannot improve.
+>
+> ### Design loop (experimental)
+>
+> > Build a local shopping-list CLI. Run two design cycles, beginning with the smallest working proof of concept.
+>
+> [Design loop](https://github.com/DanMcInerney/orchflows/tree/main/example-workflows/design-loop) composes eight reusable workflows around a project endgoal: brainstorm and research, design one increment, implement it, independently compare it with the accepted baseline, then analyze the evidence for the next cycle. Its README includes a detailed flowchart and the component contracts.
+>
+> **Experimental — this packaged example is untested so far.** A full cycle uses six fresh children, with at most 6N calls for N attempted cycles. Trial specifications are included for future validation.
 >
 > ### Self-improve
 >

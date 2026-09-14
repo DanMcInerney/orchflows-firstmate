@@ -1,12 +1,29 @@
 # Fundamental design: Orchflows for FirstMate running in Herdr
 
+**Latest user clarification — September 14, 2026:** the desired product is a
+plug-and-play FirstMate upgrade. Preserve Orchflows' Work/Review, dynamic and
+custom/meta-workflow behavior while using FirstMate's existing execution,
+subagent, communication, workspace, recovery and delivery systems. Claude/Codex
+handling remains FirstMate's responsibility. The next step is to audit the
+experimental adapter against those owners and wire normal skill/workflow
+availability. Add only a source-backed missing integration capability.
+This supersedes the earlier priority of broad harness/lifecycle engineering and
+any implication that every mechanism proposed below needs a new implementation.
+See [current handoff](../HANDOFF.md) and D26 in [decisions](decisions.md).
+
 **Recommendation:** make this an independently distributed Orchflows fork whose compositions run inside a normal FirstMate root crewmate. Replace native-child creation in `orch-work` and `orch-review` with **FirstMate-owned component tasks in Herdr**. FirstMate owns every endpoint and lifecycle operation; the crewmate still chooses the workflow, makes authorized direct changes, joins results, and reports the outer deliverable. This needs a supported FirstMate task-group integration, not just plugin installation.
 
 The user has authorized beginning modifications and clarified **FirstMate/Herdr only**. Claude Code and Codex CLI are worker harnesses under that fleet, not additional direct execution modes. The earlier research-only boundary and recommendation to leave native primitives unchanged are superseded for this fork. The original dated assessment remains evidence of the earlier investigation.
 
-This document records the selected overall design. Stage 0 implemented the independent package, namespace and home. The subsequent [Stage 1 contract](stage1-contract.md) defines the experimental one-component implementation and its narrower acceptance; it supersedes the original missing-adapter gate for that operation only. Broader feature parity and production compatibility remain unverified. Runtime evidence is recorded separately from this design.
+This document records the selected overall design. Stage 0 implemented the independent package, namespace and home. The subsequent [Stage 1 contract](stage1-contract.md) defines the experimental one-component implementation and its narrower acceptance; it supersedes the original missing-adapter gate for that operation only. The [Review contract](review-contract.md) extends admission to a standalone explicitly authorized Linux audit in dev.4. Broader feature parity and production compatibility remain unverified. Runtime evidence is recorded separately from this design.
+
+## Current development platform
+
+The user's September 14 direction is **Ubuntu in WSL, Linux first**. Perform development, candidate preparation, tests and worker trials with native Linux tools. Keep disposable candidates and homes on the Linux filesystem; the shared checkout remains the edit source. Native Windows lifecycle work is deferred and does not block the Linux implementation. The earlier Windows observations and refusal guards remain valid, but do not determine the current queue. See [Linux development](linux-development.md).
 
 ## Baseline and evidence
+
+The user confirmed on September 14, 2026 that this fork should adapt the latest public `DanMcInerney/orchflows`. The owned package is now dev.4 at source target `ca72258493480ddcfe73b3f01d0475ad532e4726`, upstream version 0.7.0. Its added experimental `design-loop` library is retained as inactive migration source and was not used to perform this work, as requested. The table below preserves the historical Stage 1 baseline. [Refresh verification](upstream-refresh-verification.md) records the changed package separately; earlier trial identities remain unchanged.
 
 | Input | Exact identity | What it establishes |
 | --- | --- | --- |
@@ -14,7 +31,7 @@ This document records the selected overall design. Stage 0 implemented the indep
 | FirstMate source | [`b182d0f908b78d08c7ccb8dce3775bdca8c5d657`](https://github.com/kunchenguid/firstmate/tree/b182d0f908b78d08c7ccb8dce3775bdca8c5d657) | Existing supervisors, ship/scout workers, launch/control/brief owners, Herdr adapter and delivery contracts. Full clean research copy at `.sources/firstmate/`. |
 | Local investigation | [Evidence](evidence.md), [FirstMate contracts](firstmate-contracts.md), [Orchflows contracts](orchflows-contracts.md) | Source inspection and earlier packaging checks; no live integration certification. Upstream claims and executed local checks remain distinct. |
 
-Use these revisions for the first implementation comparison. A later upstream refresh is a separately recorded candidate. Exact Herdr, Claude and Codex runtime versions/configuration must be recorded when the live PoC is run; the source pins do not establish that runtime tuple.
+These revisions identify the first implementation comparison. The source refresh has its own [candidate identity](upstream-refresh-state.json). Exact Herdr, Claude and Codex runtime versions/configuration must be recorded for live trials; the source pins do not establish that runtime tuple.
 
 ## Why change the primitive boundary
 

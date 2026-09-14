@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Client for FirstMate's experimental local read-only Work task group."""
+"""Client for FirstMate's experimental local read-only Work or Review task group."""
 
 from __future__ import annotations
 
@@ -78,9 +78,11 @@ def call_controller(args: argparse.Namespace, operation: str, *extra: str) -> di
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8",
                                 timeout=args.timeout, env=environment, check=False)
     except subprocess.TimeoutExpired as exc:
-        raise ClientError("Controller timed out; its outcome is unknown. Inspect FirstMate status "
-                          "before any further action. A submission may still have launched a child.",
-                          operation, uncertain=True) from exc
+        mutating = operation in {"submit", "gather"}
+        message = ("Controller timed out; its outcome is unknown. Inspect FirstMate status "
+                   "before any further action. A submission may still have launched a child."
+                   if mutating else "Controller observation timed out; no mutation was requested.")
+        raise ClientError(message, operation, uncertain=mutating) from exc
     except (OSError, UnicodeError) as exc:
         raise ClientError(f"Controller communication failed: {exc}", operation,
                           uncertain=operation in {"submit", "gather"}) from exc
@@ -96,37 +98,59 @@ def call_controller(args: argparse.Namespace, operation: str, *extra: str) -> di
     return payload
 
 
-def validate_protocol(response: dict, operation: str) -> None:
+def validate_protocol(response: dict, operation: str, *, primitive: str = "Work",
+                      handshake: bool = True) -> None:
+    expected = dict(PROTOCOL)
+    if not handshake and primitive == "Review":
+        expected["scope"] = "local-readonly-review"
     # bool is an int subclass; version true must not negotiate protocol version 1.
     if any(response.get(key) != value or type(response.get(key)) is not type(value)
-           for key, value in PROTOCOL.items()):
+           for key, value in expected.items()):
         raise ClientError("Unsupported FirstMate task-group protocol or scope", operation,
                           uncertain=operation in {"submit", "gather"})
+    if handshake and primitive == "Review":
+        for key, required in (("primitives", "Review"), ("review_policies", "explicit-audit")):
+            capabilities = response.get(key)
+            if (not isinstance(capabilities, list)
+                    or any(not isinstance(value, str) for value in capabilities)
+                    or len(set(capabilities)) != len(capabilities)
+                    or required not in capabilities):
+                raise ClientError("FirstMate must explicitly advertise Review and explicit-audit support",
+                                  operation)
 
 
 def validate_view(response: dict, args: argparse.Namespace, operation: str) -> None:
-    validate_protocol(response, operation)
+    primitive = getattr(args, "primitive", "Work")
+    validate_protocol(response, operation, primitive=primitive, handshake=False)
     attachment = response.get("attachment")
     if (response.get("attached") is not True or response.get("root") != args.root
             or response.get("generation") != args.generation or not isinstance(attachment, dict)):
         raise ClientError("FirstMate did not confirm this attached root and generation", operation,
                           uncertain=operation in {"submit", "gather"})
-    expected = {"schema": 1, "root": args.root, "epoch": 1, "primitive": "Work",
+    expected = {"schema": 1, "root": args.root, "epoch": 1, "primitive": primitive,
                 "readonly": True, "max_components": 1}
-    if any(attachment.get(key) != value or type(attachment.get(key)) is not type(value)
-           for key, value in expected.items()) or response.get("epoch") != 1:
-        raise ClientError("Unsupported FirstMate task-group attachment", operation,
+    if primitive == "Review":
+        expected["review_policy"] = "explicit-audit"
+    if (any(attachment.get(key) != value or type(attachment.get(key)) is not type(value)
+            for key, value in expected.items())
+            or type(response.get("epoch")) is not int or response["epoch"] != 1
+            or (primitive == "Work" and attachment.get("review_policy", "none") != "none")):
+        raise ClientError("Unsupported FirstMate task-group attachment or review policy", operation,
                           uncertain=operation in {"submit", "gather"})
     package_path = attachment.get("package_path")
     digest = attachment.get("package_digest")
-    if (not isinstance(package_path, str) or not Path(package_path).is_absolute()
-            or Path(package_path).resolve() != PACKAGE_ROOT or not isinstance(digest, str)
+    try:
+        matching_path = (isinstance(package_path, str) and Path(package_path).is_absolute()
+                         and Path(package_path).resolve() == PACKAGE_ROOT)
+    except (OSError, ValueError, RuntimeError):
+        matching_path = False
+    if (not matching_path or not isinstance(digest, str)
             or re.fullmatch(r"[0-9a-f]{64}", digest) is None):
         raise ClientError("Run the client from the exact FirstMate-attached fork snapshot", operation,
                           uncertain=operation in {"submit", "gather"})
 
 
-def validate_request(path: Path) -> None:
+def validate_request(path: Path, primitive: str = "Work") -> None:
     try:
         request = parse_object(path.read_text(encoding="utf-8"))
         if set(request) != {"request_id", "assignment"}:
@@ -134,19 +158,22 @@ def validate_request(path: Path) -> None:
         if any(not isinstance(request[key], str) or not request[key].strip() for key in request):
             raise ValueError("request_id and assignment must be nonempty strings")
     except (OSError, ValueError) as exc:
-        raise ClientError(f"Invalid Work request: {exc}", "preflight") from exc
+        raise ClientError(f"Invalid {primitive} request: {exc}", "preflight") from exc
 
 
 def run(args: argparse.Namespace) -> dict:
     package_identity()
+    primitive = getattr(args, "primitive", "Work")
+    if primitive not in ("Work", "Review"):
+        raise ClientError("Primitive must be Work or Review", "preflight")
     if not math.isfinite(args.timeout) or args.timeout <= 0:
         raise ClientError("Timeout must be a finite positive number", "preflight")
     if any(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", value) is None
            for value in (args.root, args.generation)):
         raise ClientError("Root and current generation must be valid FirstMate identifiers", "preflight")
     if args.operation == "submit":
-        validate_request(args.request)
-    validate_protocol(call_controller(args, "protocol"), "protocol")
+        validate_request(args.request, primitive)
+    validate_protocol(call_controller(args, "protocol"), "protocol", primitive=primitive)
     identity = (args.root, "--generation", args.generation)
     current = call_controller(args, "status", *identity)
     validate_view(current, args, "status")
@@ -166,10 +193,12 @@ def main(argv: list[str] | None = None) -> int:
                         help="Owning FirstMate home; not the Orchflows package home")
     parser.add_argument("--root", required=True, help="Attached normal root scout task ID")
     parser.add_argument("--generation", required=True, help="Current root spawn_gen from FirstMate")
+    parser.add_argument("--primitive", choices=("Work", "Review"), default="Work",
+                        help="Attachment primitive to validate (default: Work)")
     parser.add_argument("--timeout", type=float, default=420, help="Seconds per controller call (default: 420)")
     commands = parser.add_subparsers(dest="operation", required=True)
     commands.add_parser("status", help="Validate protocol, root generation and exact package attachment")
-    submit = commands.add_parser("submit", help="Submit the group's one read-only Work assignment")
+    submit = commands.add_parser("submit", help="Submit the group's one read-only assignment")
     submit.add_argument("--request", required=True, type=lambda value: Path(value).expanduser().resolve())
     commands.add_parser("gather", help="Gather and acknowledge the retained result through FirstMate")
     args = parser.parse_args(argv)

@@ -6,18 +6,39 @@ Updated September 14, 2026 during Stage 1 verification. **Source** means an insp
 
 ## Current implementation queue
 
-Product scope (standalone, FirstMate/Herdr only, Claude/Codex worker harnesses, near complete parity) is established by the user. The selected architecture replaces native children with FirstMate-owned components. The following unresolved work supersedes the earlier trial ordering:
+The latest user clarification supersedes the earlier harness/recovery-first
+queue. The product should let FirstMate use Orchflows' two primitives, dynamic
+workflow and custom/meta-workflows through its existing systems. FirstMate owns
+Claude/Codex integration, dispatch, workspaces, communication, supervision,
+recovery and delivery. New code must address a demonstrated missing interface
+or workflow-context requirement, rather than duplicate those mechanisms.
 
-| Order | Unresolved work | Next evidence required |
+Follow the [current handoff](../HANDOFF.md). Development remains Ubuntu/WSL,
+Linux first; native Windows is deferred. The dev.4 package adapts upstream
+ca72258493480ddcfe73b3f01d0475ad532e4726. Existing read-only Work/Review evidence
+is preserved in [verification](review-verification.md); the added design-loop
+source remains inactive and must not be used for this work.
+
+| Order | Next work | Evidence or deliverable required |
 | --- | --- | --- |
-| 1 | Implement native Windows lifecycle owners | Real Herdr/Treehouse primitives pass, but FirstMate's idle-shell/socket owners refuse and a detached child survived endpoint/lab teardown. Actual workers refuse before mutation. Implement native endpoint/lock identity, process incarnation/ancestry, detached-child custody and verified retirement, then repeat Claude/Codex acceptance. [Evidence and sequence](stage1-windows-native.md) |
-| 2 | Remaining recovery and harness combinations | Final repaired Claude Work/read-before-gather/report/cleanup and uninterrupted 345-second watcher acceptance passed. Earlier Codex Work included parent replacement on its recorded tuple. Complete Claude parent replacement plus successful delivery on current bytes and Codex watcher acceptance with supported host authentication; do not relabel earlier tuple evidence. [Exact observations](stage1-acceptance-continuation.md) |
-| 3 | Native background-tool activity and retirement | Real Claude moved its long shell command into the background and ended its turn; FirstMate returned unknown while the shell still ran. Native completion later resumed the model. Define positive activity and verified cancellation/cleanup through the existing FirstMate owner; a foreground-only watcher pass will not close this gap |
-| 4 | Independent-review policy and writer/delivery boundary | Recorded intake policy; fresh review of exact state; one repair pass; root-only delivery and no writers after validation custody |
-| 5 | Retained artifacts, bundles, history, nested work and budgets | Tests of teardown, update/rollback, steering epochs, nested group capacity and continuous-run checkpoints |
-| 6 | Full feature acceptance and release route | All five core skills and each optional library's representative trial; scoped FirstMate enablement and both worker harnesses |
+| 1 | Map existing FirstMate owners and audit the experimental adapter | Identify how Work/Review can use existing delegation, result and lifecycle operations. For added records/helpers, justify necessary workflow context or plan a tested simplification of duplicated task/control state |
+| 2 | Normal skill/workflow availability and primitive integration | Enable the package and selected libraries once in a disposable FirstMate setup; ordinary workers and relaunches discover the correct skills without manual per-task attachment. Resolve any role or review-policy gap at its existing FirstMate owner |
+| 3 | Representative dynamic and custom workflow | Preserve upstream Work/Review semantics, candidate identity, join/review/repair behavior and root delivery through FirstMate. Use existing workspace/write mechanisms where required; custom workflows should compose the same primitives |
+| 4 | Targeted recovery and harness compatibility checks | Invoke ordinary FirstMate recovery and verify workflow context/results survive. Test the changed interface with supported workers; investigate a harness issue only where it affects this path |
+| Later | Broader parity and release | Extend demonstrated behavior across core/custom/meta workflows and representative optional libraries, with an actual install/update route and precise supported-runtime evidence |
 
-[Fundamental design](fundamental-design.md) supplies the fixed Stage 1 acceptance cases and later rollout. [Foundation verification](foundation-verification.md) records completed package isolation and the negative execution-gate trial. The [Stage 1 implementation and checks](stage1-verification.md) now supply the task-group subset; actual worker acceptance, native Windows and full feature parity remain separately tracked.
+Known gaps remain: actual Codex Review/watcher acceptance, native background-tool
+activity/retirement, the full supervisor wake/drain/rearm cycle, writer joins,
+nested work, retained artifacts/history and optional-library parity. The prior
+foreground Claude and parent-replacement evidence does not close them.
+Native Windows custody remains deferred. Preserve the observed failures and
+refusal guards; these gaps do not automatically make rebuilding those systems
+the next milestone.
+
+The existing one-component Work/Review limits remain enforced until their
+replacement is implemented and verified. [Fundamental design](fundamental-design.md)
+contains earlier proposals to reassess under D26, and [feature parity](feature-parity.md)
+tracks the outcome requirements independently from source availability.
 
 ## Earlier research questions and source answers
 

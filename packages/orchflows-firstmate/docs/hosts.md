@@ -1,6 +1,6 @@
 # Worker harnesses
 
-Only FirstMate running in Herdr is in scope. Claude Code and Codex CLI are worker harnesses selected and launched by FirstMate. Neither direct host-native execution nor Codex Desktop is a mode of this package. **The [execution gate](architecture.md#firstmate-execution-gate) admits only the experimental read-only Work scope after actual controller and attachment checks.** Other workflows remain gated.
+Only FirstMate running in Herdr is in scope. Claude Code and Codex CLI are worker harnesses selected and launched by FirstMate. Neither direct host-native execution nor Codex Desktop is a mode of this package. **The [execution gate](architecture.md#firstmate-execution-gate) admits one experimental read-only Work or explicitly authorized Review after actual controller and attachment checks. Review is currently Linux-only and requires explicit-audit policy.** Other workflows remain gated.
 
 ## Register and refresh
 

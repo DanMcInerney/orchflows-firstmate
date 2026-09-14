@@ -1,0 +1,150 @@
+{
+  "schema": 1,
+  "date": "2026-09-14",
+  "scope": "Linux development and Stage 1 foreground Claude profile",
+  "platform": "Ubuntu 24.04.4 / WSL2, Linux 6.6.87.2, ext4, Python 3.12.3",
+  "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "orchflows_commit": "ca72258493480ddcfe73b3f01d0475ad532e4726",
+  "package_version": "0.1.0-dev.3",
+  "package": {
+    "files": 1087,
+    "sha256": "15e5b6ff0280903b2be4805143f9cd3f610080a688a249942f944baeff6d87d5",
+    "symlinks": 0
+  },
+  "candidate": {
+    "files": 563,
+    "sha256": "7788ab5faf62407a80f020622c26dda9e6871a20a0023582cf4e8589e9722aa1",
+    "symlinks": 1
+  },
+  "manifest_sha256": "3dcf321292d2a66dca7af385186151386b7c8467571bfa0a2f241d2babed1a32",
+  "deployable_files": 12,
+  "linux_runner_sha256": "99b058dda4fe020a9795451bd52315e697990220ee317e5cf699890193451068",
+  "aggregate_rule": "Sorted POSIX relative path + NUL + lowercase SHA-256 + LF, UTF-8, then SHA-256. For retained in-tree symlinks hash the link target text, never the dereferenced directory. Exclude .git and bytecode.",
+  "checks": {
+    "reference-clone": {
+      "exit": 0,
+      "seconds": 0.373,
+      "tests": null
+    },
+    "reference-checkout": {
+      "exit": 0,
+      "seconds": 0.07,
+      "tests": null
+    },
+    "prepare": {
+      "exit": 0,
+      "seconds": 0.199,
+      "tests": null
+    },
+    "package": {
+      "exit": 0,
+      "seconds": 6.986,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 84,
+        "run": 84,
+        "skipped": [],
+        "unexpected_skips": []
+      }
+    },
+    "integration": {
+      "exit": 0,
+      "seconds": 34.006,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 72,
+        "run": 82,
+        "skipped": [
+          {
+            "reason": "native Windows permission normalization",
+            "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+          }
+        ],
+        "unexpected_skips": []
+      }
+    }
+  },
+  "additional_checks": [
+    "Windows-mounted staging refused",
+    "Windows PE executable refused before execution",
+    "239 local documentation links resolved and git diff --check passed before final evidence update"
+  ],
+  "live_acceptance": {
+    "status": "passed for the foreground one-Work case",
+    "trial": "pzzebeug",
+    "versions": {
+      "claude": "2.1.269",
+      "herdr": "0.7.4",
+      "treehouse": "2.0.1"
+    },
+    "elapsed_seconds": 709.618,
+    "component_count": 1,
+    "same_child_replay": true,
+    "input_and_worktrees_clean": true,
+    "native_worker_profiles_match": true,
+    "profile_supplied_by": "FirstMate spawn owner; test environment did not set the two foreground values",
+    "continuous_watcher_interval_passed": true,
+    "active_wait_span_seconds": 383.632,
+    "actual_waiting_classifications": 20,
+    "matching_owner_samples": 21,
+    "watcher_starts": 1,
+    "wake_during_active_interval": false,
+    "final_wake": "component turn-ended signal after retained result publication",
+    "full_native_reads_before_gather": true,
+    "retained_integrity_matches": true,
+    "result_digest": "c54508b6d8d770595371183a78ab2843cd16772a43e02ea3250b59f924bedf79",
+    "root_report_sha256": "9fa4a0479d3f94d36600247491abff1047528350a62f0cc200438a5f522a340a",
+    "all_ordinary_cleanup_exits_zero": true,
+    "scoped_processes_after_cleanup": 0,
+    "no_private_authentication_files": true,
+    "cleanup_note": "The ordinary owner reaped residual worktree shells. Teardown retained watcher-down/pending-wake warnings after the expected watcher close; no post-result drain/rearm cycle was tested.",
+    "receipt_sha256": "9f61e31f40b6799df2ba5ef1c18a5cc932e825df41661f3e4e764c39c25b802a",
+    "watch_observation_sha256": "c8ce450977a05830d135504b7c77de2729234bff0a6dee27e2d13df881448b61",
+    "private_receipt": ".scratch/stage1-runtime/native-trial-fm-n1.pzzebeug/receipt.json",
+    "native_profile_observation": ".scratch/stage1-runtime/native-trial-fm-n1.pzzebeug/claude/native-profile-while-active.json"
+  },
+  "native_windows": "deferred by user; real-worker refusal guards retained",
+  "limitations": [
+    "one read-only Work component",
+    "native background tools remain unsupported",
+    "parent replacement and Codex watcher acceptance still open"
+  ]
+}
