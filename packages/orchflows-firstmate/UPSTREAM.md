@@ -2,7 +2,7 @@
 
 This standalone package began as a complete source copy of [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows/tree/0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a) at commit `0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a`, upstream manifest version `0.7.0`. The initial copy contained all 1,064 tracked files. Its preserved local checkout includes CRLF line endings in some text files whose Git blobs use LF; file retention does not imply byte identity to every raw Git blob. Git metadata is not embedded in this package. The upstream LICENSE and all existing third-party notices are retained.
 
-The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.2`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
+The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.4`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
 
 Deliberate foundation changes (version `0.1.0-dev.1`):
 
@@ -23,3 +23,17 @@ Deliberate Stage 1 changes (version `0.1.0-dev.2`):
 - Isolated client protocol tests cover malformed/rejected responses, exact package binding, request validation, timeouts, error propagation and absence of fallback. They do not establish real worker integration.
 
 FirstMate's matching experimental owner changes live outside this package, against the pinned FirstMate source; stock upstream lacks this protocol. Herdr endpoint control remains exclusively FirstMate's. Actual runtime and native worker evidence require separate exact-state records. Task-aware history and broader feature parity are still migration work.
+
+Deliberate source refresh (version `0.1.0-dev.3`):
+
+- The current source target is [Orchflows `ca72258493480ddcfe73b3f01d0475ad532e4726`](https://github.com/DanMcInerney/orchflows/tree/ca72258493480ddcfe73b3f01d0475ad532e4726), still upstream version `0.7.0`, observed on September 14, 2026. The original copy identity above remains historical provenance.
+- Imported all 17 added `example-workflows/design-loop/` files byte-for-byte from their Git blobs and refreshed the inactive upstream README quotation. This retains all 1,081 upstream paths plus the six fork additions, for 1,087 package files.
+- The experimental `design-loop` library remains inactive migration source. It was not invoked, enabled, registered or installed as a library during this refresh. Its upstream trial specifications are not executed checks.
+- Fork manifests advance to `0.1.0-dev.3`; the five core skills, runtime scripts, tests and FirstMate integration are unchanged. Package checks and retained-attachment checks do not extend the earlier runtime evidence to this new package identity.
+
+Deliberate Review increment (version 0.1.0-dev.4):
+
+- The client negotiates the selected Work or Review primitive, preserving legacy Work behavior. Review requires an advertised capability and exact explicit-audit attachment before dispatch.
+- Review instructions now permit a fresh FirstMate-owned read-only reviewer of the immutable input commit. They prohibit repairs, native children and outer delivery by the component.
+- Package readiness reports both implemented scopes while retaining execution_ready=false and package-only readiness. Dynamic composition, writers, Build and SelfImprove remain gated.
+- All upstream examples remain unchanged migration source. This increment uses the upstream dynamic workflow as a development process; it does not invoke the fork's gated dynamic workflow or enable design-loop.

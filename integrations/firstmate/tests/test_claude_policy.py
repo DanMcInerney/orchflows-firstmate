@@ -112,6 +112,34 @@ LAUNCH='claude --permission-mode auto --settings __CLAUDESETTINGS__'
                 else:
                     self.assertNotIn("permissions", settings_value)
 
+    @unittest.skipUnless(sys.platform == "linux" and shutil.which("jq"), "Linux Bash launch with jq")
+    def test_linux_foreground_profile_is_applied_only_to_attached_claude_launches(self):
+        source = (Path(os.environ["FM_STAGE1_FIRSTMATE_ROOT"]) / "bin/fm-spawn.sh").read_text()
+        quote = "shell_quote() {" + source.split("shell_quote() {", 1)[1].split("\n}\n", 1)[0] + "\n}\n"
+        settings = "CLAUDE_SETTINGS=" + source.split("\nCLAUDE_SETTINGS=", 1)[1].split(
+            '\nif [ "$HARNESS" = rovo ]', 1)[0]
+        script = quote + """
+set -eu
+fm_task_group_python() { "$PYTHON" -B "$@"; }
+worker() { "$PYTHON" -c 'import json,os,sys; print(json.dumps({"argv":sys.argv[1:],"background":os.environ.get("CLAUDE_CODE_DISABLE_BACKGROUND_TASKS"),"timeout":os.environ.get("BASH_DEFAULT_TIMEOUT_MS")}))' "$@"; }
+LAUNCH='worker --permission-mode auto --settings __CLAUDESETTINGS__'
+""" + settings + '\neval "$LAUNCH"\n'
+        for harness, bound in (("claude", "1"), ("claude", "0"), ("codex", "1")):
+            with self.subTest(harness=harness, bound=bound):
+                env = dict(os.environ, PYTHON=sys.executable, HARNESS=harness,
+                           TASK_GROUP_BOUND=bound, SCRIPT_DIR=str(fixtures.BIN),
+                           FM_HOME=str(self.owner.home), ID="root", SPAWN_GEN="s1.123.4",
+                           CLAUDE_CODE_DISABLE_BACKGROUND_TASKS="0", BASH_DEFAULT_TIMEOUT_MS="1234")
+                result = subprocess.run(["bash", "-c", script], env=env,
+                                        capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                observed = json.loads(result.stdout)
+                expected = ("1", "420000") if (harness, bound) == ("claude", "1") else ("0", "1234")
+                self.assertEqual((observed["background"], observed["timeout"]), expected)
+                self.assertEqual(observed["argv"][:3], ["--permission-mode", "auto", "--settings"])
+                self.assertEqual(len(observed["argv"]), 4)
+                self.assertEqual(env["CLAUDE_CODE_DISABLE_BACKGROUND_TASKS"], "0")
+
     @unittest.skipUnless(os.name == "nt", "native Windows permission normalization")
     def test_windows_rules_use_native_drive_not_msys_tmp_alias(self):
         rule = file_rule(self.owner.runtime, "Read", "/tmp", tree=True)

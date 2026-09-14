@@ -2,6 +2,14 @@
 
 This document preserves what the originating session established. The [original assessment](assessment-2026-09-13.md) remains the dated narrative record; this file can accumulate later evidence.
 
+## Upstream target clarification — September 14, 2026
+
+The user explicitly confirmed the latest [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows) as the source to adapt, superseding their preceding local `orchflows-light` reference. The product remains a modified Orchflows with near feature parity, executed through FirstMate on Herdr with Claude Code and Codex workers.
+
+**Executed source checks:** `git ls-remote https://github.com/DanMcInerney/orchflows.git HEAD refs/heads/main` returned `ca72258493480ddcfe73b3f01d0475ad532e4726` for both refs. A separate clone under ignored `.scratch/orchflows-refresh-ca7225849348/` was checked out detached at that exact revision. Comparing Git trees with the implemented `0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a` baseline showed one added commit, 17 added files under `example-workflows/design-loop/`, and one changed root README. Core skills and runtime scripts have no changes in this delta. The root manifest remains 0.7.0; the added library manifest is 0.1.0 with eight skills. Its README explicitly describes the packaged example as experimental and untested.
+
+**Initial source-check boundary:** that check acquired and inspected source only. The user subsequently authorized the refresh and said not to use design-loop for the work. Package dev.3 now imports all 17 added files as inactive migration source, updates the inactive README quotation and advances the three fork manifests. Core skills, scripts, tests and the FirstMate distribution are unchanged. The new source was not invoked, enabled or installed as a library. [Refresh verification](upstream-refresh-verification.md) and [current package state](upstream-refresh-state.json) record actual checks. Pinned `.sources/` references, active installations and earlier runtime records remain unchanged; package checks do not establish design-loop execution or seamless fleet compatibility.
+
 **Source baseline**
 
 | Project | Repository | Examined revision | Scope |
@@ -203,3 +211,105 @@ The 563-file continuation candidate adds positive Linux launch-transaction custo
 One fresh final independent review found the routine root signal defect also reproduced live: authoritative task-group waiting failed the no-verb working predicate, causing an unnecessary watcher wake. The single repair pass accepts group waiting only in that signal owner, preserving actionable-status precedence, secondmate routing and the general working proof. Four new regressions reproduce the prior rejection and pass repaired. Full final discovery ran 81 cases: WSL71 passed/ten skipped; Windows49 passed/32 skipped. No second independent review was run.
 
 Final Claude trial `ed3tuvcz` on the repaired 563-file candidate passed actual ordinary watcher supervision: 20 waiting classifications over 345.56 seconds, matching same-watcher/root-waiting/child-working samples and an advancing beacon. The routine progress signal was absorbed; the only wake was the legitimate group-ready result. Complete native reads preceded gather, the retained and ordinary reports were correct, source/worktrees stayed clean, and all ordinary cleanup operations succeeded with no scoped processes remaining. The cleanup owner reaped residual worktree shells; this is not a claim that endpoint closure alone retired them. No drain/rearm or credential-file copy was used. Parent replacement was not repeated in this final trial, and background-tool/native Windows/full-parity acceptance remain open. [Final verification](stage1-continuation-verification.md), [exact runtime evidence](stage1-acceptance-continuation.md).
+
+
+### Linux-first development and actual current-package Work
+
+The user changed the development priority to Ubuntu/WSL, Linux first. Native
+Windows owner work is deferred; its earlier evidence and admission refusals
+remain. A new Linux runner validates the source pin, stages native LF/symlink
+checkouts and exact owned bytes on ext4, reproduces the FirstMate distribution,
+and isolates both fixture suites from host configuration and authentication.
+
+The owned package remains dev.3 at Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726.
+The new FirstMate patch selects the per-launch native Claude foreground profile.
+All 84 package tests passed; all 72 Linux integration tests passed with ten
+explicit Windows skips. The runner also refused a Windows-mounted staging
+directory and a Windows PE executable. These checks are fixture evidence.
+
+Separately, actual Claude trial pzzebeug ran the new 563-path candidate and
+current package through FirstMate/Herdr on Ubuntu. Both native workers had the
+FirstMate-supplied foreground profile. One component, same-child replay, correct
+retained output and ordinary root report passed. The same ordinary watcher
+recorded 20 waiting classifications over 383.632 seconds without an active-work
+wake. Full native report/result reads preceded gather. Normal task/lab/sentinel
+cleanup returned zero and left no scoped processes; the owner reaped residual
+worktree shells. The logs preserve post-result watcher-down/pending-wake
+warnings; a complete supervisor drain/rearm loop was not tested. No private
+credential file or copied refresh token was used.
+
+See [Linux verification](linux-first-verification.md) and [exact state](linux-first-state.json).
+Parent replacement, Codex watcher acceptance, native background tools, Review,
+writers and wider feature parity remain open. No separate agent review was
+performed for this increment. Active installations and pinned research files
+were not changed; design-loop was not used.
+
+
+## Dev.4 Review and Linux recovery — September 14, 2026
+
+The user explicitly requested Orchflows dynamic workflow for this development.
+The upstream skill at ca72258493480ddcfe73b3f01d0475ad532e4726 was applied:
+three fresh makers with separate file ownership, joined checks, one fresh
+independent Review and one repair/check pass. Design-loop was not used.
+This development process is separate from the fork's still-gated dynamic runtime.
+
+The owned dev.4 package retains all 1,081 upstream paths in 1,088 files.
+FirstMate now admits one Linux Review/explicit-audit attachment alongside the
+legacy Work/none profile. Review binds the frozen clean input, package,
+primitive, metadata and result, uses a fresh fleet component with Review
+guidance, and leaves repairs and root delivery outside that component.
+The controller/client do not dispatch native child workers.
+
+Final Ubuntu/ext4 checks passed 99 package, 90 integration and 13 driver tests,
+with ten explicit native Windows skips. Preparation reproduced the 564-path
+candidate from thirteen inventoried deployables. The independent review found
+the overlong private socket path/missing failure diagnostics and a repeated
+gather timestamp that could hide early acknowledgement. The repair adds short
+paths and capacity admission, scrubbed operation failure logs, and a durable
+first acknowledgement timestamp that survives current-generation re-gather.
+
+The first actual attempt failed before worker launch because of socket length;
+ordinary cleanup passed. The long Review retry completed one component, exact
+replay, full native reads before its single gather, correct reports and root
+delivery. Its original receipt failed only on a wrong observer status label.
+That receipt is preserved. The repaired parser's separate assessment passed
+23 positive waiting/working samples over 395.338 seconds; the actual watcher
+trace independently contains 20 waiting classifications over 382.435 seconds.
+The same repair/check pass added a regression against actual owner output.
+
+The final repaired candidate passed real Claude Work parent replacement
+a-7ysafo1o and explicit Review a-w469d47l. Both passed full reads before gather,
+same-child replay, retained identity, clean inputs/worktrees, ordinary root
+delivery and all task/lab/sentinel cleanup, leaving no scoped processes.
+The replacement root gathered under its new generation and read/handled the
+actual result inbox notice. These final cases used a zero required steady
+watcher span; they do not repeat the long uninterrupted watcher measurement.
+Selected live process observations confirmed FirstMate's foreground profile.
+No authentication file or refresh token was copied, and active profiles were
+unchanged.
+
+[Review verification](review-verification.md) and [exact state](review-state.json)
+preserve candidate, package, driver, runtime and receipt identities separately,
+including original failed receipts and the observer-only reassessment.
+Native Windows remains deferred. Codex Review/watcher acceptance, native
+background tools, full supervisor drain/rearm, writers, multi-component joins,
+nested composition and optional-library parity remain open.
+
+
+## User clarification and next-session handoff — September 14, 2026
+
+After dev.4, the user clarified that the goal is a plug-and-play upgrade through
+which FirstMate uses Orchflows' Work/Review primitives, dynamic workflow and
+custom/meta-workflows. Existing FirstMate systems should provide subagents,
+workspaces, communication, supervision, recovery and delivery; Claude/Codex
+handling stays with FirstMate. The user rejected the emphasis on building these
+mechanisms and treating harness integration as the main work.
+
+This is a product-direction clarification, not new runtime evidence. The next
+implementation priority is to map and simplify the experimental adapter against
+existing FirstMate owners and wire normal skill/workflow availability, with
+targeted compatibility checks. D26 and the current [handoff](../HANDOFF.md)
+record it. The [previous handoff](../HANDOFF-through-dev4-2026-09-14.md) is preserved
+byte-for-byte as historical context; its next-work queue is superseded.
+This handoff update changed documentation only and did not repeat or relabel
+dev.4 tests or trials.

@@ -8,6 +8,7 @@ from pathlib import Path
 import shlex
 
 from fm_task_group_store import GroupError, clean_commit, safe_path
+from fm_task_group_primitives import attachment_primitive, validate_metadata
 
 
 def role(owner, task):
@@ -20,12 +21,16 @@ def role(owner, task):
     if binding:
         if attachment_present or advertised not in (None, "component"):
             raise GroupError("conflicting task-group roles")
-        owner.component_context(task)
+        _, _, attachment = owner.component_context(task)
+        if advertised:
+            validate_metadata(current, attachment)
         return "component"
     if attachment_present:
         if advertised not in (None, "root"):
             raise GroupError("conflicting task-group roles")
-        owner.attachment(task)
+        attachment = owner.attachment(task)
+        if advertised:
+            validate_metadata(current, attachment)
         return "root"
     if advertised:
         raise GroupError("task-group metadata has no durable binding")
@@ -67,9 +72,13 @@ def launch_meta(owner, task):
         return ""
     fields = {"task_group_role": task_role, "task_group_epoch": "1"}
     if task_role == "component":
-        binding, _, _ = owner.component_context(task)
+        binding, _, attachment = owner.component_context(task)
         fields.update(task_group_parent=binding["parent"], task_group_request=binding["request_id"],
                       task_group_hash=binding["body_hash"], result_disposition="parent")
+    else:
+        attachment = owner.attachment(task)
+    if attachment_primitive(attachment) == "Review":
+        fields["task_group_primitive"] = "Review"
     return "".join(f"{key}={value}\n" for key, value in fields.items())
 
 
@@ -88,6 +97,12 @@ def command_prefix(owner):
 
 
 def component_brief(owner, binding, record, attachment):
+    if attachment_primitive(attachment) == "Review":
+        return ("# Task\n\n## Captain's intent\n\n"
+                f"Return one independent read-only Review result to FirstMate root {binding['parent']}.\n\n"
+                "## Firstmate spec\n\n"
+                f"{record['body']['assignment']}\n\n"
+                + component_overlay(owner, binding, attachment))
     return ("# Task\n\n## Captain's intent\n\n"
             f"Return one read-only Work result to FirstMate root {binding['parent']}.\n\n"
             "## Firstmate spec\n\n"
@@ -101,9 +116,18 @@ def component_brief(owner, binding, record, attachment):
 
 def component_overlay(owner, binding, attachment):
     child = binding["child"]
+    review_contract = ""
+    if attachment_primitive(attachment) == "Review":
+        review_contract = (
+            "This is an explicitly authorized independent audit by a fresh Review component. "
+            f"Review only this component's worktree at frozen input commit {attachment['input_commit']}. "
+            "Apply the assigned package's relevant Review guidance. Report findings with evidence, "
+            "file references and remaining gaps; do not make or delegate repairs. "
+            "Do not change project files, dependencies, Git state or the attached package.\n")
     return ("# FirstMate task-group component completion contract\n\n"
             f"Role: component; disposition: return evidence to parent {binding['parent']}; "
             f"request {binding['request_id']}; attachment epoch 1.\n"
+            + review_contract +
             "This component contract governs completion. Do not write ordinary scout done status, "
             "deliver to the captain, open a PR, merge, promote, run no-mistakes, or complete the parent. "
             "Do not invoke Work or Review or another fleet command.\n"
@@ -136,6 +160,8 @@ def launch_overlay(owner, task):
               " --firstmate-root " + shlex.quote(client_code) +
               " --home " + shlex.quote(client_home) + " --root " + shlex.quote(task) +
               " --generation CURRENT_SPAWN_GEN --timeout 420")
+    if attachment_primitive(attachment) == "Review":
+        return review_root_overlay(owner, task, attachment, client + " --primitive Review")
     windows_note = ("On native Windows, pass a native absolute request path to the package client; "
                     "use cygpath -m to convert a recorded MSYS tasktmp path. " if owner.runtime.windows else "")
     return ("# FirstMate task-group root attachment\n\n"
@@ -159,3 +185,32 @@ def launch_overlay(owner, task):
             "identity before gather acknowledges receipt. While waiting, keep the join pending; do not "
             "mark done or paused for a person. Once gathered, incorporate evidence into your normal scout "
             f"report at {owner.home / 'data' / task / 'report.md'} and follow FirstMate's ordinary outer completion.\n")
+
+
+def review_root_overlay(owner, task, attachment, client):
+    package = Path(attachment["package_path"])
+    return ("# FirstMate task-group root attachment\n\n"
+            "You remain a normal root scout with one explicitly authorized independent audit. "
+            f"The attached orchflows-firstmate package is {package} "
+            f"(SHA-256 {attachment['package_digest']}), epoch 1. "
+            f"The frozen read-only input commit is {attachment['input_commit']}. "
+            "The admission policy is Review/explicit-audit: exactly one fresh read-only reviewer "
+            "under FirstMate/Herdr. Work, writers, repairs, nesting, additional components and "
+            "native-child fallback are unavailable.\n"
+            f"Read and apply the exact attached Review skill at {package / 'skills' / 'orch-review' / 'SKILL.md'}. "
+            f"Read your current spawn_gen and tasktmp from {owner.home / 'state' / (task + '.meta')} before each call. "
+            "Place the request JSON and transient files in that tasktmp, keeping your worktree clean. "
+            "The request contains only request_id and assignment; the immutable attachment selects Review. "
+            "Describe the audit target and relevant Review guidance in the assignment. "
+            "Invoke the attached fork client with the actual generation and absolute request path:\n\n"
+            f"    {client} submit --request REQUEST_JSON_PATH\n"
+            f"    {client} status\n"
+            f"    {client} gather\n\n"
+            "Replay the same request ID and exact body. After relaunch reconcile that saved request "
+            "under your current generation; never create a replacement reviewer. A launching or uncertain "
+            "request remains unresolved until FirstMate reconciles it. Read the complete retained report "
+            "and result identity before gather acknowledges receipt. Keep the join pending while waiting; "
+            "do not mark done or paused for a person. Once gathered, include the audit findings, exact "
+            "reviewed commit, reviewer identity and remaining gaps in your normal scout report at "
+            f"{owner.home / 'data' / task / 'report.md'}, then follow FirstMate's ordinary outer completion. "
+            "Findings authorize no repair pass or additional review in this bounded audit.\n")

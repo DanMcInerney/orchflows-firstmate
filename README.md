@@ -2,9 +2,20 @@
 
 Standalone Orchflows variant for **FirstMate running on Herdr**, with Claude Code and Codex CLI as worker harnesses. The target is near 1:1 feature parity with Orchflows, with revised execution and lifecycle ownership.
 
+**Product goal:** enable the upgrade once and let FirstMate use Orchflows'
+Work, Review, dynamic workflow and custom/meta-workflows naturally. FirstMate's
+existing systems own agents, workspaces, communication, recovery and delivery,
+including Claude/Codex handling. The next work is mapping and simplifying the
+adapter and wiring normal skill/workflow availability; see the clarified
+[handoff](HANDOFF.md).
+
+The owned package is `0.1.0-dev.4`, refreshed to the latest [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows) observed on September 14: `ca72258493480ddcfe73b3f01d0475ad532e4726`. Its new experimental `design-loop` library is retained as inactive migration source and was not used for this work. [Refresh verification](docs/upstream-refresh-verification.md) and [refresh package state](docs/upstream-refresh-state.json) distinguish package checks from earlier live trials on dev.2.
+
+**Development target: Ubuntu in WSL, Linux first.** Native Windows work is deferred. The current increment passed 202 package, integration and driver tests (ten additional Windows-only skips), plus real Claude Review and parent-replacement trials; see [Review verification](docs/review-verification.md). Earlier Work/watcher evidence remains in [Linux verification](docs/linux-first-verification.md). [Linux development](docs/linux-development.md) provides the isolated check command and remaining Linux acceptance work.
+
 **Start with [HANDOFF.md](HANDOFF.md).** It contains the next-session assignment and reading order. No memory of the original conversation is required.
 
-The selected design keeps workflow composition in a root crewmate and turns Work/Review into requests for FirstMate-owned component tasks. FirstMate owns every Herdr endpoint, task lifecycle and outer delivery gate. The first implementation adds one experimental read-only Work component; broader composition and feature parity remain staged work.
+The selected design keeps workflow composition in a root crewmate and turns Work/Review into requests for FirstMate-owned component tasks. FirstMate owns every Herdr endpoint, task lifecycle and outer delivery gate. The current implementation admits one read-only Work component or one explicitly authorized Linux Review component. Review audits a frozen clean commit; writers and multi-component composition remain staged work. See the [Review contract](docs/review-contract.md).
 
 The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/README.md). Package isolation and execution gating are the first implementation step; standalone execution outside FirstMate is not a supported mode. Normal Orchflows is not a runtime dependency.
 
@@ -12,6 +23,8 @@ The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/
 | --- | --- |
 | [Handoff](HANDOFF.md) | User intent, next assignment, expected outputs and completion criteria |
 | [Fundamental design](docs/fundamental-design.md) | Selected architecture, required FirstMate changes, staged implementation and fixed runtime acceptance |
+| [Review verification](docs/review-verification.md) | Current bounded Review, actual recovery, exact identities and remaining scope |
+| [Linux acceptance driver](docs/linux-acceptance.md) | Reproduce private Claude Work/Review and parent-replacement trials |
 | [Feature parity](docs/feature-parity.md) | Every core feature and optional library, retained source versus migrated behavior |
 | [Native worker trials](docs/stage1-native-trial.md) | Actual Codex/Claude attempts, retained result identities and runtime gaps |
 | [Windows runtime boundary](docs/stage1-windows.md) | Implemented shell/path/lock boundary and remaining native worker acceptance |
@@ -36,7 +49,13 @@ The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/
 | [Proposed first increment](docs/proposed-increment.md) | Manual feasibility gate, then a bounded optional worker profile |
 | [Source refresh](docs/source-refresh-2026-09-13.json) | Current clone identities, baseline blob verification and local host inventory |
 
-Status: experimental Stage 1 with actual Claude and Codex Work results in WSL, including earlier Codex parent-replacement/gather evidence. The current 81-case integration suite passes with recorded platform skips. The repaired real Claude trial passed 345 seconds of uninterrupted ordinary watcher supervision, full reads before gather, root delivery and cleanup. Launch supervision uses live FirstMate transaction custody. Native Windows probes passed Herdr/Treehouse primitives but exposed a detached-process cleanup gap, so actual Windows workers now refuse until native custody is implemented. Only one read-only Work component is admitted; Review, writers, nesting and optional-library execution remain gated. This is not yet a plug-and-play release.
+Status: experimental read-only Work/Review integration. FirstMate owns dispatch,
+recovery and delivery on Herdr. The repaired candidate completed real Claude
+Review and Work parent replacement, including full reads before gather and
+ordinary cleanup. Writers, multiple-component dynamic composition, nesting and
+optional-library execution remain gated; this is not yet a plug-and-play release.
+The development itself followed Orchflows dynamic workflow with fresh makers,
+one independent Review and one repair pass.
 
 The initial evidence dates to September 13, 2026 (America/New_York). Refresh version-sensitive facts before designing against current upstreams, retaining the pinned baseline for comparison.
 

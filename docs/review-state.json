@@ -1,0 +1,656 @@
+{
+  "schema": 1,
+  "status": "bounded Linux Work/Review implementation verified; broader parity remains gated",
+  "upstream_orchflows": "ca72258493480ddcfe73b3f01d0475ad532e4726",
+  "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "package_version": "0.1.0-dev.4",
+  "package": {
+    "files": 1088,
+    "sha256": "fb955714fea9dbefa3b6c1bbe359e668361cd3298ef30213d7001540a96bfa40",
+    "symlinks": 0
+  },
+  "candidate": {
+    "files": 564,
+    "sha256": "6c7e15b1991cb7c733b50ecc565147426f8d1134f4a8c443dcff639540503592",
+    "symlinks": 1
+  },
+  "upstream_paths_retained": 1081,
+  "distribution_deployables": 13,
+  "distribution_manifest_sha256": "34e75cd2f59c8f3634c486843ad6911442cacd504c40a99f964b0424d7242d22",
+  "checks": [
+    {
+      "exit": 0,
+      "name": "reference-clone",
+      "seconds": 0.649
+    },
+    {
+      "exit": 0,
+      "name": "reference-checkout",
+      "seconds": 0.077
+    },
+    {
+      "exit": 0,
+      "name": "prepare",
+      "seconds": 0.205
+    },
+    {
+      "exit": 0,
+      "name": "package",
+      "seconds": 12.495,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 99,
+        "run": 99,
+        "skipped": [],
+        "unexpected_skips": []
+      }
+    },
+    {
+      "exit": 0,
+      "name": "integration",
+      "seconds": 34.937,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 90,
+        "run": 100,
+        "skipped": [
+          {
+            "reason": "native Windows permission normalization",
+            "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+          }
+        ],
+        "unexpected_skips": []
+      }
+    }
+  ],
+  "raw_checks": ".scratch/review-increment/check-8zkskh4r",
+  "live_acceptance": [
+    {
+      "trial": "acceptance-6uxr4n5v",
+      "primitive": "Review",
+      "restart": false,
+      "component_delay_seconds": 330,
+      "minimum_waiting_span_seconds": 240,
+      "raw_evidence": ".scratch/review-increment/acceptance-6uxr4n5v",
+      "receipt_sha256": "eb9cb761ff7b3bd2e9ca4fb1d762a405b4abb3e841ba6b14e0db80e994316ab6",
+      "status": "failed",
+      "package": {
+        "files": 1088,
+        "sha256": "fb955714fea9dbefa3b6c1bbe359e668361cd3298ef30213d7001540a96bfa40",
+        "symlinks": 0
+      },
+      "candidate": {
+        "files": 564,
+        "sha256": "d2769e99ee88c708b6efd7c8428b54fb8e817e0ed086b07d9256e6eb5def2d7a",
+        "symlinks": 1
+      },
+      "driver_helpers": {
+        "files": 5,
+        "sha256": "b81eb46e41be2809d43ef415dab7bb3d5449ae733cc290c4d87b0074790b8067",
+        "symlinks": 0
+      },
+      "driver_entrypoint_sha256": "c2a46ed27bd4bd43f1a667ee147a6b0078fa0f8433e481b0b83760e3faae73a9",
+      "elapsed_seconds": null,
+      "root": null,
+      "request_id": null,
+      "child": null,
+      "acceptance": null,
+      "cleanup_passed": true,
+      "scoped_processes_remaining": [],
+      "no_private_credentials": true,
+      "authentication": {
+        "credential_file_copied": false,
+        "method": "explicit cache access-token-only read",
+        "refresh_token_copied": false,
+        "remaining_seconds": 15894
+      }
+    },
+    {
+      "trial": "acceptance-us29ugpk",
+      "primitive": "Review",
+      "restart": false,
+      "component_delay_seconds": 330,
+      "minimum_waiting_span_seconds": 240,
+      "raw_evidence": ".scratch/review-increment/acceptance-us29ugpk",
+      "receipt_sha256": "5bf91be30512260b75a72a81b897a419e990d39a04e452041515243ca4312ec5",
+      "status": "failed",
+      "package": {
+        "files": 1088,
+        "sha256": "fb955714fea9dbefa3b6c1bbe359e668361cd3298ef30213d7001540a96bfa40",
+        "symlinks": 0
+      },
+      "candidate": {
+        "files": 564,
+        "sha256": "d2769e99ee88c708b6efd7c8428b54fb8e817e0ed086b07d9256e6eb5def2d7a",
+        "symlinks": 1
+      },
+      "driver_helpers": {
+        "files": 5,
+        "sha256": "b81eb46e41be2809d43ef415dab7bb3d5449ae733cc290c4d87b0074790b8067",
+        "symlinks": 0
+      },
+      "driver_entrypoint_sha256": "c2a46ed27bd4bd43f1a667ee147a6b0078fa0f8433e481b0b83760e3faae73a9",
+      "elapsed_seconds": 611.376,
+      "root": "accept-us29ugpk",
+      "request_id": "inspect-fixture-review-v1",
+      "child": "tg-b466aae4c7d946480f48",
+      "acceptance": {
+        "checks": {
+          "component_gathered": true,
+          "fixture_unchanged": true,
+          "full_reads_before_gather": true,
+          "no_watcher_exit_while_pending": true,
+          "one_component": true,
+          "ordinary_root_done": true,
+          "retained_result_integrity": true,
+          "root_spawn_succeeded": true,
+          "same_child_replay": true,
+          "source_findings_in_root_report": true,
+          "watcher_waiting_span": false,
+          "worktrees_unchanged": true
+        },
+        "passed": false,
+        "waiting_samples": 0,
+        "waiting_span_seconds": 0
+      },
+      "cleanup_passed": true,
+      "scoped_processes_remaining": [],
+      "no_private_credentials": true,
+      "authentication": {
+        "credential_file_copied": false,
+        "method": "explicit cache access-token-only read",
+        "refresh_token_copied": false,
+        "remaining_seconds": 15661
+      },
+      "result_digest": "4cc7a2458ba5b67dcf558cff5f6e8495f68ed7f1b0c4602f3c24d6dc989384e6",
+      "first_gathered_at": 1789399718.7063835,
+      "gathered_parent_gen": "s1789399155.748486.7871",
+      "read_order": {
+        "events": [
+          {
+            "invoked_at": "2026-09-14T15:19:55.172Z",
+            "kind": "submit",
+            "result_at": "2026-09-14T15:20:13.565Z",
+            "returned_child": "tg-b466aae4c7d946480f48",
+            "returned_request_id": "inspect-fixture-review-v1",
+            "success": true
+          },
+          {
+            "invoked_at": "2026-09-14T15:20:16.073Z",
+            "kind": "submit",
+            "result_at": "2026-09-14T15:20:18.316Z",
+            "returned_child": "tg-b466aae4c7d946480f48",
+            "returned_request_id": "inspect-fixture-review-v1",
+            "success": true
+          },
+          {
+            "file": "report",
+            "full_content_observed": true,
+            "invoked_at": "2026-09-14T15:28:31.131Z",
+            "kind": "read",
+            "result_at": "2026-09-14T15:28:31.144Z",
+            "success": true,
+            "unlimited": true
+          },
+          {
+            "file": "result",
+            "full_content_observed": true,
+            "invoked_at": "2026-09-14T15:28:31.670Z",
+            "kind": "read",
+            "result_at": "2026-09-14T15:28:31.688Z",
+            "success": true,
+            "unlimited": true
+          },
+          {
+            "invoked_at": "2026-09-14T15:28:34.858Z",
+            "kind": "gather",
+            "result_at": "2026-09-14T15:28:39.829Z",
+            "success": true
+          }
+        ],
+        "read_both_before_first_gather": true,
+        "read_both_before_owner_acknowledgement": true,
+        "recognized_gather_count": 1,
+        "same_child_replay": true,
+        "scope": "private native Read/Bash observation; no product transcript-correlation claim",
+        "successful_submissions": 2
+      },
+      "reassessment": {
+        "status": "reassessed-retained-observations-no-worker-rerun",
+        "receipt_sha256": "5bf91be30512260b75a72a81b897a419e990d39a04e452041515243ca4312ec5",
+        "observer_sha256": "fa4005a21a840e368e72778eed8417c9fa26d7e6e55f89f1bf224783191906ff",
+        "original_status": "failed",
+        "original_failed_checks": [
+          "watcher_waiting_span"
+        ],
+        "acceptance": {
+          "passed": true,
+          "checks": {
+            "root_spawn_succeeded": true,
+            "ordinary_root_done": true,
+            "one_component": true,
+            "same_child_replay": true,
+            "retained_result_integrity": true,
+            "component_gathered": true,
+            "source_findings_in_root_report": true,
+            "fixture_unchanged": true,
+            "worktrees_unchanged": true,
+            "full_reads_before_gather": true,
+            "watcher_waiting_span": true,
+            "no_watcher_exit_while_pending": true
+          },
+          "minimum_waiting_span_seconds": 240,
+          "restart_requested": false,
+          "waiting_samples": 23,
+          "waiting_span_seconds": 395.338
+        },
+        "cleanup_passed": true,
+        "actual_watcher_trace": {
+          "waiting_classifications": 20,
+          "waiting_span_seconds": 382.435,
+          "sha256": "2431b2d8573b87b03d68907524d286957462c2e82cc0c884e2efdad3b0efb968"
+        }
+      }
+    },
+    {
+      "trial": "a-7ysafo1o",
+      "primitive": "Work",
+      "restart": true,
+      "component_delay_seconds": 60,
+      "minimum_waiting_span_seconds": 0,
+      "raw_evidence": ".scratch/review-increment/a-7ysafo1o",
+      "receipt_sha256": "6178ec553be060089fb19294b57c72b15948580bb1301a01d33dd77843d377a3",
+      "status": "passed",
+      "package": {
+        "files": 1088,
+        "sha256": "fb955714fea9dbefa3b6c1bbe359e668361cd3298ef30213d7001540a96bfa40",
+        "symlinks": 0
+      },
+      "candidate": {
+        "files": 564,
+        "sha256": "6c7e15b1991cb7c733b50ecc565147426f8d1134f4a8c443dcff639540503592",
+        "symlinks": 1
+      },
+      "driver_helpers": {
+        "files": 5,
+        "sha256": "d4033b292b8b2f8e2ab436488a95d58d113f3a583e5358b0fd055f58f593ae63",
+        "symlinks": 0
+      },
+      "driver_entrypoint_sha256": "6f177a2b7ccaba4b06eec6358f521d5ccf30cf23ed94b266dd24f4d15ab893f4",
+      "elapsed_seconds": 351.433,
+      "root": "accept-7ysafo1o",
+      "request_id": "inspect-fixture-work-v1",
+      "child": "tg-70773bbf209d1042e0f8",
+      "acceptance": {
+        "checks": {
+          "component_gathered": true,
+          "fixture_unchanged": true,
+          "full_reads_before_gather": true,
+          "gathered_by_replacement": true,
+          "no_watcher_exit_while_pending": true,
+          "one_component": true,
+          "ordinary_root_done": true,
+          "replacement_preserved_child": true,
+          "retained_result_integrity": true,
+          "root_spawn_succeeded": true,
+          "same_child_replay": true,
+          "source_findings_in_root_report": true,
+          "watcher_waiting_span": true,
+          "worktrees_unchanged": true
+        },
+        "passed": true,
+        "waiting_samples": 0,
+        "waiting_span_seconds": 0
+      },
+      "cleanup_passed": true,
+      "scoped_processes_remaining": [],
+      "no_private_credentials": true,
+      "authentication": {
+        "credential_file_copied": false,
+        "method": "explicit cache access-token-only read",
+        "refresh_token_copied": false,
+        "remaining_seconds": 15285
+      },
+      "result_digest": "fb179aa2eb4d90f02078ef043e19f7ef2dddddc36c49d1cfc7ec34f648ef07a9",
+      "first_gathered_at": 1789399796.1890435,
+      "gathered_parent_gen": "s1789399629.800321.11879",
+      "read_order": {
+        "events": [
+          {
+            "invoked_at": "2026-09-14T15:26:04.962Z",
+            "kind": "submit",
+            "result_at": "2026-09-14T15:26:24.680Z",
+            "returned_child": "tg-70773bbf209d1042e0f8",
+            "returned_request_id": "inspect-fixture-work-v1",
+            "success": true
+          },
+          {
+            "invoked_at": "2026-09-14T15:26:28.216Z",
+            "kind": "submit",
+            "result_at": "2026-09-14T15:26:30.416Z",
+            "returned_child": "tg-70773bbf209d1042e0f8",
+            "returned_request_id": "inspect-fixture-work-v1",
+            "success": true
+          },
+          {
+            "file": "report",
+            "full_content_observed": true,
+            "invoked_at": "2026-09-14T15:29:44.660Z",
+            "kind": "read",
+            "result_at": "2026-09-14T15:29:44.671Z",
+            "success": true,
+            "unlimited": true
+          },
+          {
+            "file": "result",
+            "full_content_observed": true,
+            "invoked_at": "2026-09-14T15:29:48.102Z",
+            "kind": "read",
+            "result_at": "2026-09-14T15:29:48.121Z",
+            "success": true,
+            "unlimited": true
+          },
+          {
+            "invoked_at": "2026-09-14T15:29:51.512Z",
+            "kind": "gather",
+            "result_at": "2026-09-14T15:29:56.424Z",
+            "success": true
+          }
+        ],
+        "read_both_before_first_gather": true,
+        "read_both_before_owner_acknowledgement": true,
+        "recognized_gather_count": 1,
+        "same_child_replay": true,
+        "scope": "private native Read/Bash observation; first literal gather and durable first owner acknowledgement",
+        "successful_submissions": 2
+      },
+      "replacement": {
+        "at": 1789399633.2018554,
+        "before_generation": "s1789399530.785532.15170",
+        "child": "tg-70773bbf209d1042e0f8",
+        "exit": 0
+      },
+      "inbox_observation": {
+        "read_and_handled": true,
+        "sha256": "2a847e20a4efa94466629a0c891db378235bb36dd0b66cab0234052b9293046b"
+      }
+    },
+    {
+      "trial": "a-w469d47l",
+      "primitive": "Review",
+      "restart": false,
+      "component_delay_seconds": 0,
+      "minimum_waiting_span_seconds": 0,
+      "raw_evidence": ".scratch/review-increment/a-w469d47l",
+      "receipt_sha256": "54a8e6d12237de60633cedc94c13d2d8ce6ed548eaf4f209d6ba918766a3932c",
+      "status": "passed",
+      "package": {
+        "files": 1088,
+        "sha256": "fb955714fea9dbefa3b6c1bbe359e668361cd3298ef30213d7001540a96bfa40",
+        "symlinks": 0
+      },
+      "candidate": {
+        "files": 564,
+        "sha256": "6c7e15b1991cb7c733b50ecc565147426f8d1134f4a8c443dcff639540503592",
+        "symlinks": 1
+      },
+      "driver_helpers": {
+        "files": 5,
+        "sha256": "d4033b292b8b2f8e2ab436488a95d58d113f3a583e5358b0fd055f58f593ae63",
+        "symlinks": 0
+      },
+      "driver_entrypoint_sha256": "6f177a2b7ccaba4b06eec6358f521d5ccf30cf23ed94b266dd24f4d15ab893f4",
+      "elapsed_seconds": 181.382,
+      "root": "accept-w469d47l",
+      "request_id": "inspect-fixture-review-v1",
+      "child": "tg-de0b3ffd1a4e07934e14",
+      "acceptance": {
+        "checks": {
+          "component_gathered": true,
+          "fixture_unchanged": true,
+          "full_reads_before_gather": true,
+          "no_watcher_exit_while_pending": true,
+          "one_component": true,
+          "ordinary_root_done": true,
+          "retained_result_integrity": true,
+          "root_spawn_succeeded": true,
+          "same_child_replay": true,
+          "source_findings_in_root_report": true,
+          "watcher_waiting_span": true,
+          "worktrees_unchanged": true
+        },
+        "passed": true,
+        "waiting_samples": 0,
+        "waiting_span_seconds": 0
+      },
+      "cleanup_passed": true,
+      "scoped_processes_remaining": [],
+      "no_private_credentials": true,
+      "authentication": {
+        "credential_file_copied": false,
+        "method": "explicit cache access-token-only read",
+        "refresh_token_copied": false,
+        "remaining_seconds": 15078
+      },
+      "result_digest": "611cddd239f84cfe5dd9a98e9dac1de411b016971207dc0a55f4522cdb725a06",
+      "first_gathered_at": 1789399861.1301272,
+      "gathered_parent_gen": "s1789399736.810366.12345",
+      "read_order": {
+        "events": [
+          {
+            "invoked_at": "2026-09-14T15:29:41.213Z",
+            "kind": "submit",
+            "result_at": "2026-09-14T15:30:01.224Z",
+            "returned_child": "tg-de0b3ffd1a4e07934e14",
+            "returned_request_id": "inspect-fixture-review-v1",
+            "success": true
+          },
+          {
+            "invoked_at": "2026-09-14T15:30:03.870Z",
+            "kind": "submit",
+            "result_at": "2026-09-14T15:30:06.094Z",
+            "returned_child": "tg-de0b3ffd1a4e07934e14",
+            "returned_request_id": "inspect-fixture-review-v1",
+            "success": true
+          },
+          {
+            "file": "report",
+            "full_content_observed": true,
+            "invoked_at": "2026-09-14T15:30:53.546Z",
+            "kind": "read",
+            "result_at": "2026-09-14T15:30:53.564Z",
+            "success": true,
+            "unlimited": true
+          },
+          {
+            "file": "result",
+            "full_content_observed": true,
+            "invoked_at": "2026-09-14T15:30:54.081Z",
+            "kind": "read",
+            "result_at": "2026-09-14T15:30:54.095Z",
+            "success": true,
+            "unlimited": true
+          },
+          {
+            "invoked_at": "2026-09-14T15:30:58.962Z",
+            "kind": "gather",
+            "result_at": "2026-09-14T15:31:01.348Z",
+            "success": true
+          }
+        ],
+        "read_both_before_first_gather": true,
+        "read_both_before_owner_acknowledgement": true,
+        "recognized_gather_count": 1,
+        "same_child_replay": true,
+        "scope": "private native Read/Bash observation; first literal gather and durable first owner acknowledgement",
+        "successful_submissions": 2
+      }
+    }
+  ],
+  "independent_review": {
+    "count": 1,
+    "findings": [
+      "P1 Linux socket pathname capacity and missing failure diagnostics",
+      "P2 repeated gather overwrote first acknowledgement, permitting false read-order evidence"
+    ],
+    "repair_passes": 1,
+    "second_review": false
+  },
+  "reviewed_candidate": {
+    "files": 564,
+    "sha256": "d2769e99ee88c708b6efd7c8428b54fb8e817e0ed086b07d9256e6eb5def2d7a",
+    "symlinks": 1
+  },
+  "reviewed_distribution_manifest_sha256": "63332d837e25a9706e96e05167b3d8100ce04198c5d5bd6a2bb4beddcfd68713",
+  "reviewed_checks": [
+    {
+      "exit": 0,
+      "name": "reference-clone",
+      "seconds": 0.592
+    },
+    {
+      "exit": 0,
+      "name": "reference-checkout",
+      "seconds": 0.081
+    },
+    {
+      "exit": 0,
+      "name": "prepare",
+      "seconds": 0.238
+    },
+    {
+      "exit": 0,
+      "name": "package",
+      "seconds": 14.194,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 99,
+        "run": 99,
+        "skipped": [],
+        "unexpected_skips": []
+      }
+    },
+    {
+      "exit": 0,
+      "name": "integration",
+      "seconds": 45.404,
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 88,
+        "run": 98,
+        "skipped": [
+          {
+            "reason": "native Windows permission normalization",
+            "test": "test_windows_rules_use_native_drive_not_msys_tmp_alias (test_claude_policy.ClaudePolicyTests.test_windows_rules_use_native_drive_not_msys_tmp_alias)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody (test_task_group_windows_runtime.WindowsRuntimeTests.test_actual_unrelated_live_lock_owner_blocks_admission_and_forged_custody)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_complete_notify_and_gather_use_real_inbox_owner (test_task_group_windows_runtime.WindowsRuntimeTests.test_complete_notify_and_gather_use_real_inbox_owner)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_failure_keeps_uncertain_request_and_never_relaunches (test_task_group_windows_runtime.WindowsRuntimeTests.test_failure_keeps_uncertain_request_and_never_relaunches)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_forged_lock_environment_and_stale_parent_cannot_admit (test_task_group_windows_runtime.WindowsRuntimeTests.test_forged_lock_environment_and_stale_parent_cannot_admit)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_missing_runtime_and_wsl_bash_rejected_before_admission (test_task_group_windows_runtime.WindowsRuntimeTests.test_missing_runtime_and_wsl_bash_rejected_before_admission)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_native_public_submit_proves_custody_and_preserves_posix_metadata (test_task_group_windows_runtime.WindowsRuntimeTests.test_native_public_submit_proves_custody_and_preserves_posix_metadata)"
+          },
+          {
+            "reason": "requires explicit native Windows Git Bash",
+            "test": "test_typed_path_roundtrip_and_runtime_identity_are_pinned (test_task_group_windows_runtime.WindowsRuntimeTests.test_typed_path_roundtrip_and_runtime_identity_are_pinned)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_spawn_and_relaunch_refuse_before_worker_mutations (test_worker_custody.WorkerCustodyTests.test_native_spawn_and_relaunch_refuse_before_worker_mutations)"
+          },
+          {
+            "reason": "native Windows complete entrypoint",
+            "test": "test_native_teardown_and_force_retain_all_task_records (test_worker_custody.WorkerCustodyTests.test_native_teardown_and_force_retain_all_task_records)"
+          }
+        ],
+        "unexpected_skips": []
+      }
+    }
+  ],
+  "reviewed_raw_checks": ".scratch/review-increment/check-e5r8a5r4",
+  "acceptance_driver": {
+    "helpers": {
+      "files": 5,
+      "symlinks": 0,
+      "sha256": "28fd54d6c11dd353543006fc8b741761809d077ca2a7442afd2e36410fcb8e8e"
+    },
+    "entrypoint_sha256": "6f177a2b7ccaba4b06eec6358f521d5ccf30cf23ed94b266dd24f4d15ab893f4",
+    "tests_passed": 13,
+    "test_seconds": 0.521,
+    "post_review_check_repair": "Use actual FirstMate state labels and require positive child activity; record threshold in future assessments"
+  },
+  "native_runtime": {
+    "claude": {
+      "version": "2.1.269 (Claude Code)",
+      "version_exit": 0,
+      "sha256": "25e44883f54419569a3d739f38cbbdaebe83b09895da0f343e1b003710a4775b"
+    },
+    "herdr": {
+      "version": "herdr 0.7.4",
+      "version_exit": 0,
+      "sha256": "bc0fc02d4ba500f9cac2353a43e67fe036785ecca6eb55378e050fac3c103059"
+    },
+    "treehouse": {
+      "version": "v2.0.1",
+      "version_exit": 0,
+      "sha256": "07a54f318c4b17f200cf34a679ad63c66bc05166461de9c33fa83ed39301338d"
+    }
+  }
+}
