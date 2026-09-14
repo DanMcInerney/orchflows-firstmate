@@ -2,7 +2,7 @@
 
 This standalone package began as a complete source copy of [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows/tree/0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a) at commit `0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a`, upstream manifest version `0.7.0`. The initial copy contained all 1,064 tracked files. Its preserved local checkout includes CRLF line endings in some text files whose Git blobs use LF; file retention does not imply byte identity to every raw Git blob. Git metadata is not embedded in this package. The upstream LICENSE and all existing third-party notices are retained.
 
-The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.4`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
+The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.6`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
 
 Deliberate foundation changes (version `0.1.0-dev.1`):
 
@@ -37,3 +37,18 @@ Deliberate Review increment (version 0.1.0-dev.4):
 - Review instructions now permit a fresh FirstMate-owned read-only reviewer of the immutable input commit. They prohibit repairs, native children and outer delivery by the component.
 - Package readiness reports both implemented scopes while retaining execution_ready=false and package-only readiness. Dynamic composition, writers, Build and SelfImprove remain gated.
 - All upstream examples remain unchanged migration source. This increment uses the upstream dynamic workflow as a development process; it does not invoke the fork's gated dynamic workflow or enable design-loop.
+
+Deliberate normal-launch increment (version 0.1.0-dev.5):
+
+- Work/Review use a validated immutable FirstMate launch context by default; explicit client arguments remain available for existing callers.
+- Selected custom skills may compose one admitted read-only primitive through retained library roots. Additional components and the other core workflows remain gated.
+- Matching FirstMate enablement, catalog rendering and relaunch-context publication live in integrations/firstmate; no package-owned dispatch or recovery mechanism is added.
+- The full upstream source and inactive examples are retained. Controller/client fixtures and actual workers are recorded separately.
+
+Deliberate bounded dynamic increment (version 0.1.0-dev.6):
+
+- Capability metadata declares dynamic support without changing launch-context schema 1. Legacy retained context clients and two-field Work/Review requests remain supported.
+- A validated dynamic attachment admits explicit Work/Review and writable choices, request-selected status/gather, retained writer commit identities and one fresh Review followed by one repair/check pass.
+- Work, Review and dynamic skill guidance now describes that bounded Linux normal-scout profile. Custom skills reuse the same primitives; nesting, ship delivery, Build, SelfImprove and design-loop remain gated.
+- Package readiness still reports package-only and execution_ready=false. Client fixtures are separate from owner checks and actual worker evidence; FirstMate alone owns launch, workspace allocation, lifecycle and delivery.
+- All 1,081 upstream paths and existing migration inventories remain retained at ca72258493480ddcfe73b3f01d0475ad532e4726. This increment does not refresh upstream sources or modify optional example libraries.

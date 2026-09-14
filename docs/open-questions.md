@@ -6,39 +6,35 @@ Updated September 14, 2026 during Stage 1 verification. **Source** means an insp
 
 ## Current implementation queue
 
-The latest user clarification supersedes the earlier harness/recovery-first
-queue. The product should let FirstMate use Orchflows' two primitives, dynamic
-workflow and custom/meta-workflows through its existing systems. FirstMate owns
-Claude/Codex integration, dispatch, workspaces, communication, supervision,
-recovery and delivery. New code must address a demonstrated missing interface
-or workflow-context requirement, rather than duplicate those mechanisms.
+The dev.6 continuation extends the completed owner mapping and normal-launch
+seam to bounded Linux dynamic scout composition. Multiple Work results can be
+retained, clean writer commits joined in the root's existing worktree and the
+exact joined candidate reviewed once. Selected custom skills compose the same
+primitives. [Dynamic contract](dynamic-composition.md) defines the interface;
+[current verification](dynamic-verification.md) separates executed fixtures,
+actual workers, independent review and repair evidence. The final strict Linux
+Claude custom/running-Work replacement trial passed without intervention, with
+ordinary cleanup and retaining refs verified. Earlier failures remain preserved.
 
-Follow the [current handoff](../HANDOFF.md). Development remains Ubuntu/WSL,
-Linux first; native Windows is deferred. The dev.4 package adapts upstream
-ca72258493480ddcfe73b3f01d0475ad532e4726. Existing read-only Work/Review evidence
-is preserved in [verification](review-verification.md); the added design-loop
-source remains inactive and must not be used for this work.
-
-| Order | Next work | Evidence or deliverable required |
+| Order | Next work | Evidence required |
 | --- | --- | --- |
-| 1 | Map existing FirstMate owners and audit the experimental adapter | Identify how Work/Review can use existing delegation, result and lifecycle operations. For added records/helpers, justify necessary workflow context or plan a tested simplification of duplicated task/control state |
-| 2 | Normal skill/workflow availability and primitive integration | Enable the package and selected libraries once in a disposable FirstMate setup; ordinary workers and relaunches discover the correct skills without manual per-task attachment. Resolve any role or review-policy gap at its existing FirstMate owner |
-| 3 | Representative dynamic and custom workflow | Preserve upstream Work/Review semantics, candidate identity, join/review/repair behavior and root delivery through FirstMate. Use existing workspace/write mechanisms where required; custom workflows should compose the same primitives |
-| 4 | Targeted recovery and harness compatibility checks | Invoke ordinary FirstMate recovery and verify workflow context/results survive. Test the changed interface with supported workers; investigate a harness issue only where it affects this path |
-| Later | Broader parity and release | Extend demonstrated behavior across core/custom/meta workflows and representative optional libraries, with an actual install/update route and precise supported-runtime evidence |
+| 1 | Extend root writer delivery through existing FirstMate owners | A selected normal ship/local-only task delivers joined committed output; preserve no-mistakes custody and root versus component completion, with no duplicate writer/runtime system |
+| 2 | Broader custom/meta composition | A representative workflow authoring or nested composition case through the same primitives and retained catalog; introduce only missing owner interfaces demonstrated by that case |
+| 3 | Targeted compatibility and recovery | Current actual Codex composition and any lifecycle gap affecting the selected feature; component continuation and larger artifacts need their own evidence |
+| Later | Release and remaining parity | Broader optional-library trials, complete install/update/rollback, artifact/history retention, remote homes and promotion |
 
-Known gaps remain: actual Codex Review/watcher acceptance, native background-tool
-activity/retirement, the full supervisor wake/drain/rearm cycle, writer joins,
-nested work, retained artifacts/history and optional-library parity. The prior
-foreground Claude and parent-replacement evidence does not close them.
-Native Windows custody remains deferred. Preserve the observed failures and
-refusal guards; these gaps do not automatically make rebuilding those systems
-the next milestone.
+The latest direction remains a plug-and-play FirstMate upgrade. FirstMate owns
+Claude/Codex integration, dispatch, workspaces, inboxes, supervision, recovery
+and delivery. Do not restart the completed owner survey or build a new
+scheduler, recovery daemon or exhaustive harness program.
 
-The existing one-component Work/Review limits remain enforced until their
-replacement is implemented and verified. [Fundamental design](fundamental-design.md)
-contains earlier proposals to reassess under D26, and [feature parity](feature-parity.md)
-tracks the outcome requirements independently from source availability.
+Known limits: the dynamic profile is local Linux scout scope with a
+32-component bound. Ship delivery, nesting, Build/SelfImprove, general component
+relaunch, native background-tool retirement, full supervisor wake/drain/rearm,
+current Codex runtime acceptance, remote homes, promotion, bundle pruning and
+general rollback remain open. The root's ordinary scout report is not delivered
+ship code. Native Windows is deferred. Source-retained examples are not executed
+parity. Do not use design-loop for this work.
 
 ## Earlier research questions and source answers
 

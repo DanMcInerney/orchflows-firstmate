@@ -1,4 +1,4 @@
-"""Read-only callbacks for FirstMate's existing launch transaction.
+"""Callbacks for FirstMate's existing launch transaction.
 
 Callbacks deliberately do not take the task-group lock: submit owns it while
 fm-spawn calls these, and lifecycle owners can hold their existing metadata locks.
@@ -7,8 +7,9 @@ import os
 from pathlib import Path
 import shlex
 
-from fm_task_group_store import GroupError, clean_commit, safe_path
-from fm_task_group_primitives import attachment_primitive, validate_metadata
+from fm_task_group_store import GroupError, clean_commit, git, safe_path
+from fm_task_group_primitives import (attachment_primitive, component_primitive, is_dynamic,
+                                      validate_metadata)
 
 
 def role(owner, task):
@@ -21,9 +22,9 @@ def role(owner, task):
     if binding:
         if attachment_present or advertised not in (None, "component"):
             raise GroupError("conflicting task-group roles")
-        _, _, attachment = owner.component_context(task)
+        _, record, attachment = owner.component_context(task)
         if advertised:
-            validate_metadata(current, attachment)
+            validate_metadata(current, attachment, record=record)
         return "component"
     if attachment_present:
         if advertised not in (None, "root"):
@@ -63,7 +64,52 @@ def launch_check(owner, task, kind, backend, harness, project, worktree=None):
         worktree = safe_path(worktree, directory=True)
         if worktree == project:
             raise GroupError("task-group worker requires its own isolated worktree")
-        clean_commit(worktree, attachment["input_commit"])
+        if task_role == "component":
+            clean_commit(worktree, record.get("input_commit", attachment["input_commit"]))
+        elif not (is_dynamic(attachment) and (owner.home / "state" / f"{task}.meta").exists()):
+            clean_commit(worktree, attachment["input_commit"])
+
+
+def launch_position(owner, task, worktree):
+    """Position a newly allocated component through the existing spawn owner.
+
+    The call site is after isolation/freshening and before launch-check or metadata
+    publication. Never move a root, a published child, or the parent's worktree.
+    """
+    if role(owner, task) != "component":
+        return
+    binding, record, attachment = owner.component_context(task)
+    if not is_dynamic(attachment):
+        return
+    parent, _ = owner.root_meta(binding["parent"], binding["accepted_parent_gen"])
+    if record["state"] != "launching" or (owner.home / "state" / f"{task}.meta").exists():
+        raise GroupError("only a fresh launching component may be positioned")
+    worktree = safe_path(worktree, directory=True)
+    project = safe_path(attachment["project"], directory=True)
+    parent_worktree = safe_path(parent["worktree"], directory=True)
+    if worktree in (project, parent_worktree):
+        raise GroupError("component positioning requires its own worktree")
+    top = safe_path(git(worktree, "rev-parse", "--show-toplevel"), directory=True)
+    common = safe_path(git(worktree, "rev-parse", "--path-format=absolute", "--git-common-dir"), directory=True)
+    project_common = safe_path(git(project, "rev-parse", "--path-format=absolute", "--git-common-dir"), directory=True)
+    if top != worktree or common != project_common:
+        raise GroupError("component positioning requires an isolated worktree of the attached repository")
+    clean_commit(worktree)
+    verify_position(owner, binding, project, worktree)
+    git(worktree, "reset", "--hard", record["input_commit"])
+    clean_commit(worktree, record["input_commit"])
+
+
+def verify_position(owner, binding, project, worktree):
+    """Ask the existing shell owners to prove this spawn's locks and pool claim."""
+    result = owner.runtime.run(
+        owner.code_root / "bin" / "fm-task-group-spawn.sh",
+        ["--verify-position", binding["parent"], binding["accepted_parent_gen"],
+         binding["child"], str(project), str(worktree)],
+        env=owner.runtime.environment(home=owner.home, code_root=owner.code_root),
+        capture_output=True, timeout=10, check=False)
+    if result.returncode:
+        raise GroupError("component positioning requires current spawn custody and its own Treehouse slot")
 
 
 def launch_meta(owner, task):
@@ -72,13 +118,19 @@ def launch_meta(owner, task):
         return ""
     fields = {"task_group_role": task_role, "task_group_epoch": "1"}
     if task_role == "component":
-        binding, _, attachment = owner.component_context(task)
+        binding, record, attachment = owner.component_context(task)
         fields.update(task_group_parent=binding["parent"], task_group_request=binding["request_id"],
                       task_group_hash=binding["body_hash"], result_disposition="parent")
     else:
         attachment = owner.attachment(task)
-    if attachment_primitive(attachment) == "Review":
-        fields["task_group_primitive"] = "Review"
+    primitive = (component_primitive(record, attachment) if task_role == "component"
+                 else attachment_primitive(attachment))
+    if primitive == "Review" or is_dynamic(attachment):
+        fields["task_group_primitive"] = primitive
+    if is_dynamic(attachment):
+        fields["task_group_workflow"] = "dynamic"
+        if task_role == "component":
+            fields["task_group_writable"] = str(record["writable"]).lower()
     return "".join(f"{key}={value}\n" for key, value in fields.items())
 
 
@@ -97,30 +149,43 @@ def command_prefix(owner):
 
 
 def component_brief(owner, binding, record, attachment):
-    if attachment_primitive(attachment) == "Review":
+    if component_primitive(record, attachment) == "Review":
         return ("# Task\n\n## Captain's intent\n\n"
                 f"Return one independent read-only Review result to FirstMate root {binding['parent']}.\n\n"
                 "## Firstmate spec\n\n"
                 f"{record['body']['assignment']}\n\n"
-                + component_overlay(owner, binding, attachment))
+                + component_overlay(owner, binding, attachment, record))
+    if record.get("writable") is True:
+        return ("# Task\n\n## Captain's intent\n\n"
+                f"Return one scoped Work implementation to FirstMate root {binding['parent']}.\n\n"
+                "## Firstmate spec\n\n"
+                f"{record['body']['assignment']}\n\n"
+                f"Start from this component's input commit {record['input_commit']}. "
+                "Make and check only the assigned changes in your isolated worktree. "
+                "Commit the complete result with ordinary Git, leaving the worktree clean. "
+                "Do not change the parent worktree or attached package. Your output commit is retained "
+                "for the root to inspect and cherry-pick; it does not deliver or merge the root task.\n\n"
+                + component_overlay(owner, binding, attachment, record))
     return ("# Task\n\n## Captain's intent\n\n"
             f"Return one read-only Work result to FirstMate root {binding['parent']}.\n\n"
             "## Firstmate spec\n\n"
             f"{record['body']['assignment']}\n\n"
-            f"Inspect only this component's worktree at input commit {attachment['input_commit']}. "
+            f"Inspect only this component's worktree at input commit {record.get('input_commit', attachment['input_commit'])}. "
             "Do not change project files, dependencies, Git state or the attached package. "
             "Use the assigned package's relevant Make guidance; no native children, fleet children, "
             "or independent review are authorized. Include evidence, file references and remaining gaps.\n\n"
-            + component_overlay(owner, binding, attachment))
+            + component_overlay(owner, binding, attachment, record))
 
 
-def component_overlay(owner, binding, attachment):
+def component_overlay(owner, binding, attachment, record=None):
+    if record is None:
+        _, record, _ = owner.component_context(binding["child"])
     child = binding["child"]
     review_contract = ""
-    if attachment_primitive(attachment) == "Review":
+    if component_primitive(record, attachment) == "Review":
         review_contract = (
             "This is an explicitly authorized independent audit by a fresh Review component. "
-            f"Review only this component's worktree at frozen input commit {attachment['input_commit']}. "
+            f"Review only this component's worktree at frozen input commit {record.get('input_commit', attachment['input_commit'])}. "
             "Apply the assigned package's relevant Review guidance. Report findings with evidence, "
             "file references and remaining gaps; do not make or delegate repairs. "
             "Do not change project files, dependencies, Git state or the attached package.\n")
@@ -148,20 +213,31 @@ def launch_overlay(owner, task):
     if not task_role:
         return ""
     if task_role == "component":
-        binding, _, attachment = owner.component_context(task)
-        return component_overlay(owner, binding, attachment)
+        binding, record, attachment = owner.component_context(task)
+        return component_overlay(owner, binding, attachment, record)
     attachment = owner.attachment(task)
     package = Path(attachment["package_path"])
-    # The package client is native Python and intentionally has no MSYS path
-    # decoder. Give it native absolute paths; the owner handles metadata paths.
-    client_code = owner.code_root.as_posix() if owner.runtime.windows else str(owner.code_root)
-    client_home = owner.home.as_posix() if owner.runtime.windows else str(owner.home)
-    client = (python_command(owner, package / "scripts" / "firstmate.py") +
-              " --firstmate-root " + shlex.quote(client_code) +
-              " --home " + shlex.quote(client_home) + " --root " + shlex.quote(task) +
-              " --generation CURRENT_SPAWN_GEN --timeout 420")
+    # The launch owner supplies an immutable current-generation context.
+    client = python_command(owner, package / "scripts" / "firstmate.py")
+    from fm_orchflows import library_overlay, supports_launch_context
+    libraries = library_overlay(attachment)
+    if supports_launch_context(package):
+        invocation_note = ("The client uses ORCHFLOWS_FIRSTMATE_CONTEXT supplied by this launch; "
+                           "do not add authority flags. ")
+    else:
+        # Retained older packages must keep their original explicit CLI contract.
+        code = owner.code_root.as_posix() if owner.runtime.windows else str(owner.code_root)
+        home = owner.home.as_posix() if owner.runtime.windows else str(owner.home)
+        client += (" --firstmate-root " + shlex.quote(code) + " --home " + shlex.quote(home) +
+                   " --root " + shlex.quote(task) + " --generation CURRENT_SPAWN_GEN --timeout 420")
+        if attachment_primitive(attachment) == "Review":
+            client += " --primitive Review"
+        invocation_note = ("This retained client uses explicit arguments. Read the current spawn_gen "
+                           "from your metadata before each call and replace CURRENT_SPAWN_GEN below. ")
+    if is_dynamic(attachment):
+        return dynamic_root_overlay(owner, task, attachment, client, invocation_note) + libraries
     if attachment_primitive(attachment) == "Review":
-        return review_root_overlay(owner, task, attachment, client + " --primitive Review")
+        return review_root_overlay(owner, task, attachment, client, invocation_note) + libraries
     windows_note = ("On native Windows, pass a native absolute request path to the package client; "
                     "use cygpath -m to convert a recorded MSYS tasktmp path. " if owner.runtime.windows else "")
     return ("# FirstMate task-group root attachment\n\n"
@@ -169,13 +245,14 @@ def launch_overlay(owner, task):
             f"{attachment['package_path']} (SHA-256 {attachment['package_digest']}), epoch 1. "
             f"The fixed read-only input commit is {attachment['input_commit']}. "
             "Stage 1 permits exactly one read-only Work component under FirstMate/Herdr; "
-            "other workflows, Review, writers, nesting and native-child fallback are unavailable.\n"
+            "Review, writers, nesting and native-child fallback are unavailable.\n"
             f"Read and apply the exact attached Work skill at {package / 'skills' / 'orch-work' / 'SKILL.md'}. "
-            f"Read your current spawn_gen and tasktmp from {owner.home / 'state' / (task + '.meta')} before each call. "
+            f"Read your tasktmp from {owner.home / 'state' / (task + '.meta')}. "
+            + invocation_note +
             "Place the request JSON and all transient files inside your recorded tasktmp directory, "
             "keeping the project worktree clean. The request contains only request_id and assignment. "
             + windows_note +
-            "Invoke the attached fork client with the actual generation and absolute request path:\n\n"
+            "Invoke the attached fork client with the absolute request path:\n\n"
             f"    {client} submit --request REQUEST_JSON_PATH\n"
             f"    {client} status\n"
             f"    {client} gather\n\n"
@@ -184,10 +261,10 @@ def launch_overlay(owner, task):
             "request stays unresolved until FirstMate reconciles it. Read the complete retained report and "
             "identity before gather acknowledges receipt. While waiting, keep the join pending; do not "
             "mark done or paused for a person. Once gathered, incorporate evidence into your normal scout "
-            f"report at {owner.home / 'data' / task / 'report.md'} and follow FirstMate's ordinary outer completion.\n")
+            f"report at {owner.home / 'data' / task / 'report.md'} and follow FirstMate's ordinary outer completion.\n" + libraries)
 
 
-def review_root_overlay(owner, task, attachment, client):
+def review_root_overlay(owner, task, attachment, client, invocation_note):
     package = Path(attachment["package_path"])
     return ("# FirstMate task-group root attachment\n\n"
             "You remain a normal root scout with one explicitly authorized independent audit. "
@@ -198,11 +275,12 @@ def review_root_overlay(owner, task, attachment, client):
             "under FirstMate/Herdr. Work, writers, repairs, nesting, additional components and "
             "native-child fallback are unavailable.\n"
             f"Read and apply the exact attached Review skill at {package / 'skills' / 'orch-review' / 'SKILL.md'}. "
-            f"Read your current spawn_gen and tasktmp from {owner.home / 'state' / (task + '.meta')} before each call. "
+            f"Read your tasktmp from {owner.home / 'state' / (task + '.meta')}. "
+            + invocation_note +
             "Place the request JSON and transient files in that tasktmp, keeping your worktree clean. "
             "The request contains only request_id and assignment; the immutable attachment selects Review. "
             "Describe the audit target and relevant Review guidance in the assignment. "
-            "Invoke the attached fork client with the actual generation and absolute request path:\n\n"
+            "Invoke the attached fork client with the absolute request path:\n\n"
             f"    {client} submit --request REQUEST_JSON_PATH\n"
             f"    {client} status\n"
             f"    {client} gather\n\n"
@@ -214,3 +292,55 @@ def review_root_overlay(owner, task, attachment, client):
             "reviewed commit, reviewer identity and remaining gaps in your normal scout report at "
             f"{owner.home / 'data' / task / 'report.md'}, then follow FirstMate's ordinary outer completion. "
             "Findings authorize no repair pass or additional review in this bounded audit.\n")
+
+
+def dynamic_root_overlay(owner, task, attachment, client, invocation_note):
+    package = Path(attachment["package_path"])
+    return ("# FirstMate task-group dynamic root attachment\n\n"
+            "You remain a normal root scout with ordinary FirstMate report delivery. "
+            "The explicitly selected workflow is dynamic with workflow-review policy. "
+            f"The immutable package is {package} (SHA-256 {attachment['package_digest']}). "
+            f"Read and apply {package / 'skills' / 'orch-dynamic-workflow' / 'SKILL.md'}, "
+            f"{package / 'skills' / 'orch-work' / 'SKILL.md'} and "
+            f"{package / 'skills' / 'orch-review' / 'SKILL.md'}. "
+            "For a requested custom workflow, on initial launch and every relaunch read the full selected "
+            "retained custom skill before continuing. Reapply its deliverable and validation requirements "
+            "to the retained results and remaining work; it composes these same primitives.\n"
+            + invocation_note +
+            f"Use your recorded tasktmp from {owner.home / 'state' / (task + '.meta')} for request files. "
+            "Every request JSON has exactly request_id, assignment, primitive (Work or Review), "
+            "and writable (a JSON boolean). Work may write when scoped and useful; Review requires writable=false. "
+            "Each new request freezes your current clean worktree HEAD. Commit your own changes before submitting. "
+            f"The group permits at most {attachment['max_components']} component requests.\n\n"
+            f"    {client} status\n"
+            f"    {client} submit --request REQUEST_JSON_PATH\n"
+            f"    {client} status --request-id REQUEST_ID\n"
+            f"    {client} gather --request-id REQUEST_ID\n\n"
+            "Status without an ID lists all retained requests. Ready independent Work requests may run together. "
+            "Replay only the same request ID and exact body; an uncertain launch cannot authorize a replacement. "
+            "FirstMate owns every child, workspace, endpoint, notice, recovery and cancellation. "
+            "No native children, nested components, or direct fleet commands are authorized.\n"
+            "For each request, run status --request-id REQUEST_ID and read the complete files at the exact "
+            "top-level report_path and result_path returned by that response before gathering the request. "
+            "The result's component_meta.tasktmp and component_meta.worktree record provenance; they are not "
+            "the parent's retained report locations. Do not reconstruct component scratch paths or broaden "
+            "permissions. If the retained paths are absent or unavailable, keep the request pending and "
+            "reconcile through FirstMate's existing owner before continuing. For writing Work, "
+            "inspect the retained input_commit and output_commit and join the complete input_commit..output_commit "
+            "commit range in dependency order using ordinary Git cherry-pick in your own FirstMate "
+            "worktree; include every maker commit, resolve conflicts there and record the join. "
+            "Gather acknowledges receipt and does not join commits. Preserve accepted results and existing "
+            "joined or dirty work after relaunch; inspect status and reread any selected retained custom skill "
+            "before resuming its remaining deliverables and validation.\n"
+            "After gathering all earlier Work results and joining and checking the exact clean candidate, "
+            "request one fresh independent read-only Review. Then gather it and perform one repair/check pass, "
+            "using scoped repair Work if useful or repairing directly. Do not request another Review "
+            "or repeat the review/repair cycle. Never wait for repeated clean verdicts. "
+            "Once no-mistakes validation starts it alone owns review, fixes, tests, documentation, push, PR and CI; "
+            "this scout workflow does not start or replace that pipeline. FirstMate self-development is refused.\n"
+            "Keep unfinished joins pending while FirstMate supervises; do not mark done or paused for a person. "
+            "Component completion returns only to you. Before ordinary root completion, reread any selected "
+            "retained custom skill and verify its required report content, artifacts and checks are satisfied. "
+            "Deliver those custom requirements together with the resulting evidence, joined commit, review "
+            "identity, repair/check outcome and remaining gaps in your normal scout report at "
+            f"{owner.home / 'data' / task / 'report.md'}, then follow ordinary root completion.\n")

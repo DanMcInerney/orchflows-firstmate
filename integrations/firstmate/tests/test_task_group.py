@@ -40,6 +40,9 @@ class ControllerTests(unittest.TestCase):
         self.package.mkdir()
         (self.package / "plugin.json").write_text(json.dumps({"name": "orchflows-firstmate", "version": "test"}))
         (self.package / "guidance.md").write_text("Read only; report evidence.\n")
+        (self.package / "scripts").mkdir()
+        (self.package / "scripts/firstmate-client.json").write_text(
+            json.dumps({"schema": 1, "launch_context_schema": 1}))
         self.calls = []
         self.notices = []
         self.owner = TaskGroups(self.home, BIN.parent, self.fixture_spawn, self.fixture_notice)

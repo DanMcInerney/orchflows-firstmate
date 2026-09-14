@@ -1,10 +1,12 @@
 {
   "schema": 1,
   "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
-  "status": "experimental read-only Work/Review candidate; runtime evidence recorded separately",
+  "status": "experimental bounded Linux dynamic Work/Review composition and retained custom workflows; runtime evidence separate",
   "patches": [
     "patches/0001-readonly-task-groups.patch",
-    "patches/0002-linux-foreground-claude.patch"
+    "patches/0002-linux-foreground-claude.patch",
+    "patches/0003-normal-workflow-launch.patch",
+    "patches/0004-dynamic-composition.patch"
   ],
   "files": [
     {
@@ -17,23 +19,27 @@
     },
     {
       "path": "overlay/bin/fm-task-group-spawn.sh",
-      "sha256": "c71ba344f80aa7010cc3ed8548c4fd5c5f01f8d066b72abb569749acd6abee08"
+      "sha256": "a64f7c1def934901a07f7b7edd3c0d935c725e5a88ef094ddab0e8f497a6b5d7"
     },
     {
       "path": "overlay/bin/fm-task-group-state.sh",
-      "sha256": "484a199d726d89cf3271188c237d3ac2abb8a8f070afa88bc568cadb0d19f002"
+      "sha256": "edbdf1ec7eae55e37c65f561b71e71186fccab7a1ef8832557fdafab5ac2ed6e"
     },
     {
       "path": "overlay/bin/fm-task-group.py",
-      "sha256": "d9070b7feebbdc0414785e0a7d85b98c0c5ea769d61cddfff8cbd2d9228a5f88"
+      "sha256": "9ff64528c6bf409b3f8bb5295f79b6f692b1817cbada7c120be209a20fad5c29"
+    },
+    {
+      "path": "overlay/bin/fm_orchflows.py",
+      "sha256": "2c2f80d76015bcc94812bfd78a7e6e53a341286fd5cdc1ef47fbc1138b02f283"
     },
     {
       "path": "overlay/bin/fm_task_group.py",
-      "sha256": "cb2a4b555ec7b4670d8288168e1b14d899e94a79ad1998246e6f74141f9e9b9e"
+      "sha256": "6174508af679075f36e6863fe6ad40021a4c9aa70ce2a80960c7136123b92a9e"
     },
     {
       "path": "overlay/bin/fm_task_group_launch.py",
-      "sha256": "8ccbc2ba749f7231d558f6d8cc2a7fe6f5fdf8797a42310a02155fe7c687e975"
+      "sha256": "21246786f806a049b158a50b7a33ee70c26043c5e4fe4d53defe487aa4393e8f"
     },
     {
       "path": "overlay/bin/fm_task_group_policy.py",
@@ -41,7 +47,7 @@
     },
     {
       "path": "overlay/bin/fm_task_group_primitives.py",
-      "sha256": "273da38a77861767db0fce6b0a29c2fcffbf14d2010b91b77c48edc176ba2534"
+      "sha256": "f6c4180bf669b29222ad6c37d361c587750f3409c774db64e366c011c738e3f4"
     },
     {
       "path": "overlay/bin/fm_task_group_runtime.py",
@@ -49,7 +55,7 @@
     },
     {
       "path": "overlay/bin/fm_task_group_store.py",
-      "sha256": "1272cf6c84af9d620ed75306c4486a7e9de01bbe1476edc8e75977b217b51af4"
+      "sha256": "2d953b3259c9e1980feed8d3ef124ef43c799b5c36244d75a195c6ee430e7a5a"
     },
     {
       "path": "patches/0001-readonly-task-groups.patch",
@@ -58,6 +64,14 @@
     {
       "path": "patches/0002-linux-foreground-claude.patch",
       "sha256": "3f8ad46e861cc4e24f1bca6b63b2a944782bbc3dc2ddc68c0ebfe88cab6122ab"
+    },
+    {
+      "path": "patches/0003-normal-workflow-launch.patch",
+      "sha256": "2194c0c88bc0a25d9e43ceb810e153aac45bc2e331af8ca89ded43bbf4c697c6"
+    },
+    {
+      "path": "patches/0004-dynamic-composition.patch",
+      "sha256": "0369b56440c6f01dbf23e6d176774616d59c43fb8895ffe048f0d496cfa603f0"
     }
   ]
 }

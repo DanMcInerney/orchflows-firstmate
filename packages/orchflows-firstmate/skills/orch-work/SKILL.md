@@ -1,17 +1,23 @@
 ---
 name: orch-work
-description: Request one experimental read-only Work result through an attached FirstMate task group in Herdr.
+description: Request a scoped Work result through FirstMate, including writers in an admitted Linux dynamic workflow.
 ---
 
-**Conditional experimental execution:** follow the [FirstMate client contract](../../docs/firstmate-client.md). Before dispatch, run the exact retained client with `--primitive Work status`. It must negotiate the real controller and validate the current root generation, exact retained fork snapshot and read-only Work attachment. A Review attachment cannot accept Work. If any input or check is missing, report the gap and stop. Package readiness, environment variables and host plugin discovery do not satisfy this gate. Never use native Agent/spawn tools, direct fleet/Herdr commands or normal Orchflows as a fallback.
+**Conditional experimental execution:** follow the [FirstMate client contract](../../docs/firstmate-client.md). Run `python3 -B <snapshot>/scripts/firstmate.py status` in FirstMate's supplied launch environment before dispatch. It must confirm the current root generation, exact retained fork snapshot and an admitted Work or dynamic attachment. If a check fails, report the gap and stop. Package readiness and host plugin discovery do not satisfy this gate. Never use native Agent/spawn tools, direct fleet/Herdr commands or normal Orchflows as a fallback.
 
-## Stage 1 Work
+## Scoped Work
 
-Only a normal local root scout attached by FirstMate may request one read-only maker component in Herdr. It inherits the root's Claude or Codex harness, model and effort. Editing, independent Review, multiple components, nesting, continuation, model/effort overrides, remote homes and broader composed workflows remain unsupported; refuse a request requiring them. Read-only is an instruction and result-validation contract, not an operating-system sandbox.
+Only a normal Linux root scout may compose dynamic Work. Each component inherits the root's Claude or Codex harness, model and effort. FirstMate allocates its worktree and owns launch, waiting, recovery, result retention and cleanup. Components do not delegate or perform root delivery. A legacy single Work attachment still permits exactly one read-only component; a Review attachment cannot accept Work.
 
-Reuse supplied guidance context or establish it per the [selection rule](../../docs/architecture.md#guidance-selection), using only the retained complete package's guidance. Write a request file in the root's assigned temporary directory with exactly `request_id` and `assignment`. The assignment names the read-only result, exact input, applicable Make guidance paths and evidence to return. Do not place this file inside the retained package or input repository. Submit it through `scripts/firstmate.py` from the attachment, with `--primitive Work`, the explicit FirstMate code root, home, root ID and current generation.
+Reuse supplied guidance context or establish it per the [selection rule](../../docs/architecture.md#guidance-selection), using the retained complete package and selected library roots. Give each maker clear file/result ownership, exact inputs, resolved Make guidance paths and the checks and evidence to return. For independent assignments, submit when their inputs are ready.
 
-Keep the returned FirstMate child identity. FirstMate owns launch, waiting, recovery and completion. Use client `status` to inspect current state, always with `--primitive Work`. Read the complete retained report and result files before `gather` verifies and acknowledges the result. Report uncertain launches, failed children and missing results without starting replacements. Reusing a request ID with a changed assignment is an error; a consumed group cannot accept a second request. A restarted root uses its new generation to inspect and gather the original assignment. Component completion does not complete or deliver the root task.
+Write the request in the root's assigned temporary directory, outside the input and retained package. A dynamic request contains exactly `request_id`, `assignment`, `primitive: "Work"` and boolean `writable`. Set writable true only for an authorized project change; read-only investigation uses false. A legacy single Work request retains only request_id and assignment. Submit with `python3 -B <snapshot>/scripts/firstmate.py submit --request <request-file>`. FirstMate freezes the current clean root worktree commit for each new dynamic request. Commit and check root changes before requesting a dependent maker.
+
+Keep each returned request and child identity. Inspect with `status --request-id <id>`; read the complete retained report and result before `gather --request-id <id>`. Dynamic results retain the exact input_commit and output_commit. Join useful writer commits into the root's own worktree with ordinary Git cherry-pick, resolve any conflicts there, and check the joined candidate. Do not treat a component's report or clean commit alone as a verified root result. The legacy single attachment also accepts status/gather without an ID.
+
+An identical request replay retains its child; changing an accepted body is an error. On an uncertain launch, failed child or missing result, use FirstMate's existing reconciliation owner without creating a replacement through another tool. A relaunched root uses its new immutable context to recover the same requests. Keep the supplied context unchanged; an old launch must not substitute a newer generation.
+
+Dynamic admits at most 32 total components, including its one Review and any repair Work. Nesting, component continuation, model/effort overrides, remote homes, ship delivery, Build and SelfImprove remain unsupported. Read-only is an instruction and result-validation contract, not an operating-system sandbox.
 
 ## Upstream migration baseline (inactive)
 

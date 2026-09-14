@@ -1,0 +1,123 @@
+diff --git a/AGENTS.md b/AGENTS.md
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -319,6 +319,7 @@
+ ### Dispatch and supervision handoff
+ 
+ Spawn only through `bin/fm-spawn.sh` after the profile and backend checks in section 4.
++For an enabled Orchflows project, a new scout may explicitly select `--orchflows-workflow dynamic`, retain its configured default with `default`, or decline a new attachment with `none`. Existing attachments survive relaunch and changed defaults; this option does not admit ship tasks.
+ The spawn must resolve a genuine isolated task worktree distinct from the primary checkout; a failed isolation assertion stops the task.
+ When the configured tasks-axi backlog gate applies, the spawn itself moves the work item to In flight and refuses rather than dispatching work this home has no item for, so recording the dispatch is never a separate step to remember; a manual-backend home retains the hand-editing contract in `docs/configuration.md`.
+ After spawning, confirm the worker is processing the brief and handle any trust dialog through `harness-adapters`.
+@@ -336,9 +337,9 @@
+ ### Selected delivery path and merge authority
+ 
+ The selected delivery path owns its own rigor.
+-When no-mistakes is selected, no-mistakes alone owns review, fixes, tests, documentation, push, PR, and CI; otherwise follow the faster path without adding an independent reviewer.
++Once no-mistakes validation starts, no-mistakes alone owns review, fixes, tests, documentation, push, PR, and CI. Otherwise follow the selected delivery path without adding an independent reviewer, except for the explicitly selected workflow below.
+ Never hold work outside no-mistakes for a manual clean verdict, stack serial manual reviews, or infer authority for one from security, architecture, or risk alone.
+-A separate review or audit is allowed only when the captain explicitly requests that deliverable or the authorized task is a knowledge-only review; one named question remains scoped to that question.
++A separate review or audit is allowed when the captain explicitly requests that deliverable, the authorized task is a knowledge-only review, or FirstMate has explicitly attached the dynamic Orchflows workflow with workflow-review policy to a Linux scout. That selected workflow may compose scoped Work in FirstMate worktrees, join and check the candidate, and request one fresh read-only Review followed by one repair/check pass. It must not stack reviews or create another delivery gate; only the root follows ordinary scout delivery. Workflow enablement is not authority for FirstMate self-development delegation, promotion, or work after no-mistakes takes validation custody. One named audit question remains scoped to that question.
+ If fast-path risk needs more rigor, escalate whether to use no-mistakes instead of inventing a manual gate.
+ The path's worker, automated gates, and captain approval remain authoritative:
+ 
+diff --git a/bin/fm-dod-lib.sh b/bin/fm-dod-lib.sh
+--- a/bin/fm-dod-lib.sh
++++ b/bin/fm-dod-lib.sh
+@@ -35,7 +35,7 @@
+ When this task works on Firstmate itself, the repository root `AGENTS.md` (also imported by `CLAUDE.md`) is the primary/secondmate supervisor's contract: follow this brief instead of that supervisor contract.
+ For that Firstmate task, do the assigned work yourself and report to firstmate; do not adopt the supervisor identity, delegate the task, run fleet supervision, or address the captain.
+ This exception preserves this brief's safety and authority boundaries and applicable contributor guidance, including `CONTRIBUTING.md` and `firstmate-coding-guidelines` for Firstmate changes.
+-Other projects retain their own instructions unchanged.
++Other projects retain their own instructions unchanged. An explicit FirstMate dynamic attachment may authorize scoped Work components, one fresh read-only Review, and one repair/check pass through FirstMate owners. Only the root delivers the ordinary scout report; components return to their parent. This does not authorize delegation for Firstmate self-development, promotion, or a separate delivery gate.
+ EOF
+ }
+ 
+@@ -223,6 +223,7 @@
+ Firstmate will then instruct you to run /no-mistakes to validate and ship a PR.
+ 
+ You drive no-mistakes by responding to its gates, not by implementing fixes.
++Once this validation starts, no-mistakes alone owns review, fixes, tests, documentation, push, PR, and CI. Any earlier Orchflows composition stops; do not dispatch Work or Review or repair the candidate outside this pipeline.
+ Follow the guidance no-mistakes itself provides for the mechanics: it loads when you invoke /no-mistakes, and \`no-mistakes axi run --help\` plus the \`help\` lines in each \`axi\` response are authoritative and version-matched to the installed binary.
+ When starting no-mistakes, pass \`--intent\` as only this brief's \`## Captain's intent\` subsection plus any later words the captain actually said.
+ For a legacy brief with no such subsection, include only words explicitly labeled \`Captain:\`, \`Captain's words:\`, \`Captain's ask:\`, or \`Captain's intent:\`; never copy its mixed \`# Task\` wholesale. If it has no provenance-marked captain words, stop and ask firstmate instead of starting no-mistakes.
+diff --git a/bin/fm-spawn.sh b/bin/fm-spawn.sh
+--- a/bin/fm-spawn.sh
++++ b/bin/fm-spawn.sh
+@@ -515,6 +515,8 @@
+ YOLO_SET=0
+ TRACEPARENT_SET=0
+ RELAUNCH=0
++ORCHFLOWS_WORKFLOW=default
++ORCHFLOWS_WORKFLOW_SET=0
+ POS=()
+ want_value=
+ for a in "$@"; do
+@@ -530,12 +532,15 @@
+       mode) MODE=$a; MODE_SET=1 ;;
+       yolo) YOLO=$a; YOLO_SET=1 ;;
+       traceparent) TRACEPARENT_ARG=$a; TRACEPARENT_SET=1 ;;
++      orchflows-workflow) ORCHFLOWS_WORKFLOW=$a; ORCHFLOWS_WORKFLOW_SET=1 ;;
+       *) echo "error: internal parser state for --$want_value" >&2; exit 1 ;;
+     esac
+     want_value=
+     continue
+   fi
+   case "$a" in
++    --orchflows-workflow) want_value=orchflows-workflow ;;
++    --orchflows-workflow=*) ORCHFLOWS_WORKFLOW=${a#--orchflows-workflow=}; ORCHFLOWS_WORKFLOW_SET=1 ;;
+     --scout) KIND=scout; KIND_SET=1 ;;
+     --secondmate) KIND=secondmate; KIND_SET=1 ;;
+     --relaunch) RELAUNCH=1 ;;
+@@ -564,6 +569,10 @@
+ [ "$MODE_SET" -eq 0 ] || [ -n "$MODE" ] || { echo "error: --mode requires a non-empty value" >&2; exit 1; }
+ [ "$YOLO_SET" -eq 0 ] || [ -n "$YOLO" ] || { echo "error: --yolo requires a non-empty value" >&2; exit 1; }
+ [ "$TRACEPARENT_SET" -eq 0 ] || [ -n "$TRACEPARENT_ARG" ] || { echo "error: --traceparent requires a non-empty value" >&2; exit 1; }
++case "$ORCHFLOWS_WORKFLOW" in
++  default|dynamic|none) ;;
++  *) echo "error: --orchflows-workflow must be default, dynamic or none" >&2; exit 1 ;;
++esac
+ # A parent-delivered carrier replaces this home's own resolution, so it is
+ # refused unless it is a secondmate spawn carrying a strictly valid W3C value.
+ # Nothing else may reach the pane's TRACEPARENT export.
+@@ -587,6 +596,7 @@
+ # task's own durable record below. Contradicting it on the command line is a
+ # refusal rather than a silently-ignored flag.
+ if [ "$RELAUNCH" -eq 1 ]; then
++  [ "$ORCHFLOWS_WORKFLOW_SET" -eq 0 ] || { echo "error: --relaunch retains its workflow attachment; --orchflows-workflow cannot override it" >&2; exit 1; }
+   [ "$BACKEND_SET" -eq 0 ] || { echo "error: --relaunch reuses the task's recorded backend; --backend cannot override it" >&2; exit 1; }
+   [ "$KIND_SET" -eq 0 ] || { echo "error: --relaunch reuses the task's recorded kind; --scout/--secondmate cannot override it" >&2; exit 1; }
+   [ "$MODE_SET" -eq 0 ] || { echo "error: --relaunch reuses the task's recorded delivery mode; --mode cannot override it" >&2; exit 1; }
+@@ -1173,6 +1183,7 @@
+   fi
+   rc=0
+   shared_args=()
++  [ "$ORCHFLOWS_WORKFLOW_SET" -eq 0 ] || shared_args+=(--orchflows-workflow "$ORCHFLOWS_WORKFLOW")
+   [ -z "$HARNESS_ARG" ] || shared_args+=(--harness "$HARNESS_ARG")
+   [ -z "$MODEL" ] || shared_args+=(--model "$MODEL")
+   [ -z "$EFFORT" ] || shared_args+=(--effort "$EFFORT")
+@@ -2356,9 +2367,10 @@
+ # launch transaction before any endpoint exists. Ordinary tasks do not load
+ # the experimental controller or require its Python dependencies.
+ # Resolve enabled project defaults inside the existing spawn transaction.
+-if [ -e "$FM_HOME/config/orchflows.json" ] || [ -L "$FM_HOME/config/orchflows.json" ]; then
++if [ "$ORCHFLOWS_WORKFLOW_SET" -eq 1 ] || [ -e "$FM_HOME/config/orchflows.json" ] || [ -L "$FM_HOME/config/orchflows.json" ]; then
+   fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" auto-attach "$ID" \
+-    --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" >/dev/null || exit 1
++    --kind "$KIND" --backend "$BACKEND" --harness "$HARNESS" --project "$PROJ_ABS" \
++    --workflow "$ORCHFLOWS_WORKFLOW" >/dev/null || exit 1
+ fi
+ TASK_GROUP_BOUND=0
+ TASK_GROUP_META=
+@@ -3396,6 +3408,11 @@
+ fi
+ if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ]; then
+   freshen_spawn_worktree_base "$WT" || exit 1
++  if [ "$TASK_GROUP_BOUND" = 1 ]; then
++    # Apply the accepted component input only to this newly allocated worktree.
++    fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-position "$ID" \
++      --worktree "$WT" >/dev/null || exit 1
++  fi
+ fi
+ if [ "$TASK_GROUP_BOUND" = 1 ]; then
+   # Pool allocation can select a different commit. Verify the actual candidate

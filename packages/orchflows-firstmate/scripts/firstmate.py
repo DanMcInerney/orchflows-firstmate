@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Client for FirstMate's experimental local read-only Work or Review task group."""
+"""Client for FirstMate-owned Work, Review and bounded Linux dynamic workflows."""
 
 from __future__ import annotations
 
@@ -13,12 +13,19 @@ import math
 import os
 from pathlib import Path
 import re
+import stat
 import subprocess
 
 
 PROTOCOL = {"protocol": "firstmate-task-group", "version": 1,
             "experimental": True, "scope": "local-readonly-work"}
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+CONTEXT_ENV = "ORCHFLOWS_FIRSTMATE_CONTEXT"
+CONTEXT_LIMIT = 16 * 1024
+AUTHORITY_FIELDS = ("firstmate_root", "home", "root", "generation", "primitive")
+CONTEXT_FIELDS = {"schema", *AUTHORITY_FIELDS, "package_path"}
+IDENTIFIER = r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}"
+DYNAMIC_FIELDS = {"request_id", "assignment", "primitive", "writable"}
 
 
 class ClientError(Exception):
@@ -49,6 +56,67 @@ def parse_object(raw: str) -> dict:
     if not isinstance(result, dict):
         raise ValueError("Expected one JSON object")
     return result
+
+
+def context_path(value: str, *, directory: bool = False) -> Path:
+    if not isinstance(value, str) or not value or "\0" in value:
+        raise ValueError("Context paths must be nonempty strings without NUL")
+    path = Path(value)
+    if not path.is_absolute():
+        raise ValueError("Context authority paths must be absolute")
+    # Do not resolve away a symlink or a parent traversal supplied as authority.
+    if path.resolve(strict=True) != path or any(part.is_symlink() for part in (path, *path.parents)):
+        raise ValueError("Context paths must be canonical and contain no symlinks")
+    if directory and not path.is_dir():
+        raise ValueError("Context authority paths must identify existing directories")
+    return path
+
+
+def read_context(path: Path) -> dict:
+    try:
+        path = context_path(str(path.expanduser().absolute()))
+        flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+        with os.fdopen(os.open(path, flags), "rb") as stream:
+            metadata = os.fstat(stream.fileno())
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > CONTEXT_LIMIT:
+                raise ValueError("Context must be a regular JSON file of at most 16 KiB")
+            raw = stream.read(CONTEXT_LIMIT + 1)
+        if len(raw) > CONTEXT_LIMIT:
+            raise ValueError("Context exceeds 16 KiB")
+        context = parse_object(raw.decode("utf-8"))
+        if set(context) != CONTEXT_FIELDS:
+            raise ValueError("Context must contain exactly schema, firstmate_root, home, root, "
+                             "generation, primitive and package_path")
+        if type(context["schema"]) is not int or context["schema"] != 1:
+            raise ValueError("Unsupported FirstMate launch context schema")
+        for key in ("firstmate_root", "home", "package_path"):
+            context[key] = context_path(context[key], directory=True)
+        if context["package_path"] != PACKAGE_ROOT:
+            raise ValueError("Run the client from the exact context package snapshot")
+        return context
+    except (OSError, ValueError, UnicodeError, RuntimeError) as exc:
+        raise ClientError(f"Invalid FirstMate launch context: {exc}", "preflight") from exc
+
+
+def resolve_authority(args: argparse.Namespace) -> argparse.Namespace:
+    # Keep imported run(args) callers and repeated calls from changing their inputs.
+    args = argparse.Namespace(**vars(args))
+    context = getattr(args, "context", None)
+    if context is None:
+        context = os.environ.get(CONTEXT_ENV)
+    if context is not None:
+        if any(getattr(args, key, None) is not None for key in AUTHORITY_FIELDS):
+            raise ClientError("Launch context cannot be mixed with manual authority flags", "preflight")
+        if not str(context):
+            raise ClientError("FirstMate launch context path must not be empty", "preflight")
+        selected = read_context(Path(context))
+        for key in AUTHORITY_FIELDS:
+            setattr(args, key, selected[key])
+    else:
+        if any(getattr(args, key, None) is None for key in AUTHORITY_FIELDS[:-1]):
+            raise ClientError("FirstMate launch context or complete explicit authority is required", "preflight")
+        args.primitive = getattr(args, "primitive", None) or "Work"
+    return args
 
 
 def package_identity() -> None:
@@ -99,42 +167,58 @@ def call_controller(args: argparse.Namespace, operation: str, *extra: str) -> di
 
 
 def validate_protocol(response: dict, operation: str, *, primitive: str = "Work",
-                      handshake: bool = True) -> None:
+                      handshake: bool = True, workflow: str | None = None) -> None:
     expected = dict(PROTOCOL)
-    if not handshake and primitive == "Review":
-        expected["scope"] = "local-readonly-review"
+    if not handshake:
+        if workflow == "dynamic":
+            expected["scope"] = "local-dynamic"
+        elif primitive == "Review":
+            expected["scope"] = "local-readonly-review"
     # bool is an int subclass; version true must not negotiate protocol version 1.
     if any(response.get(key) != value or type(response.get(key)) is not type(value)
            for key, value in expected.items()):
         raise ClientError("Unsupported FirstMate task-group protocol or scope", operation,
                           uncertain=operation in {"submit", "gather"})
-    if handshake and primitive == "Review":
-        for key, required in (("primitives", "Review"), ("review_policies", "explicit-audit")):
+    if handshake and (primitive == "Review" or workflow == "dynamic"):
+        required_capabilities = (("primitives", "Review"), ("review_policies", "explicit-audit"))
+        if workflow == "dynamic":
+            required_capabilities = (("primitives", "Work"), ("primitives", "Review"),
+                                     ("workflows", "dynamic"), ("review_policies", "workflow-review"))
+        for key, required in required_capabilities:
             capabilities = response.get(key)
             if (not isinstance(capabilities, list)
                     or any(not isinstance(value, str) for value in capabilities)
                     or len(set(capabilities)) != len(capabilities)
                     or required not in capabilities):
-                raise ClientError("FirstMate must explicitly advertise Review and explicit-audit support",
+                raise ClientError("FirstMate must explicitly advertise " +
+                                  ("dynamic, Work, Review and workflow-review support"
+                                   if workflow == "dynamic" else "Review and explicit-audit support"),
                                   operation)
 
 
 def validate_view(response: dict, args: argparse.Namespace, operation: str) -> None:
     primitive = getattr(args, "primitive", "Work")
-    validate_protocol(response, operation, primitive=primitive, handshake=False)
     attachment = response.get("attachment")
+    workflow = attachment.get("workflow") if isinstance(attachment, dict) else None
+    validate_protocol(response, operation, primitive=primitive, handshake=False, workflow=workflow)
     if (response.get("attached") is not True or response.get("root") != args.root
             or response.get("generation") != args.generation or not isinstance(attachment, dict)):
         raise ClientError("FirstMate did not confirm this attached root and generation", operation,
                           uncertain=operation in {"submit", "gather"})
     expected = {"schema": 1, "root": args.root, "epoch": 1, "primitive": primitive,
                 "readonly": True, "max_components": 1}
-    if primitive == "Review":
+    if workflow == "dynamic":
+        expected.update(workflow="dynamic", primitive="Work", review_policy="workflow-review",
+                        readonly=False, max_components=32)
+    elif primitive == "Review":
         expected["review_policy"] = "explicit-audit"
-    if (any(attachment.get(key) != value or type(attachment.get(key)) is not type(value)
+    if (workflow not in (None, "dynamic")
+            or (workflow == "dynamic" and (primitive != "Work" or sys.platform != "linux"))
+            or any(attachment.get(key) != value or type(attachment.get(key)) is not type(value)
             for key, value in expected.items())
             or type(response.get("epoch")) is not int or response["epoch"] != 1
-            or (primitive == "Work" and attachment.get("review_policy", "none") != "none")):
+            or (workflow is None and primitive == "Work"
+                and attachment.get("review_policy", "none") != "none")):
         raise ClientError("Unsupported FirstMate task-group attachment or review policy", operation,
                           uncertain=operation in {"submit", "gather"})
     package_path = attachment.get("package_path")
@@ -150,57 +234,113 @@ def validate_view(response: dict, args: argparse.Namespace, operation: str) -> N
                           uncertain=operation in {"submit", "gather"})
 
 
-def validate_request(path: Path, primitive: str = "Work") -> None:
+def validate_request(path: Path, primitive: str = "Work") -> dict:
+    """Validate syntax before controller calls; the attachment selects the shape."""
     try:
         request = parse_object(path.read_text(encoding="utf-8"))
-        if set(request) != {"request_id", "assignment"}:
-            raise ValueError("Request must contain exactly request_id and assignment")
-        if any(not isinstance(request[key], str) or not request[key].strip() for key in request):
-            raise ValueError("request_id and assignment must be nonempty strings")
-    except (OSError, ValueError) as exc:
+        fields = set(request)
+        if fields != {"request_id", "assignment"} and not (
+                primitive == "Work" and fields == DYNAMIC_FIELDS):
+            raise ValueError("Request must contain request_id and assignment, with primitive and "
+                             "writable only for a dynamic attachment")
+        for key in ("request_id", "assignment"):
+            if not isinstance(request[key], str) or not request[key].strip():
+                raise ValueError("request_id and assignment must be nonempty strings")
+        if re.fullmatch(IDENTIFIER, request["request_id"]) is None:
+            raise ValueError("request_id must be a valid FirstMate identifier")
+        if "\0" in request["assignment"] or len(request["assignment"].encode("utf-8")) > 32768:
+            raise ValueError("assignment must be at most 32768 UTF-8 bytes without NUL")
+        if fields == DYNAMIC_FIELDS:
+            if request["primitive"] not in ("Work", "Review") or type(request["writable"]) is not bool:
+                raise ValueError("dynamic requests require primitive Work or Review and boolean writable")
+            if request["primitive"] == "Review" and request["writable"]:
+                raise ValueError("Review must be read-only")
+        return request
+    except (OSError, ValueError, UnicodeError) as exc:
         raise ClientError(f"Invalid {primitive} request: {exc}", "preflight") from exc
 
 
+def validate_selection(response: dict, request_id: str, operation: str, *,
+                       body: dict | None = None) -> None:
+    request = response.get("request")
+    observed = request.get("body") if isinstance(request, dict) else None
+    if (not isinstance(observed, dict) or observed.get("request_id") != request_id
+            or (body is not None and observed != body)):
+        raise ClientError("FirstMate did not confirm the selected request", operation,
+                          uncertain=operation in {"submit", "gather"})
+
+
 def run(args: argparse.Namespace) -> dict:
+    args = resolve_authority(args)
     package_identity()
     primitive = getattr(args, "primitive", "Work")
     if primitive not in ("Work", "Review"):
         raise ClientError("Primitive must be Work or Review", "preflight")
     if not math.isfinite(args.timeout) or args.timeout <= 0:
         raise ClientError("Timeout must be a finite positive number", "preflight")
-    if any(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", value) is None
+    if any(not isinstance(value, str)
+           or re.fullmatch(IDENTIFIER, value) is None
            for value in (args.root, args.generation)):
         raise ClientError("Root and current generation must be valid FirstMate identifiers", "preflight")
-    if args.operation == "submit":
-        validate_request(args.request, primitive)
-    validate_protocol(call_controller(args, "protocol"), "protocol", primitive=primitive)
+    request_id = getattr(args, "request_id", None)
+    if request_id is not None and (
+            not isinstance(request_id, str) or re.fullmatch(IDENTIFIER, request_id) is None):
+        raise ClientError("Request ID must be a valid FirstMate identifier", "preflight")
+    request = validate_request(args.request, primitive) if args.operation == "submit" else None
+    protocol = call_controller(args, "protocol")
+    validate_protocol(protocol, "protocol", primitive=primitive)
     identity = (args.root, "--generation", args.generation)
-    current = call_controller(args, "status", *identity)
+    selection = ("--request-id", request_id) if request_id is not None else ()
+    current = call_controller(args, "status", *identity, *selection)
     validate_view(current, args, "status")
+    workflow = current["attachment"].get("workflow")
+    if request_id is not None:
+        validate_selection(current, request_id, "status")
+    if workflow == "dynamic":
+        validate_protocol(protocol, "protocol", primitive=primitive, workflow=workflow)
+    if request is not None:
+        expected_fields = DYNAMIC_FIELDS if workflow == "dynamic" else {"request_id", "assignment"}
+        if set(request) != expected_fields:
+            raise ClientError("Request fields must match the admitted " +
+                              ("dynamic" if workflow == "dynamic" else "single-primitive") +
+                              " attachment", "preflight")
     if args.operation == "status":
         return current
-    extra = ("--request", str(args.request)) if args.operation == "submit" else ()
+    if args.operation == "gather" and workflow == "dynamic" and request_id is None:
+        raise ClientError("Dynamic gather requires --request-id", "preflight")
+    extra = ("--request", str(args.request)) if args.operation == "submit" else selection
     outcome = call_controller(args, args.operation, *identity, *extra)
     validate_view(outcome, args, args.operation)
+    if request_id is not None:
+        validate_selection(outcome, request_id, args.operation)
+    elif workflow == "dynamic" and request is not None:
+        validate_selection(outcome, request["request_id"], args.operation, body=request)
+    if outcome["attachment"] != current["attachment"]:
+        raise ClientError("FirstMate attachment changed during the operation", args.operation,
+                          uncertain=True)
     return outcome
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--firstmate-root", required=True, type=lambda value: Path(value).expanduser().resolve(),
+    parser.add_argument("--context", type=Path,
+                        help="FirstMate launch context JSON (default: ORCHFLOWS_FIRSTMATE_CONTEXT)")
+    parser.add_argument("--firstmate-root", type=lambda value: Path(value).expanduser().resolve(),
                         help="Explicit experimental FirstMate code root containing bin/fm-task-group.py")
-    parser.add_argument("--home", required=True, type=lambda value: Path(value).expanduser().resolve(),
+    parser.add_argument("--home", type=lambda value: Path(value).expanduser().resolve(),
                         help="Owning FirstMate home; not the Orchflows package home")
-    parser.add_argument("--root", required=True, help="Attached normal root scout task ID")
-    parser.add_argument("--generation", required=True, help="Current root spawn_gen from FirstMate")
-    parser.add_argument("--primitive", choices=("Work", "Review"), default="Work",
-                        help="Attachment primitive to validate (default: Work)")
+    parser.add_argument("--root", help="Attached normal root scout task ID")
+    parser.add_argument("--generation", help="This launch's root spawn_gen from FirstMate")
+    parser.add_argument("--primitive", choices=("Work", "Review"),
+                        help="Explicit attachment primitive (default without launch context: Work)")
     parser.add_argument("--timeout", type=float, default=420, help="Seconds per controller call (default: 420)")
     commands = parser.add_subparsers(dest="operation", required=True)
-    commands.add_parser("status", help="Validate protocol, root generation and exact package attachment")
-    submit = commands.add_parser("submit", help="Submit the group's one read-only assignment")
+    status = commands.add_parser("status", help="Inspect the group or one selected request")
+    status.add_argument("--request-id", help="Observe this retained logical request")
+    submit = commands.add_parser("submit", help="Submit an assignment admitted by the attachment")
     submit.add_argument("--request", required=True, type=lambda value: Path(value).expanduser().resolve())
-    commands.add_parser("gather", help="Gather and acknowledge the retained result through FirstMate")
+    gather = commands.add_parser("gather", help="Gather and acknowledge a retained result")
+    gather.add_argument("--request-id", help="Logical request to acknowledge (required for dynamic)")
     args = parser.parse_args(argv)
     try:
         payload, code = run(args), 0

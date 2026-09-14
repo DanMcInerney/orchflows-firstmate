@@ -116,11 +116,13 @@ class ReviewOwnerTests(unittest.TestCase):
         with self.assertRaisesRegex(GroupError, "relaunch"):
             launch_check(self.owner, child, "scout", "herdr", "codex", self.fixture.project)
 
-    def test_review_root_overlay_regenerates_explicit_client_and_audit_delivery(self):
+    def test_review_root_overlay_regenerates_context_client_and_audit_delivery(self):
         overlay = launch_overlay(self.owner, "audit")
         self.assertIn("/skills/orch-review/SKILL.md", overlay)
         for verb in ("submit", "status", "gather"):
-            self.assertIn("--primitive Review " + verb, overlay)
+            self.assertIn("scripts/firstmate.py " + verb, overlay)
+        self.assertIn("ORCHFLOWS_FIRSTMATE_CONTEXT", overlay)
+        self.assertNotIn("--generation CURRENT_SPAWN_GEN", overlay)
         self.assertIn("Read the complete retained report and result identity before gather", overlay)
         self.assertIn("normal scout report", overlay)
         self.assertIn("Findings authorize no repair pass", overlay)
@@ -284,7 +286,8 @@ class ReviewOwnerTests(unittest.TestCase):
         self.assertEqual(value["version"], 1)
         self.assertEqual(value["scope"], "local-readonly-work")
         self.assertEqual(value["primitives"], ["Work", "Review"])
-        self.assertEqual(value["review_policies"], ["explicit-audit"])
+        self.assertEqual(value["review_policies"], ["explicit-audit", "workflow-review"])
+        self.assertEqual(value["workflows"], ["dynamic"])
         arguments = ("attach", "cli-audit", "--package", str(self.fixture.package),
                      "--project", str(self.fixture.project), "--primitive", "Review")
         denied = self.cli(*arguments)

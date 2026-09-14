@@ -313,3 +313,60 @@ record it. The [previous handoff](../HANDOFF-through-dev4-2026-09-14.md) is pres
 byte-for-byte as historical context; its next-work queue is superseded.
 This handoff update changed documentation only and did not repeat or relabel
 dev.4 tests or trials.
+
+## September 14 continuation: normal launch and retained custom workflows
+
+**Observed source:** the [owner mapping](firstmate-owner-mapping.md) traces the
+actual pinned FirstMate owners and audits every baseline added helper/record.
+It distinguishes necessary parent/request/result provenance from authoritative
+FirstMate task state and identifies policy work still needed for full dynamic
+composition.
+
+**Implemented:** dev.5 adds project enablement, complete retained custom
+libraries, ordinary scout spawn attachment and immutable client context through
+existing spawn/relaunch. A capability declaration preserves legacy dev.4
+invocations. No separate dispatch, recovery, supervisor or Herdr control path
+was added. Custom skills currently compose one admitted read-only primitive.
+
+**Executed checks and actual workers:** [normal launch verification](normal-launch-verification.md)
+and [exact state](normal-launch-state.json) contain the joined/repaired test
+counts, one independent review, one repair pass, exact candidate identities,
+private worker trial receipts and cleanup outcomes. Earlier receipts and the
+dated assessment are unchanged.
+
+**Still unverified/unimplemented:** full dynamic/multi-component and writer
+composition, broad custom/meta and optional-example parity, current actual
+Codex normal-launch behavior, and the lifecycle gaps carried in the handoff.
+Package readiness remains package-only.
+
+
+## September 14 continuation: bounded dynamic composition
+
+**Observed source and implemented glue:** [dynamic contract](dynamic-composition.md)
+extends the completed owner mapping. Existing FirstMate spawn/Treehouse owners
+allocate and position components; the request/result owner preserves multiple
+assignments, clean writer commits and archival Git refs. The root uses ordinary
+Git joins and requests one exact-candidate Review. Policy changes live at AGENTS
+and fm-dod; root delivery and no-mistakes custody remain distinct. Custom skills
+compose the same retained primitives, with no workflow-specific runtime.
+
+**Executed evidence:** [dynamic verification](dynamic-verification.md) and
+[exact state](dynamic-state.json) contain the reviewed/repaired checks, the one
+independent development Review, its three concrete findings and the single
+repair/check pass. Real dynamic/custom trials and failures are recorded under
+the actual candidate and driver identity. A successful fixture or copied skill
+is not live parity.
+
+**Remaining scope:** ordinary scout report delivery is not ship code delivery.
+Ship/local-only delivery, nesting, Build/SelfImprove, current actual Codex
+composition and the remaining lifecycle/release gaps stay open. No active
+installation, rotating cache or pinned source was changed; design-loop was not
+used. Historical verification and the original dated assessment remain intact.
+
+**Final dev.6 execution:** 124 package, 142 Linux integration and 19 driver checks
+passed (ten explicit native Windows skips). Final actual Claude trial a-x6osytu8
+passed all seventeen acceptance checks without intervention: two writer results,
+ordinary replacement while one Work remained running, retained custom requirements,
+exact joined Review, final tests after gather and normal completion/cleanup. Both
+writer refs survived teardown and the scoped process inventory was empty. Earlier
+failed and manually assisted trials remain recorded separately.
