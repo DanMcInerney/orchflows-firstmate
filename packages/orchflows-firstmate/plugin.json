@@ -1,0 +1,18 @@
+{
+  "name": "orchflows-firstmate",
+  "version": "0.1.0-dev.2",
+  "description": "Experimental read-only Work client for FirstMate/Herdr; broader workflows remain gated.",
+  "author": {
+    "name": "orchflows"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Orchflows FirstMate",
+    "shortDescription": "Experimental FirstMate read-only Work client.",
+    "longDescription": "Standalone Orchflows variant for FirstMate/Herdr with Claude Code and Codex CLI workers. One read-only Work component requires a matching experimental controller and exact task attachment.",
+    "developerName": "orchflows",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Read the FirstMate execution gate. Only one experimental read-only Work component may run after controller and exact attachment checks; other workflows remain gated."
+  }
+}

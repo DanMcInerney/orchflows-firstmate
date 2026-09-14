@@ -1,0 +1,141 @@
+{
+  "schema": 1,
+  "scope": "Stage 0 package foundation only; no executable FirstMate integration",
+  "source": {
+    "repository": "https://github.com/DanMcInerney/orchflows",
+    "commit": "0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a",
+    "manifest_version": "0.7.0",
+    "file_count": 1064,
+    "aggregate_sha256": "4637b59c1d9b1435ebe6f1957c06ce6d21d607b6594f0dfc7ad42fea540702f1"
+  },
+  "firstmate_reference": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "candidate": {
+    "path": "packages/orchflows-firstmate",
+    "manifest_version": "0.1.0-dev.1",
+    "file_count": 1067,
+    "aggregate_sha256": "ccd246a9035ffe024e70379ff729331e0d0bed45357327cf19c49f6627d7fc5a"
+  },
+  "identity_algorithm": "SHA256 of UTF-8 lines sorted by relative POSIX path: path + NUL + lowercase file SHA256 + LF; excludes Python bytecode/cache files",
+  "changed": [
+    {
+      "path": ".agents/plugins/marketplace.json",
+      "source_sha256": "a0694aeb78b694843b19c0b94a60701d4b6a59861be2009d3b1ba4e3de6f4f7b",
+      "candidate_sha256": "6b2f26e8f8c60c44ad2579ec8bb04bce4a21a87764e9d56c49fbe6b7f78fc267"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "source_sha256": "071c939348a758b9412e5ba5c05a885d0b2190b558256b88f0706b19e2ed77a4",
+      "candidate_sha256": "2dab95e276d9d5505f105794c55179978322484dc94706a6a7602ce874b1538f"
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "source_sha256": "9bc9fd2436b006c26bd870fb479e6d177987898a49e756f242ee1900e06d89e8",
+      "candidate_sha256": "e065080eb22b5896a4febd1404254cb28eab46b328ab505e0f902401252147bf"
+    },
+    {
+      "path": ".codex-plugin/plugin.json",
+      "source_sha256": "ff68a995add8421e5b541afba6571e1202f555c904b7b2faf75214ef296e8a76",
+      "candidate_sha256": "0f3ea069a392ff727418823275f1f25dba695331216f618b340acc885e9e097a"
+    },
+    {
+      "path": "AGENTS.md",
+      "source_sha256": "3dd7b93b6dc0151009675e2f548ebb51aa502122ec95d6326396c49c4464a40d",
+      "candidate_sha256": "1c2ca5b07f325e2db220a0778c01b0be7aea384ff38d0b371d99319f5f317838"
+    },
+    {
+      "path": "README.md",
+      "source_sha256": "c3f37008fe1f6e945f175641ea0d9d90b60ad7c990ea391ecd88b4d9428d520c",
+      "candidate_sha256": "c95275524b058dc4e5f0eb2507b4c978fad67173df1bd11277fe807355c67293"
+    },
+    {
+      "path": "docs/architecture.md",
+      "source_sha256": "51b266956bbcef2f82728a305ba7cc7b67e6088d4a5a98063820c3a4bdebd726",
+      "candidate_sha256": "0de2464b400071091bb12d553b6dee80ce7c92d6b8fc3a5914adbe39fd416317"
+    },
+    {
+      "path": "docs/history.md",
+      "source_sha256": "946f3eb470af600ed23bd72bfb390bfb4614e13e444692c8cad382a68502077b",
+      "candidate_sha256": "306f7f25cdd5868babe4c3ff3ba35f03e226f0ffceeab8e5e073c4e8666639d5"
+    },
+    {
+      "path": "docs/home.md",
+      "source_sha256": "ffcbb39723d360dd5b12c6ce474ab64feeb242a828d745616a39734fb25ecf3e",
+      "candidate_sha256": "a5404870cd354199f5f6b2466227b426a0c5d029ebe6c995bf9c282136062670"
+    },
+    {
+      "path": "docs/hosts.md",
+      "source_sha256": "537bc2a77d82aae1e3bdcf38379bb96896d3bd8b2b2fd1c650b8aae20a2de17e",
+      "candidate_sha256": "49ba9344d30b24f7e0111da7dd2f1a3393561be95ad1179dbe9dfbe9ddeae351"
+    },
+    {
+      "path": "plugin.json",
+      "source_sha256": "ff68a995add8421e5b541afba6571e1202f555c904b7b2faf75214ef296e8a76",
+      "candidate_sha256": "0f3ea069a392ff727418823275f1f25dba695331216f618b340acc885e9e097a"
+    },
+    {
+      "path": "scripts/orchflows.py",
+      "source_sha256": "e56d29191dc1f82da74ba087c7945a4fbae8ffbf7c3103841ed8567777e520a2",
+      "candidate_sha256": "66b15af7dfe31d713ab41cec896ce8672b48978a7f0a92cf485295bf352e03b5"
+    },
+    {
+      "path": "skills/orch-build-workflow/SKILL.md",
+      "source_sha256": "14bcc4d17ff9ba80fcc2f50ed32a460d89b8feca2465a78e33726c59697135e2",
+      "candidate_sha256": "f95115bfaa7c9dc73fcb0995351d1887981c511c10d66263d40beb5ecb5e2a52"
+    },
+    {
+      "path": "skills/orch-dynamic-workflow/SKILL.md",
+      "source_sha256": "16067ed73e185ba1246d368b2717af9e29f2f44711f6f0a5f2622dd310c038ed",
+      "candidate_sha256": "47b8ca84704b23f0f41e2fb2d864fc236829e6bc0cb9f7b94708ccd4c90357fa"
+    },
+    {
+      "path": "skills/orch-review/SKILL.md",
+      "source_sha256": "e50bacbe404eb7dbedf74c9bb7552b62d831a9d4cadd149324793f7cc1e8eacc",
+      "candidate_sha256": "f7ec5c32cf19ceed642187d9339104a233ff3521d06735bded3cf4c776daaab0"
+    },
+    {
+      "path": "skills/orch-self-improve/SKILL.md",
+      "source_sha256": "e3b04e6baa4ab936736aadb367a173bfaeb94b6b2290b9660d7a54ff8914d286",
+      "candidate_sha256": "04e598c28ed2d193cdd0349d86f4bcac86e67031a0a3916ea5e824a391c379fa"
+    },
+    {
+      "path": "skills/orch-work/SKILL.md",
+      "source_sha256": "a00b566c8bd2c0999b5a9f529927b1cb0a3aa849f926bdb14ffd04fe379bfef3",
+      "candidate_sha256": "ebfe6775c48f22c4252fd74c56e187697852066971c56d83cc1bf94dc290f355"
+    },
+    {
+      "path": "tests/test_home_cli.py",
+      "source_sha256": "b442b43b7395964acf3e523e35c907cb26464c6cc5c8169576fb9f8a3898b7c7",
+      "candidate_sha256": "cc085025a8b4aed2aaf1e0555fa8fafe43a88c7acb83ca1f37dd18282c21d34a"
+    },
+    {
+      "path": "tests/test_home_setup.py",
+      "source_sha256": "6f13d37dbd3724f2c070ca5a596163418f9f6caa48c4598db38f05b3211a9f20",
+      "candidate_sha256": "ccb9ddcd3de03729d8d30f29d5d90dcf77219694314631417eb4aa888b42cc21"
+    }
+  ],
+  "added": [
+    {
+      "path": "UPSTREAM.md",
+      "candidate_sha256": "8ebe0d122f760684c8f4dfed9284a50e3406882d94bfc4382c0616104f26968d"
+    },
+    {
+      "path": "scripts/package_identity.py",
+      "candidate_sha256": "bdfed1a8920e480f9ed196fd533ad1c19f69886749afddc1ec2484fb2a4b4caf"
+    },
+    {
+      "path": "tests/test_firstmate_foundation.py",
+      "candidate_sha256": "ef9d953df08b178f74f9de36c10f4c320067880a3f1baed920b770bc951cfe03"
+    }
+  ],
+  "missing": [],
+  "retention": {
+    "examples_byte_identical": true,
+    "example_files": 1022,
+    "license_and_notice_files": [
+      "LICENSE",
+      "example-workflows/research-acquire/LICENSE",
+      "example-workflows/social-search/LICENSE"
+    ],
+    "licenses_and_notices_byte_identical": true
+  }
+}

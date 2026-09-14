@@ -1,0 +1,20 @@
+{
+  "name": "orchflows-firstmate-local",
+  "interface": {
+    "displayName": "Orchflows FirstMate Development"
+  },
+  "plugins": [
+    {
+      "name": "orchflows-firstmate",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

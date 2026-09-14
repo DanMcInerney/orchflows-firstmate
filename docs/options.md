@@ -1,5 +1,7 @@
 # Candidate approaches for investigation
 
+The September 13 continuation expands these original inputs in [solution-options.md](solution-options.md), including two manual loading routes, a provisional ranking, concrete friction remedies and counterevidence. [experiment-plan.md](experiment-plan.md) specifies the next acceptance probes. The table below remains the original brainstorming starting point.
+
 These are brainstorming inputs, not approved designs. The initial assessment favors B; A can test it cheaply. C and D remain alternatives to evaluate rather than silently dismiss.
 
 | Option | Shape | Potential benefit | Principal uncertainty | First discriminating experiment |
