@@ -1,167 +1,149 @@
 # Handoff: continue the plug-and-play FirstMate upgrade
 
-## Latest direction and development rules
+## Direction and development rules
 
 The user wants FirstMate to use Orchflows' Work/Review primitives, dynamic
 workflow and custom/meta-workflows naturally. Orchflows owns skills, guidance
 and composition. FirstMate owns agents, worktrees, communication, supervision,
 recovery, cancellation, delivery and Claude/Codex integration on Herdr.
 
-Reuse those owners; add only demonstrated missing glue. Do not build another
-scheduler, recovery or writer service, direct Herdr adapter, native-child
-fallback or exhaustive harness program. A FirstMate supervisor does not perform
-project work merely because a selected workflow needs it.
+Reuse those owners and add only demonstrated missing glue. Do not introduce
+another scheduler, recovery or writer service, direct Herdr adapter, native-child
+fallback or exhaustive harness program. FirstMate supervisor instructions in
+research sources do not make the development agent a fleet supervisor.
 
-Implementation remains authorized. Develop and verify through Ubuntu in WSL,
-using Linux Python, Bash, Git and worker binaries. Keep the shared repository
-as the edit source and disposable candidates/homes on the Linux filesystem.
-Native Windows is deferred. Do not use design-loop.
+Implementation remains authorized. Use Ubuntu in WSL, native Linux Python,
+Bash, Git and worker binaries. The shared repository is the edit source;
+disposable candidates/homes run on the Linux filesystem. Native Windows is
+deferred. Do not use design-loop or alter active installations.
 
 Use the pinned upstream Orchflows dynamic development workflow: scoped makers
 when useful, join/check, one fresh independent Review, then one repair/check
 pass without another Review. Installed orchflows-light is not the source target
 or this project's development workflow.
 
-The user requested waiting for the in-flight PR before continuing. PR #3 merged
-at 2026-09-14T18:51:03Z as d465c1a4d90e7144137a08073a79e5fd9c2cf451.
-This increment started from that clean main checkout.
+The user's requested wait is complete. PR #4 merged at 2026-09-14T20:13:13Z as
+d3cf51b6b6dd31887f2d7d35a28679426af19d90. This increment started from clean main.
+The waiting heartbeat is paused.
 
-## What dev.7 implements
+## What dev.8 adds
 
-The [owner mapping](docs/firstmate-owner-mapping.md),
-[normal-launch seam](docs/normal-launch.md) and
-[dynamic composition](docs/dynamic-composition.md) remain the foundation.
-The [local delivery contract](docs/local-delivery.md) adds:
+[Bounded leaf authoring](docs/leaf-authoring.md) extends the existing dynamic
+ship/local-only composition using the retained Build skill:
 
-- Explicit dynamic selection for an ordinary Linux Herdr ship/local-only task.
-  Default ship selection keeps FirstMate's ordinary route. Unsupported selected
-  modes refuse before task/workspace/endpoint allocation.
-- Immutable kind, mode and fm/<task> branch identity in the existing attachment,
-  task metadata and per-generation launch context. New capability/scope
-  negotiation prevents retained scout clients from accepting ship delivery.
-- The same multiple scoped Work requests, ordinary root Git joins, one Review
-  of the exact clean joined candidate and one repair/check phase. Components
-  remain scouts returning retained results to the parent.
-- Ordinary root relaunch preserving selected delivery and accepted/gathered
-  work. Changed delivery metadata, repository or branch requires reconciliation.
-- The ordinary ready-in-branch completion signal and existing fm-merge-local
-  owner for landing committed output. The worker does not merge or open a PR.
-- Teardown protection for the promised branch even after a worktree branch
-  switch. Existing backlog-close evidence and Treehouse claims support cleanup
-  retries; the branch remains reachable until successful task-record removal.
+1. A writable Work authors a complete non-delegating leaf workflow/guidance
+   library and returns committed output.
+2. The root joins that output through ordinary Git. A fresh read-only Work
+   loads the library from its own exact frozen worktree and reads declared core
+   dependencies from the immutable retained package.
+3. The root gathers actual output and commits exact report bytes, full retained
+   result JSON and a trial record outside the deliverable library.
+4. One Review sees that exact clean candidate. The root performs the one
+   repair/check pass, then FirstMate's existing local delivery owners land it.
 
-The existing bounded Linux scout profile stays compatible. Both profiles keep
-the 32-component bound, request-specific input/result identities, full retained
-reads before gather, archival writer refs and aggregate lifecycle guards.
-No-mistakes is not admitted; selected mode changes refuse. This increment does
-not add a no-mistakes run parser or claim detection of a manually started
-pipeline while metadata still claims local-only.
+The existing normal launch, request identities, replay, permissions, worktree
+positioning, replacement, supervision and delivery mechanisms are reused.
+Product changes are bounded skill/client/catalog guidance. There is no new
+execution capability, protocol field, nested delegation or runtime owner.
+
+The shared client documentation distinguishes canonical full-result digests
+from raw report digests. The delivered trial record labels both and retains the
+source result so they can be recomputed independently after cleanup.
+
+A same-project leaf trial does not establish portability. Unrelated-project
+trials before final Review are required for portability claims. General
+composing Build, nested workflows and SelfImprove remain open.
 
 ## Evidence and review
 
-Read [local delivery verification](docs/local-delivery-verification.md) and
-[exact state](docs/local-delivery-state.json) before runtime claims. The joined
-candidate passed 128 package, 149 Linux integration and 23 driver checks.
-One independent development Review found that switching to a landed worktree
-branch could hide the unlanded promised delivery branch during cleanup.
-The single repair/check pass fixed this at the existing teardown owner and
-corrected stale package execution instructions. No second Review ran.
+Read [leaf authoring verification](docs/leaf-authoring-verification.md) and
+[exact state](docs/leaf-authoring-state.json) before making runtime claims.
+The final candidate passes 128 package, 155 Linux integration and 30 driver
+checks: 313 passed, with ten explicit native Windows skips. Exact identities
+are recorded there. One independent development
+Review found two observer gaps: reviewed provenance needed binding to actual
+retained bytes/identities, and declared core guidance needed precise native
+read evidence. Both were repaired and checked, without a second Review.
 
-The first cleanup-repaired candidate passed 304 combined checks. Its actual
-ordinary spawn attempt then exposed a pre-worker branch-ordering gap: the
-pinned ship brief starts detached and tells the worker to create fm/<task>.
-The same repair/check pass now allows only that pristine initial state and
-keeps subsequent client, relaunch and delivery checks strict. The final
-candidate passed **128 package, 154 Linux integration and 23 driver tests:
-305 passed checks**, with ten explicit native Windows skips.
+Actual Sonnet 5/high authoring, ordinary root replacement, a fresh leaf trial,
+one Review, prose repair and an additional fresh repair Work were observed.
+The final repair trial used the exact final commit and returned the correct
+output. Strict dev.8 acceptance nevertheless remains failed: that fourth Work
+and changed library exceed the unchanged-library fixture, and several native
+calls do not satisfy its required literal-call observations. Landing was
+skipped. All scoped processes stopped; the unlanded ready branch and root
+records remain protected. Original failed receipts are preserved unchanged.
 
-**Actual dev.7 local-only delivery is verified with a documented observer
-correction and resumed cleanup.** Trial a-lf4thn46 used Sonnet 5/high as the user
-requested. Native task/command/response records confirm that profile. Two makers,
-ordinary root replacement while one maker ran, retained custom-skill rereading,
-exact joined Review, final checks and ready-branch completion succeeded.
+The separate strengthened reassessment confirms original-trial provenance,
+declared dependency reads and actual result integrity, without relabeling the
+receipt as passed. Repair-trial evidence was left in retained results and a
+tasktmp diagnostic. A final, package-tested clarification now requires that
+additional evidence to be committed before delivery; it has not had another
+actual worker trial. Do not claim dev.8 local delivery or broad Build parity.
 
-The original driver receipt failed because its observer treated a normal 2>&1
-redirect as an extra gather argument. Full native reads preceded both the actual
-first gather and durable owner acknowledgement. The repaired observer passes
-all 25 pre-landing assertions on the unchanged trace. That original receipt
-remains failed and unchanged; this is not a clean uninterrupted driver pass.
-
-The existing fm-merge-local owner then landed the exact final commit. Initial
-cleanup correctly refused ambiguous endpoint inspection after the earlier lab
-shutdown. Restoring the same private lab through its existing owner proved the
-retired endpoint absent; ordinary teardown then succeeded. Delivered code and
-all six tests pass after cleanup, both writer refs survive, and no scoped
-processes remain. These follow-ups launched no additional model. Final evidence
-contains 26 acceptance assertions plus delivered-code/ref/cleanup checks.
-
-The user refreshed the normal Ubuntu Claude login. Continue using the selected
-current Ubuntu cache through the access-token-only driver; do not refresh/copy
-it yourself. Acceptance now defaults to claude-sonnet-5 at high effort to avoid
-unintended expensive model defaults. Product candidate/package checks and all
-original/corrected/resumed receipt identities remain distinct in exact state.
-
-Earlier dev.6 [dynamic verification](docs/dynamic-verification.md) remains exact
-historical evidence. Driver preflight failures are preserved separately and
-are not relabeled as worker trials. Authentication reads only the access token
-from an explicitly selected current cache; it does not copy or reset rotating
-credential caches. Active installations and pinned references remain untouched.
-The original dated assessment and [dev.6 handoff](HANDOFF-through-dev6-2026-09-14.md)
-are preserved.
+Earlier [dev.7 verification](docs/local-delivery-verification.md) and
+[dev.6 verification](docs/dynamic-verification.md) remain historical evidence,
+with their original failures, observer corrections and resumed owner actions
+kept separate. The original dated assessment is unchanged; the previous
+[dev.7 handoff](HANDOFF-through-dev7-2026-09-14.md) is preserved.
 
 ## Next implementation work
 
-1. **Exercise broader custom/meta composition through the same primitives.**
-   Select a representative workflow-authoring or nested composition case that
-   demonstrates the next missing interface. Retain complete libraries/guidance;
-   introduce no workflow-specific runtime adapter. Verify its actual artifact
-   and ordinary recovery, not only catalog availability.
-
-2. **Use targeted compatibility evidence.**
+1. Close the demonstrated leaf-authoring delivery gap: commit post-Review
+   repair-trial evidence with the artifact and assess that precise extra Work
+   sequence without discarding the existing strict checks. Then extend the
+   representative custom/meta case beyond non-delegating leaf authoring when
+   the next demonstrated missing interface is known. Use
+   existing FirstMate owners for composing Build, SelfImprove and any
+   unrelated-project trial. Do not claim general parity from catalog retention.
+2. Target compatibility or lifecycle work that affects the selected feature.
    Current actual Codex composition, component continuation, native background
-   retirement and the full supervisor wake/drain/rearm cycle remain open.
-   Address a harness or lifecycle gap when it affects the selected feature;
-   Linux Claude evidence does not certify these other cases.
+   retirement and complete supervisor wake/drain/rearm remain open.
+3. Extend delivery through its existing owners only when needed. Direct-PR,
+   no-mistakes and promotion stay open; preserve sole validation custody.
+4. Investigate the existing recovery route when cleanup has already removed
+   an endpoint but an unlanded branch remains. Do not fabricate endpoint
+   bindings or task records to bypass an ordinary relaunch refusal.
 
-3. **Extend delivery only at its existing owners when the selected case needs it.**
-   Direct-PR/no-mistakes, promotion and broader policy combinations remain open.
-   Preserve no-mistakes sole custody once validation begins; do not create an
-   independent review or delivery pipeline.
-
-Broader gaps include per-assignment controls, nesting, Build/SelfImprove,
-artifact/history retention, optional-example runtime parity, remote homes,
-installation/update/rollback and joint archival-ref/result pruning. Native
-Windows stays deferred. Near feature parity remains the target.
+Other open work includes per-assignment controls, artifact/history retention,
+broader optional examples, remote homes, install/update/rollback and joint
+archival-ref/result pruning. Near feature parity remains the target.
 
 ## Source and ownership constraints
 
-- Package: packages/orchflows-firstmate, version 0.1.0-dev.7; 1,091 files retaining
+- Package: packages/orchflows-firstmate, version 0.1.0-dev.8; 1,091 files retaining
   all 1,081 paths of Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 (0.7.0).
 - FirstMate pin: b182d0f908b78d08c7ccb8dce3775bdca8c5d657. Historical Orchflows
-  research pin: 0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a. Current target reference
-  remains ignored .scratch/orchflows-refresh-ca7225849348. Historical reference
-  CRLF-only differences remain as found; do not normalize pinned source files.
-- FirstMate changes belong in integrations/firstmate; package changes in the
-  owned package. Nineteen inventoried deployable files, including six sequential patches,
-  reproduce a 566-path candidate, including one symlink, through prepare.py.
-  Patches 0005/0006 extend the existing spawn, merge and cleanup owners.
-- Dynamic requests live under task-group/requests; legacy request.json remains.
-  Output refs retain results; they do not establish another workspace owner.
-- The Linux acceptance driver adds --local-only to its existing --dynamic,
-  --custom-workflow and --restart paths. It reuses runtime/lab/auth/cleanup code.
+  research pin: 0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a. Current source reference
+  remains ignored .scratch/orchflows-refresh-ca7225849348. Leave .sources
+  unchanged, including pre-existing CRLF-only differences.
+- Product FirstMate changes belong in integrations/firstmate; package changes
+  belong in the owned package. Nineteen inventoried deployable files, including
+  six sequential patches, reproduce a 566-path candidate with one symlink
+  through the distribution preparation tool.
+- Dynamic roots remain bounded to 32 components and scout or explicitly
+  selected ship/local-only delivery. Components return retained results to
+  their parent. Archival output refs are not a second workspace owner.
+- The existing Linux acceptance driver adds --authoring, implying dynamic and
+  local-only. It reuses the current namespace, lab, authentication, watcher,
+  relaunch, merge and cleanup helpers. The fixture is targeted evidence,
+  not a required runtime adapter or broad harness milestone.
+- Live acceptance uses the user-selected current Ubuntu Claude cache through
+  the access-token-only driver. Do not refresh/copy/reset credential caches.
+  Keep the selected claude-sonnet-5/high profile explicit.
 
-Inspect Git status and preserve existing changes. Keep reusable document paths
-portable and raw traces/disposable clones ignored or outside the repository.
-Do not change active installations during package checks.
+Inspect Git status and preserve existing changes. Keep reusable paths portable;
+store raw local evidence and disposable clones outside tracked documentation.
 
 ## Reading order
 
 1. This handoff and [README](README.md).
-2. [Local delivery contract](docs/local-delivery.md),
-   [verification](docs/local-delivery-verification.md),
-   [exact state](docs/local-delivery-state.json).
-3. [Dynamic contract](docs/dynamic-composition.md), then its historical
-   [verification](docs/dynamic-verification.md) and [state](docs/dynamic-state.json).
+2. [Leaf authoring contract](docs/leaf-authoring.md),
+   [verification](docs/leaf-authoring-verification.md),
+   [exact state](docs/leaf-authoring-state.json).
+3. [Local delivery contract](docs/local-delivery.md), historical
+   [verification](docs/local-delivery-verification.md) and
+   [state](docs/local-delivery-state.json), then [dynamic contract](docs/dynamic-composition.md).
 4. [Decisions](docs/decisions.md), [open work](docs/open-questions.md),
    [owner mapping](docs/firstmate-owner-mapping.md), [normal launch](docs/normal-launch.md).
 5. [FirstMate contracts](docs/firstmate-contracts.md), affected pinned source

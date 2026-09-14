@@ -58,3 +58,10 @@ Deliberate local-only root delivery increment (version 0.1.0-dev.7):
 - Package/client and FirstMate capabilities explicitly negotiate `ship-local-only`; immutable root delivery includes kind, mode and ordinary `fm/<id>` branch. Legacy contexts and scout attachments retain their contract.
 - Dynamic/Work/Review guidance includes explicitly selected Linux ship/local-only roots, with components returning to their parent and only the root following ordinary ready-branch delivery. Direct-PR, no-mistakes, promotion, nesting and self-development remain excluded.
 - FirstMate spawn/relaunch, task-group guard and local merge owners validate the selected delivery; this package introduces no writer or delivery service.
+
+Deliberate bounded leaf-authoring increment:
+
+- Adapts orch-build-workflow from the same pinned Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 source to complete non-delegating leaf/guidance libraries in explicitly selected Linux dynamic ship/local-only roots. It reuses Work, joined commits, one Review and the existing repair/check pass.
+- The fresh leaf trial uses its frozen worktree and declared retained dependencies. Actual output and trial findings join the final candidate; recovery reuses accepted requests and rechecks authoring requirements. No runtime protocol or capability is added.
+- The matching FirstMate catalog points to this bounded contract. General composing/nested Build, SelfImprove, native registration and implicit user-home installation remain unavailable. Unrelated-project reuse uses existing outer FirstMate enablement/spawn owners and is separate evidence unless performed before final Review.
+- Original quoted skills, all upstream paths and optional library bytes remain retained. Source inspection and package/owner checks do not certify actual authoring behavior; exact worker evidence is recorded separately.

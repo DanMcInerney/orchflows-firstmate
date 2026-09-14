@@ -14,6 +14,13 @@ makes one repair/check pass. [Current verification](local-delivery-verification.
 separates fixture checks from actual workers. Direct-PR/no-mistakes delivery,
 nesting, Build/SelfImprove and broader optional-library/meta parity remain open.
 
+The dev.8 bounded leaf-authoring extension uses those existing primitives and
+delivery owners for a complete non-delegating workflow/guidance library, fresh
+same-project trial, committed evidence and exact final Review. No protocol,
+worker-launch or workspace mechanism is added. See [leaf authoring](leaf-authoring.md)
+and its [verification](leaf-authoring-verification.md). General composing Build,
+nested trials, portability and SelfImprove remain open.
+
 ## Core parity target
 
 | Feature | Behavior to preserve | Fundamental adaptation | Current implementation |
@@ -21,7 +28,7 @@ nesting, Build/SelfImprove and broader optional-library/meta parity remain open.
 | Work | Fresh maker, explicit task/context, selected guidance/model/effort, bounded result | Request a FirstMate-owned component; return a durable logical assignment handle, not a native child handle | Legacy read-only Work plus bounded dynamic read-only/writer components; per-request frozen inputs, clean output commits, full-result gather and aggregate lifecycle. Current execution evidence: [dynamic verification](dynamic-verification.md). Native Windows remains refused |
 | Review | Fresh independent reviewer, scoped findings, no repairs | Separate component with reviewed-state identity and explicit review authorization | Legacy explicit audits preserved; dynamic workflow admits one fresh read-only Review after prior results are gathered, freezes the joined root commit and fences a second Review. [Current evidence](dynamic-verification.md) |
 | Dynamic workflow | Investigation, dependency-aware parallel work, join, one review, one repair pass | Root crewmate composes; FirstMate owns component lifecycle; workflow review policy reconciles with root delivery | Bounded Linux scout and explicitly selected ship/local-only roots use normal enablement/spawn and exact-result context; [verification](local-delivery-verification.md) records actual scope. Other delivery modes and nesting remain open |
-| Build workflow | Create workflows/guidance/libraries, trial them, review and refine | Author in assigned workspace; collect package artifact and publish/install through the selected authorized delivery | Source retained; workflow execution gated pending adapter |
+| Build workflow | Create workflows/guidance/libraries, trial them, review and refine | Author in assigned workspace; collect package artifact and publish/install through the selected authorized delivery | Bounded dynamic ship/local-only authoring of non-delegating leaf/guidance libraries; same-project fresh Work trial and committed evidence. General composing/nested Build and portability remain gated |
 | Self-improve | Bounded history inspection, source checks, corrections, trial and independent review | Group history joins several host sessions; target checkout/library and delivery authority are explicit | Native history mechanics retained; group-history correlation not implemented |
 | Layered guidance | Dotted specificity, core then selected-library order, deduplication, missing-domain errors | Resolve within the task's pinned package set; preserve logical domain names | Guidance files retained unchanged |
 | Model and effort | Per-setting caller precedence, assignment overrides, repair settings, unsupported-value errors | FirstMate dispatch uses effective worker controls; continue or replace by explicit capability | Existing intent contract retained; fleet realization pending |

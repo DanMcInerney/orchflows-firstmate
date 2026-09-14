@@ -47,7 +47,7 @@ def collect_ready(trial, result, project):
             and head.returncode == 0 and branch.returncode == 0
             and head.stdout.strip() == branch.stdout.strip() == result.get("final_commit"),
         "ready_branch_clean_fast_forward": clean.returncode == 0 and clean.stdout == "" and ancestry.returncode == 0,
-        "components_return_to_parent": len(result.get("retained_results", {})) == 3 and all(
+        "components_return_to_parent": set(result.get("retained_results", {})) == trial.expected_requests and all(
             value.get("component_meta", {}).get("kind") == "scout"
             and value.get("component_meta", {}).get("result_disposition") == "parent"
             for value in result.get("retained_results", {}).values()),
@@ -92,7 +92,7 @@ def check_landed_after_cleanup(trial):
         head = _git(trial, project, "rev-parse", "--verify", "refs/heads/main")
         clean = _git(trial, project, "status", "--porcelain")
         env = {key: value for key, value in trial.env.items() if key != "CLAUDE_CODE_OAUTH_TOKEN"}
-        behavior = trial.run(["python3", "-B", "-c", BEHAVIOR], env=env, cwd=project, check=False)
+        behavior = trial.check_behavior(project)
         tests = trial.run(["python3", "-B", "-m", "unittest", "discover", "-v"],
                           env=env, cwd=project, check=False)
         trial.write(trial.out / "landed-tests-after-cleanup.log", tests.stdout + tests.stderr)

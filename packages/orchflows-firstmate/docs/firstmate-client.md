@@ -2,7 +2,7 @@
 
 This client implements the package side of protocol `firstmate-task-group`, version `1`, scopes `local-readonly-work`, `local-readonly-review`, `local-dynamic` and `local-dynamic-ship-local-only`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
 
-The client supports legacy one-component read-only Work/Review attachments and an explicitly admitted bounded dynamic workflow from a normal Linux root scout or explicitly selected ordinary ship/local-only root. FirstMate retains the complete fork, selected custom libraries and accepted input commits. The component inherits the root's Claude/Codex harness, model and effort. The project must satisfy FirstMate's clean local Git/no-origin admission. Nesting, component continuation, model overrides, remote homes, direct-PR and no-mistakes delivery, promotion, Build and SelfImprove remain gated. Optional examples remain migration source rather than certified workflows.
+The client supports legacy one-component read-only Work/Review attachments and an explicitly admitted bounded dynamic workflow from a normal Linux root scout or explicitly selected ordinary ship/local-only root. FirstMate retains the complete fork, selected custom libraries and accepted input commits. The component inherits the root's Claude/Codex harness, model and effort. The project must satisfy FirstMate's clean local Git/no-origin admission. [Bounded leaf authoring](#bounded-leaf-authoring) uses the existing dynamic local-only profile. Nesting, component continuation, model overrides, remote homes, direct-PR and no-mistakes delivery, promotion, general composing Build and SelfImprove remain gated. Optional examples remain migration source rather than certified workflows.
 
 ## Primitive and review authority
 
@@ -107,6 +107,65 @@ the same policy and limits. FirstMate's existing intake, spawn, worktree, inbox,
 recovery and delivery owners remain authoritative. Component completion returns
 to the root; it does not run root delivery or introduce ship/no-mistakes review
 gates.
+
+## Bounded leaf authoring
+
+[orch-build-workflow](../skills/orch-build-workflow/SKILL.md) composes existing
+Work/Review requests in an explicitly selected dynamic ship/local-only root.
+It authors a complete library whose leaf skill performs its assignment without
+delegating; the library may include domain guidance and declared dependencies.
+This adds no primitive, attachment mode, capability, runtime or installation
+authority. This Build composition in scouts, composing or nested trials and SelfImprove
+remain unavailable.
+
+The root joins the authored library and commits its clean candidate before a
+fresh Work trials the leaf. That component reads the candidate library from its
+own frozen worktree and resolves its declared dependencies from the retained
+package roots. Its assignment names repository-relative input/library locations
+and the supplied retained roots; it must not use the parent worktree's absolute
+paths, a mutable source catalog or an undeclared user home. Loading the leaf
+does not create an attachment or authorize delegation.
+
+A read-only trial keeps project and Git state unchanged and writes its complete
+text output and findings in its recorded tasktmp report. The existing complete,
+status and gather operations retain that report. The root commits the actual
+output and trial evidence outside the deliverable library before final Review;
+links to disposable component files do not retain an artifact. Library
+trials/ may contain reusable requests and expected behavior. Any needed
+writable trial remains a scoped Work whose complete output is committed and
+joined through the same owner.
+
+Return trial findings to authoring before the one final Review. Component
+continuation is unavailable: the authorized root can refine the candidate, or
+fresh Work can receive it and the committed trial record. After relaunch, use
+the new launch context to recover the same accepted requests and reread the
+authoring requirements and trial evidence before resuming. The final Review
+identifies the clean joined library and evidence commit; then the existing
+repair/check and ready-branch delivery contract applies. If the repair changes
+the trialed library, rerun affected behavior through fresh Work and commit that
+trial's actual output, retained result and identities before readiness. Preserve
+the original Review evidence and identify the repaired candidate separately.
+A tasktmp-only diagnostic does not retain the repair trial with the delivered
+library. This is the same repair/check pass, without another Review.
+
+An outer caller may arrange an unrelated-project trial through ordinary
+FirstMate enablement and spawn using the complete authored library. The
+authoring root cannot launch that fleet task itself. A portability claim
+requires that evidence before final Review; a later reuse trial is reported
+separately. This bounded case does not establish general Build parity,
+native registration by skill name or implicit user-home publication.
+
+### Trial digest meanings
+
+request.result_digest identifies the entire retained result.json: SHA-256
+of its UTF-8 canonical JSON (sorted keys, compact separators, ensure_ascii=False).
+result.report_digest identifies the raw retained report bytes. They are
+different digests and must not be substituted for each other during review or
+repair. Label both explicitly in trial provenance. When evidence must be
+verifiable after task cleanup, commit the retained result JSON alongside the
+exact trial output, outside the deliverable library, so both digests can be
+checked from the delivered files. Findings must be checked against the digest's
+declared object before changing a correct value.
 
 ## Inputs and invocation
 

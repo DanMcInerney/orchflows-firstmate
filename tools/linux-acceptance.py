@@ -21,6 +21,7 @@ def main():
     parser.add_argument("--model", default="claude-sonnet-5", help="Explicit Claude model inherited by every component")
     parser.add_argument("--effort", choices=("low", "medium", "high", "xhigh", "max"), default="high")
     parser.add_argument("--dynamic", action="store_true", help="Two writer Work results, joined candidate, one Review and checks")
+    parser.add_argument("--authoring", action="store_true", help="Author and trial a non-delegating leaf library through dynamic local-only delivery")
     parser.add_argument("--local-only", action="store_true", help="Deliver the dynamic result through an ordinary ship/local-only root")
     parser.add_argument("--enabled", action="store_true", help="Enable the project once; ordinary spawn attaches it")
     parser.add_argument("--custom-workflow", action="store_true", help="Invoke a retained custom one-primitive workflow (requires --enabled)")
@@ -32,6 +33,10 @@ def main():
     parser.add_argument("--claude-access-token-file", type=Path, help="Explicit user-owned Claude cache: read only accessToken/expiresAt")
     parser.add_argument("--access-token-expires-at", type=float, help="Unix expiration of CLAUDE_CODE_OAUTH_TOKEN when known")
     args = parser.parse_args()
+    if args.authoring:
+        if args.custom_workflow:
+            parser.error("--authoring supplies its own authored leaf; omit --custom-workflow")
+        args.dynamic = args.local_only = True
     if args.local_only and not args.dynamic:
         parser.error("--local-only requires --dynamic")
     if args.dynamic:
@@ -59,7 +64,10 @@ def main():
     if args.command == "doctor":
         print(json.dumps(probe, indent=2, sort_keys=True))
         return 0
-    if args.dynamic:
+    if args.authoring:
+        from linux_acceptance.authoring import AuthoringTrial
+        trial = AuthoringTrial(args, probe, search_path)
+    elif args.dynamic:
         from linux_acceptance.dynamic import DynamicTrial
         trial = DynamicTrial(args, probe, search_path)
     else:

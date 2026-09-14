@@ -2,6 +2,28 @@
 
 This document preserves what the originating session established. The [original assessment](assessment-2026-09-13.md) remains the dated narrative record; this file can accumulate later evidence.
 
+## Bounded leaf authoring  September 14, 2026
+
+After PR #4 merged as d3cf51b6b6dd31887f2d7d35a28679426af19d90, dev.8
+clarifies bounded non-delegating leaf authoring through existing dynamic
+ship/local-only Work/Review. No new runtime owner or capability was added.
+
+Actual Sonnet 5/high trials produced a complete library, exercised ordinary
+parent replacement, applied the leaf in fresh read-only Work and obtained
+Review. The refined run also used a fresh repair Work against its exact final
+commit. Both original receipts remain failed; dev.8 local landing is not
+certified. The initial diagnostic exposed digest confusion. The refined case
+exceeded its narrow three-request/unchanged-library fixture and missed required
+native-call observations; repair-trial evidence was not committed with the final
+artifact. Cleanup retained both unlanded roots, with zero scoped processes.
+
+One independent development Review found and prompted two observer repairs.
+The final pass has 30 passing driver checks; exact package/integration checks,
+runtime identities, failed receipts, separate strengthened reassessment and
+remaining limits are in [verification](leaf-authoring-verification.md) and
+[exact state](leaf-authoring-state.json). The final package clarification requires
+committed repair-trial evidence before delivery and is not yet live-tested.
+
 ## Upstream target clarification — September 14, 2026
 
 The user explicitly confirmed the latest [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows) as the source to adapt, superseding their preceding local `orchflows-light` reference. The product remains a modified Orchflows with near feature parity, executed through FirstMate on Herdr with Claude Code and Codex workers.

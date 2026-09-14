@@ -247,3 +247,14 @@ including before a formatter. It does not treat file redirection, shell lists or
 substitution as literal invocation evidence. When correcting an observer after
 a run, preserve the original receipt and write a separate reassessment; an
 administrative delivery/cleanup retry is distinct from an uninterrupted pass.
+
+
+## Bounded leaf authoring
+
+The --authoring case selects dynamic local-only delivery and reuses the existing
+driver lifecycle. It authors a complete library, trials its non-delegating leaf
+in a fresh read-only Work, replaces the root during that trial when --restart
+is selected, then reviews committed trial evidence and lands the library.
+[The authoring contract](leaf-authoring.md) gives the command and exact observer
+scope; [verification](leaf-authoring-verification.md) records executed outcomes.
+This remains same-project evidence, with no portability or nested Build claim.

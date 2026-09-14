@@ -6,23 +6,21 @@ Updated September 14, 2026 during Stage 1 verification. **Source** means an insp
 
 ## Current implementation queue
 
-The dev.7 continuation extends the completed owner mapping, normal-launch
-seam and bounded dynamic scout composition with explicit ordinary Linux
-ship/local-only root delivery. The root joins committed Work, obtains one
-exact-candidate Review and follows FirstMate's existing ready-branch, merge and
-teardown owners. [Local delivery contract](local-delivery.md),
-[verification](local-delivery-verification.md) and [exact state](local-delivery-state.json)
-separate source behavior, fixture checks and actual worker evidence. The actual
-Sonnet 5/high custom/relaunch case delivered its exact committed output and
-completed ordinary cleanup after an observer correction and administrative
-resume. Its original failed receipt is preserved; an uninterrupted final-driver
-rerun was not performed because no further model execution was needed.
-
+The dev.8 continuation adds bounded leaf workflow/guidance authoring through
+the existing dynamic ship/local-only profile: author Work, a fresh read-only
+Work trial using the frozen library, committed output and provenance, one
+Review and repair/check, then ordinary delivery. See the [contract](leaf-authoring.md),
+[verification](leaf-authoring-verification.md) and [exact state](leaf-authoring-state.json).
+Same-project evidence does not establish unrelated-project portability or
+general composing Build. Historical dev.7 local-delivery evidence remains
+separately identified.
 | Order | Next work | Evidence required |
 | --- | --- | --- |
-| 1 | Broader custom/meta composition | A representative workflow-authoring or nested composition case through the same primitives and retained catalog; add only missing owner interfaces demonstrated by that case |
-| 2 | Targeted compatibility and recovery | Current actual Codex composition and any lifecycle gap affecting the selected feature; component continuation and larger artifacts need their own evidence |
-| 3 | Broader delivery when required | Direct-PR/no-mistakes or promotion through existing FirstMate policy owners, preserving sole validation custody |
+| 1 | Close bounded leaf authoring delivery | Commit the observed post-Review repair-trial evidence with the final artifact; assess that precise extra Work and resolve required native-call evidence before claiming a pass. Preserve both failed receipts and existing owners |
+| 2 | Broader custom/meta composition | Extend beyond non-delegating leaf authoring to a representative composing Build or SelfImprove case using the same owners; unrelated-project trials are required before claiming portability |
+| 3 | Recovery after partial cleanup | A failed authoring trial retained its unlanded branch, but ordinary relaunch refused the already removed endpoint after private-lab restoration. Determine the existing owner route when this case is selected; do not fabricate endpoint bindings or replace fleet records |
+| 4 | Targeted compatibility and recovery | Current actual Codex composition and any lifecycle gap affecting the selected feature; component continuation and larger artifacts need their own evidence |
+| 5 | Broader delivery when required | Direct-PR/no-mistakes or promotion through existing FirstMate policy owners, preserving sole validation custody |
 | Later | Release and remaining parity | Broader optional-library trials, complete install/update/rollback, artifact/history retention, remote homes and promotion |
 
 The latest direction remains a plug-and-play FirstMate upgrade. FirstMate owns
@@ -32,7 +30,7 @@ scheduler, recovery daemon or exhaustive harness program.
 
 Known limits: dynamic composition supports bounded local Linux scout and
 explicit ship/local-only roots, with at most 32 components. Direct-PR/no-mistakes,
-nesting, Build/SelfImprove, general component relaunch, native background-tool
+nesting, general composing Build/SelfImprove, unrelated-project portability, general component relaunch, native background-tool
 retirement, full supervisor wake/drain/rearm, current Codex runtime acceptance,
 remote homes, promotion, bundle pruning and general rollback remain open.
 Native Windows is deferred. Source-retained examples are not executed parity.
