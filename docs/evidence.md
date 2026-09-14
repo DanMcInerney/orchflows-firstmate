@@ -447,3 +447,34 @@ Current Codex composition, direct-PR/no-mistakes, nested/meta authoring and the
 remaining lifecycle/release gaps remain open. Pinned references, active
 installations and rotating credential caches remain unchanged; design-loop
 was not used.
+
+
+## September 14 continuation: committed repair-trial evidence and qualified delivery
+
+The dev.8 package and FirstMate candidate are unchanged. The existing Build/client
+clarification required retaining post-Review trial evidence; a separate bounded
+four-request case now exercises it. One independent development Review found
+external symlinks could pass as committed evidence. The single repair/check pass
+requires regular Git blobs and exact bytes. Final checks: 128 package, 155 Linux
+integration and 39 driver tests passed (322 total), with ten Windows skips.
+
+Actual Sonnet 5/high trial a-t27bkjzs completed authoring, root replacement,
+original trial, one Review and fresh repair Work. It committed original and
+repair trial evidence plus Review bytes. All native read/replay/context checks
+passed. The strict receipt correctly failed because the final command included
+a preceding cd, and its initial landing was skipped.
+
+A separate labelled assessment verified that cd named the exact native worktree,
+the final tests succeeded after repair gathering, and all eight evidence files
+were actual regular Git blobs. It retained both failed strict assertions. The
+same private lab was restored through its owner, and existing merge-local and
+teardown owners delivered the exact branch and cleaned up without another model
+or recreated task endpoint. Fifty-one qualified delivery checks passed. Four
+delivered tests, evidence-byte preservation, writer-ref retention, metadata
+removal and zero scoped processes were verified after cleanup.
+
+[Verification](leaf-repair-verification.md) and [exact state](leaf-repair-state.json)
+keep original failure, final observer, qualified delivery and artifact identities
+separate. This closes the observed retention/delivery gap with qualification;
+clean strict acceptance, broader Build/SelfImprove, portability and current
+Codex composition remain open.

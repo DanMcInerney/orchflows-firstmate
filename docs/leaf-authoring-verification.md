@@ -1,5 +1,9 @@
 # Leaf authoring verification
 
+The [repair-trial continuation](leaf-repair-verification.md) extends this work
+with a separate four-request acceptance case. The dev.8 receipts and outcomes
+below remain unchanged.
+
 This increment starts from merged PR #4, main commit d3cf51b. Source pins remain
 FirstMate b182d0f908b78d08c7ccb8dce3775bdca8c5d657 and Orchflows
 ca72258493480ddcfe73b3f01d0475ad532e4726. Current package identity is dev.8.

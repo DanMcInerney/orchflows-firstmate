@@ -15,7 +15,9 @@ ship/local-only root. Work authors it, a fresh Work trials the exact joined
 library, one Review assesses the committed artifact and trial evidence, and
 FirstMate's existing local delivery owners land it.
 See [leaf authoring](docs/leaf-authoring.md) and
-[current verification](docs/leaf-authoring-verification.md). Actual authoring, recovery and a repair trial were observed; strict dev.8 delivery acceptance remains incomplete.
+[repair-trial verification](docs/leaf-repair-verification.md). The continuation
+checks committed evidence and local delivery for an explicit post-Review repair
+trial; earlier strict dev.8 failures remain separately recorded.
 
 Enable the fork and selected complete custom libraries once; select dynamic
 through ordinary FirstMate spawn. The retained package client uses immutable

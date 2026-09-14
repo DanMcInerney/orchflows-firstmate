@@ -4,8 +4,8 @@ The dev.8 [bounded leaf-authoring extension](leaf-authoring.md) composes the
 existing Work/Review interface to produce a complete non-delegating leaf or
 guidance library, trial its exact joined source in a fresh component, retain
 committed evidence and deliver through local-only owners. Its
-[verification](leaf-authoring-verification.md) separates source, fixtures and
-actual workers. General composing Build, nesting and portability remain open.
+[verification](leaf-repair-verification.md) separates source, fixtures,
+actual workers and qualified repair-trial delivery. General composing Build, nesting and portability remain open.
 
 
 The dev.7 [local delivery extension](local-delivery.md) adds explicitly selected

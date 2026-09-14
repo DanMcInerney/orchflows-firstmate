@@ -22,88 +22,80 @@ when useful, join/check, one fresh independent Review, then one repair/check
 pass without another Review. Installed orchflows-light is not the source target
 or this project's development workflow.
 
-The user's requested wait is complete. PR #4 merged at 2026-09-14T20:13:13Z as
-d3cf51b6b6dd31887f2d7d35a28679426af19d90. This increment started from clean main.
-The waiting heartbeat is paused.
+## Current result: repair-trial evidence delivered
 
-## What dev.8 adds
+Read [leaf repair verification](docs/leaf-repair-verification.md) and
+[exact state](docs/leaf-repair-state.json) before making runtime claims.
+This continuation began at 4f63714d4497ff5ba11381b5774ffa75032958ab on
+codex/firstmate-workflow-authoring. Package dev.8 and the FirstMate candidate
+remain unchanged. The earlier Build/client clarification already required
+committing post-Review repair-trial evidence before readiness.
 
-[Bounded leaf authoring](docs/leaf-authoring.md) extends the existing dynamic
-ship/local-only composition using the retained Build skill:
+The separate --authoring-repair case exercises author Work, fresh read-only
+leaf trial, ordinary root replacement, one Review, a bounded library refinement
+and a fresh repair Work. The root preserves original trial evidence and commits
+the repair output, full retained result and provenance plus the Review's report
+and result. The final library equals the repaired trial input; only those five
+new evidence files are added afterward. Existing FirstMate owners handle all
+execution and delivery.
 
-1. A writable Work authors a complete non-delegating leaf workflow/guidance
-   library and returns committed output.
-2. The root joins that output through ordinary Git. A fresh read-only Work
-   loads the library from its own exact frozen worktree and reads declared core
-   dependencies from the immutable retained package.
-3. The root gathers actual output and commits exact report bytes, full retained
-   result JSON and a trial record outside the deliverable library.
-4. One Review sees that exact clean candidate. The root performs the one
-   repair/check pass, then FirstMate's existing local delivery owners land it.
+The final checks passed 128 package, 155 Linux integration and 39 driver tests:
+**322 passed**, with ten explicit native Windows skips. One independent
+development Review found that filesystem reads could accept external symlinks
+as committed evidence. The one repair/check pass now requires regular Git blobs
+with the exact evidence bytes, including after cleanup. No second Review ran.
 
-The existing normal launch, request identities, replay, permissions, worktree
-positioning, replacement, supervision and delivery mechanisms are reused.
-Product changes are bounded skill/client/catalog guidance. There is no new
-execution capability, protocol field, nested delegation or runtime owner.
+Actual Sonnet 5/high trial a-t27bkjzs completed the four requests, correct JSON
+outputs, full native reads, replay, recovery and committed original/repair
+evidence. The root signaled ready at
+76a1ca904c6b4eb8e2fefdb5a4e0ee2c19463160.
 
-The shared client documentation distinguishes canonical full-result digests
-from raw report digests. The delivered trial record labels both and retains the
-source result so they can be recomputed independently after cleanup.
+**The strict fixture receipt remains failed.** The root prepended cd to its
+exact recorded worktree before the final test command, violating the required
+standalone-call form. Both strict final-command assertions failed; initial
+landing was skipped and the branch was protected. The tests actually succeeded
+after repair gathering.
 
-A same-project leaf trial does not establish portability. Unrelated-project
-trials before final Review are required for portability claims. General
-composing Build, nested workflows and SelfImprove remain open.
+A separate labelled assessment verified the final regular Git blobs and the
+native same-directory-prefixed test's success and timing. The default observer
+and live fixture remain strict. This assessment preserves both failed checks;
+it does not relabel the original receipt. All 51 qualified delivery checks,
+including ordinary landing, passed. The same private lab was restored through
+its owner for structured endpoint absence checks; no task endpoint or worker
+was recreated. Existing merge-local and teardown owners landed the exact branch
+and completed cleanup. All eight evidence files and the author output ref
+survive, four delivered tests pass, root metadata is removed and zero scoped
+processes remain. The follow-up launched no additional model.
 
-## Evidence and review
-
-Read [leaf authoring verification](docs/leaf-authoring-verification.md) and
-[exact state](docs/leaf-authoring-state.json) before making runtime claims.
-The final candidate passes 128 package, 155 Linux integration and 30 driver
-checks: 313 passed, with ten explicit native Windows skips. Exact identities
-are recorded there. One independent development
-Review found two observer gaps: reviewed provenance needed binding to actual
-retained bytes/identities, and declared core guidance needed precise native
-read evidence. Both were repaired and checked, without a second Review.
-
-Actual Sonnet 5/high authoring, ordinary root replacement, a fresh leaf trial,
-one Review, prose repair and an additional fresh repair Work were observed.
-The final repair trial used the exact final commit and returned the correct
-output. Strict dev.8 acceptance nevertheless remains failed: that fourth Work
-and changed library exceed the unchanged-library fixture, and several native
-calls do not satisfy its required literal-call observations. Landing was
-skipped. All scoped processes stopped; the unlanded ready branch and root
-records remain protected. Original failed receipts are preserved unchanged.
-
-The separate strengthened reassessment confirms original-trial provenance,
-declared dependency reads and actual result integrity, without relabeling the
-receipt as passed. Repair-trial evidence was left in retained results and a
-tasktmp diagnostic. A final, package-tested clarification now requires that
-additional evidence to be committed before delivery; it has not had another
-actual worker trial. Do not claim dev.8 local delivery or broad Build parity.
-
-Earlier [dev.7 verification](docs/local-delivery-verification.md) and
-[dev.6 verification](docs/dynamic-verification.md) remain historical evidence,
-with their original failures, observer corrections and resumed owner actions
-kept separate. The original dated assessment is unchanged; the previous
-[dev.7 handoff](HANDOFF-through-dev7-2026-09-14.md) is preserved.
+The observed repair-trial evidence retention and local delivery gap is closed
+with a **qualified assessment and administrative delivery resume**. Do not call
+this an uninterrupted strict fixture pass, broad Build parity or portability.
+Original failed receipts, exact reviewed driver source, qualified receipt,
+native traces and delivered artifact bundle are preserved under ignored
+.scratch/leaf-repair. Historical dev.8 unlanded branches remain unchanged.
 
 ## Next implementation work
 
-1. Close the demonstrated leaf-authoring delivery gap: commit post-Review
-   repair-trial evidence with the artifact and assess that precise extra Work
-   sequence without discarding the existing strict checks. Then extend the
-   representative custom/meta case beyond non-delegating leaf authoring when
-   the next demonstrated missing interface is known. Use
-   existing FirstMate owners for composing Build, SelfImprove and any
-   unrelated-project trial. Do not claim general parity from catalog retention.
-2. Target compatibility or lifecycle work that affects the selected feature.
-   Current actual Codex composition, component continuation, native background
-   retirement and complete supervisor wake/drain/rearm remain open.
-3. Extend delivery through its existing owners only when needed. Direct-PR,
+1. Extend the representative custom/meta case beyond non-delegating leaf
+   authoring when its next demonstrated missing interface is known. Use existing
+   FirstMate owners for composing Build, SelfImprove and unrelated-project
+   trials. A portability claim requires an unrelated-project trial before final
+   Review. Catalog retention alone does not establish executed parity.
+2. Target compatibility or lifecycle work affecting that feature. Current actual
+   Codex composition, component continuation, native background retirement and
+   complete supervisor wake/drain/rearm remain open.
+3. Extend delivery through existing owners only when needed. Direct-PR,
    no-mistakes and promotion stay open; preserve sole validation custody.
-4. Investigate the existing recovery route when cleanup has already removed
-   an endpoint but an unlanded branch remains. Do not fabricate endpoint
-   bindings or task records to bypass an ordinary relaunch refusal.
+4. Investigate the existing recovery route if cleanup has removed an endpoint
+   but unfinished worker activity is still needed for an unlanded branch. This
+   continuation needed only administrative landing of completed work. It does
+   not resolve ordinary relaunch refusal or authorize fabricated endpoint
+   bindings/task records.
+
+A clean --authoring-repair fixture pass remains open because of the explicit
+final-call syntax failure. If that targeted check is selected, require the final
+command with no preceding cd; keep all original receipts unchanged. Do not make
+repeated harness trials the next product milestone.
 
 Other open work includes per-assignment controls, artifact/history retention,
 broader optional examples, remote homes, install/update/rollback and joint
@@ -118,19 +110,20 @@ archival-ref/result pruning. Near feature parity remains the target.
   remains ignored .scratch/orchflows-refresh-ca7225849348. Leave .sources
   unchanged, including pre-existing CRLF-only differences.
 - Product FirstMate changes belong in integrations/firstmate; package changes
-  belong in the owned package. Nineteen inventoried deployable files, including
-  six sequential patches, reproduce a 566-path candidate with one symlink
-  through the distribution preparation tool.
+  belong in the owned package. Nineteen inventoried deployables, including six
+  sequential patches, reproduce a 566-path candidate with one symlink through
+  the distribution preparation tool.
 - Dynamic roots remain bounded to 32 components and scout or explicitly
-  selected ship/local-only delivery. Components return retained results to
-  their parent. Archival output refs are not a second workspace owner.
-- The existing Linux acceptance driver adds --authoring, implying dynamic and
-  local-only. It reuses the current namespace, lab, authentication, watcher,
-  relaunch, merge and cleanup helpers. The fixture is targeted evidence,
-  not a required runtime adapter or broad harness milestone.
+  selected ship/local-only delivery. Components return retained results to their
+  parent. Archival output refs are not a second workspace owner.
 - Live acceptance uses the user-selected current Ubuntu Claude cache through
   the access-token-only driver. Do not refresh/copy/reset credential caches.
   Keep the selected claude-sonnet-5/high profile explicit.
+
+PR #4 previously merged as d3cf51b6b6dd31887f2d7d35a28679426af19d90;
+the waiting heartbeat is paused. Historical dev.6/dev.7 evidence and the
+[previous authoring handoff](HANDOFF-through-dev8-authoring-2026-09-14.md) remain
+separate. Keep the original dated assessment intact.
 
 Inspect Git status and preserve existing changes. Keep reusable paths portable;
 store raw local evidence and disposable clones outside tracked documentation.
@@ -139,8 +132,10 @@ store raw local evidence and disposable clones outside tracked documentation.
 
 1. This handoff and [README](README.md).
 2. [Leaf authoring contract](docs/leaf-authoring.md),
-   [verification](docs/leaf-authoring-verification.md),
-   [exact state](docs/leaf-authoring-state.json).
+   [repair verification](docs/leaf-repair-verification.md),
+   [repair state](docs/leaf-repair-state.json), then historical
+   [authoring verification](docs/leaf-authoring-verification.md) and
+   [authoring state](docs/leaf-authoring-state.json).
 3. [Local delivery contract](docs/local-delivery.md), historical
    [verification](docs/local-delivery-verification.md) and
    [state](docs/local-delivery-state.json), then [dynamic contract](docs/dynamic-composition.md).

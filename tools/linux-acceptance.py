@@ -22,6 +22,7 @@ def main():
     parser.add_argument("--effort", choices=("low", "medium", "high", "xhigh", "max"), default="high")
     parser.add_argument("--dynamic", action="store_true", help="Two writer Work results, joined candidate, one Review and checks")
     parser.add_argument("--authoring", action="store_true", help="Author and trial a non-delegating leaf library through dynamic local-only delivery")
+    parser.add_argument("--authoring-repair", action="store_true", help="Author a leaf library, review it, then commit a bounded repair and fresh repair-trial evidence")
     parser.add_argument("--local-only", action="store_true", help="Deliver the dynamic result through an ordinary ship/local-only root")
     parser.add_argument("--enabled", action="store_true", help="Enable the project once; ordinary spawn attaches it")
     parser.add_argument("--custom-workflow", action="store_true", help="Invoke a retained custom one-primitive workflow (requires --enabled)")
@@ -33,6 +34,8 @@ def main():
     parser.add_argument("--claude-access-token-file", type=Path, help="Explicit user-owned Claude cache: read only accessToken/expiresAt")
     parser.add_argument("--access-token-expires-at", type=float, help="Unix expiration of CLAUDE_CODE_OAUTH_TOKEN when known")
     args = parser.parse_args()
+    if args.authoring_repair:
+        args.authoring = True
     if args.authoring:
         if args.custom_workflow:
             parser.error("--authoring supplies its own authored leaf; omit --custom-workflow")
@@ -64,7 +67,10 @@ def main():
     if args.command == "doctor":
         print(json.dumps(probe, indent=2, sort_keys=True))
         return 0
-    if args.authoring:
+    if args.authoring_repair:
+        from linux_acceptance.authoring_repair import AuthoringRepairTrial
+        trial = AuthoringRepairTrial(args, probe, search_path)
+    elif args.authoring:
         from linux_acceptance.authoring import AuthoringTrial
         trial = AuthoringTrial(args, probe, search_path)
     elif args.dynamic:

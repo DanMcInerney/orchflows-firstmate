@@ -21,6 +21,7 @@ def maker_relaunch_window(requests):
 class DynamicTrial(Trial):
     expected_requests = {"stock-maker-v1", "label-maker-v1", "final-review-v1"}
     writer_requests = {"stock-maker-v1", "label-maker-v1"}
+    request_count_check = "two_work_one_review"
     title = "Compose two makers and an independent review"
 
     @property
@@ -246,7 +247,7 @@ class DynamicTrial(Trial):
                           for key, value in self.receipt["worker_profile"].items())
                       for meta in metas.values()),
                   "ordinary_root_done": bool(lines) and lines[-1].startswith("done:"),
-                  "two_work_one_review": set(retained) == expected and len(requests) == len(expected),
+                  self.request_count_check: set(retained) == expected and len(requests) == len(expected),
                   "all_results_gathered": len(requests) == len(expected) and all(r.get("gathered") for r in requests),
                   "retained_integrity": integrity and len(retained) == len(expected),
                   "full_reads_before_each_gather": len(reads) == len(expected) and all(r["read_both_before_first_gather"] and

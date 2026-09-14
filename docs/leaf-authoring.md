@@ -62,3 +62,34 @@ Fixture mode reads no authentication and launches no worker.
 Executed checks and actual worker outcomes belong in
 [verification](leaf-authoring-verification.md); a prepared fixture is not a
 runtime pass.
+
+
+## Separate post-Review repair case
+
+The continuation adds --authoring-repair to exercise the precise extra Work
+sequence observed in dev.8. The ordinary --authoring fixture and its strict
+unchanged-library checks remain available; historical failed receipts are not
+rewritten. This is an acceptance selection, not a new workflow mode or runtime
+capability. The package's existing Build/client guidance already requires the
+additional trial evidence.
+
+The selected case authors and trials the original library, gathers one Review,
+then makes a bounded prose clarification in the library and commits it. A fresh
+read-only repair-trial-v1 Work uses that exact repaired input. The root preserves
+the three original trial files and adds five files outside the library:
+repair-trial-output.json, repair-trial-result.json, repair-trial-record.json,
+final-review-report.md and final-review-result.json. These retain actual output,
+full results, both digests and the reviewed/repaired identities. No second Review
+runs. The root's final test must follow repair gathering.
+
+The observer requires the original authored/trialed/reviewed library to agree,
+the repaired library to differ, and the final library to equal the repair input.
+Only the five new evidence files may change after that trial input. It verifies
+actual retained bytes, native reads, exact four-request roles and order, existing
+replay and local delivery conditions, and evidence preservation after teardown.
+A separate unchanged_library_assessment retains the original tree assertion;
+it is expected to fail in this explicitly changed-library case.
+
+Use the command above with --authoring-repair in place of --authoring. This
+bounded fixture establishes neither general repair composition nor portability.
+See [repair continuation verification](leaf-repair-verification.md) for results.

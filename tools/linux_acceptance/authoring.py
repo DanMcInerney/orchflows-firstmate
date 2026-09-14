@@ -11,6 +11,8 @@ from .dynamic import DynamicTrial
 from .local_delivery import _extend
 
 
+TRIAL_FILES = ("trial-output.json", "trial-result.json", "trial-record.json")
+
 
 def shell_read_target(command):
     """Recognize a full final cat, optionally preceded by harmless listings."""
@@ -128,10 +130,32 @@ class AuthoringTrial(DynamicTrial):
         reply = self.run(["git", "-C", worktree, *args], check=False)
         return reply.stdout.strip() if reply.returncode == 0 else None
 
-    def check_trial_provenance(self, worktree, retained):
+    def regular_evidence_blobs(self, worktree, names, revision="HEAD"):
+        """Read Git modes, not filesystem targets, for delivered evidence."""
+        blobs = {}
+        for name in names:
+            entry = self.git_text(worktree, "ls-tree", revision, "--", name)
+            if not entry:
+                continue
+            metadata, separator, path = entry.partition("\t")
+            fields = metadata.split()
+            if (separator and path == name and len(fields) == 3
+                    and fields[0] in ("100644", "100755") and fields[1] == "blob"):
+                blobs[name] = fields[2]
+        return blobs
+
+    def committed_evidence_files(self, worktree, names):
+        blobs = self.regular_evidence_blobs(worktree, names)
+        return set(blobs) == set(names) and all(
+            (worktree / name).is_file() and not (worktree / name).is_symlink()
+            and self.git_text(worktree, "hash-object", "--no-filters", "--", name) == blob
+            for name, blob in blobs.items())
+
+    def check_trial_provenance(self, worktree, retained, *, request_id="leaf-trial-v1",
+                               prefix="trial", extra_identities=None):
         """Bind either delivered snapshot to the same immutable owner evidence."""
         author = retained.get("author-maker-v1", {})
-        trial = retained.get("leaf-trial-v1", {})
+        trial = retained.get(request_id, {})
         names = ("trial_json_from_fresh_worker", "exact_trial_output_committed",
                  "exact_retained_trial_result_committed", "committed_trial_identities")
         checks = dict.fromkeys(names, False)
@@ -146,15 +170,17 @@ class AuthoringTrial(DynamicTrial):
             identities = {
                 "author_output_commit": author.get("output_commit"),
                 "trial_input_commit": trial.get("input_commit"), "trial_child": child,
-                "request_id": "leaf-trial-v1",
+                "request_id": request_id,
                 "result_digest": hashlib.sha256(canonical).hexdigest(),
                 "report_digest": trial.get("report_digest"),
             }
-            record = json.loads((worktree / "trial-record.json").read_text())
+            identities.update(extra_identities or {})
+            record = json.loads((worktree / (prefix + "-record.json")).read_text())
             checks.update(
                 trial_json_from_fresh_worker=json.loads(payload) == EXPECTED,
-                exact_trial_output_committed=(worktree / "trial-output.json").read_bytes() == payload,
-                exact_retained_trial_result_committed=(worktree / "trial-result.json").read_bytes() == result_bytes,
+                exact_trial_output_committed=(worktree / (prefix + "-output.json")).read_bytes() == payload,
+                exact_retained_trial_result_committed=(worktree / (prefix + "-result.json")).read_bytes() == result_bytes
+                    and json.loads(result_bytes) == trial,
                 committed_trial_identities=all(value and record.get(key) == value
                                                for key, value in identities.items()))
         except (OSError, ValueError):
@@ -164,7 +190,9 @@ class AuthoringTrial(DynamicTrial):
     def check_reviewed_candidate(self, worktree, reviewed, retained):
         author = retained.get("author-maker-v1", {})
         trial = retained.get("leaf-trial-v1", {})
-        checks = {"distinct_candidate": bool(reviewed) and reviewed != self.receipt["input_commit"]}
+        checks = {"distinct_candidate": bool(reviewed) and reviewed != self.receipt["input_commit"],
+                  "reviewed_trial_evidence_regular_blobs": bool(reviewed) and set(
+                      self.regular_evidence_blobs(worktree, TRIAL_FILES, reviewed)) == set(TRIAL_FILES)}
         trees = {}
         for label, commit in (("author", author.get("output_commit")),
                               ("trial", trial.get("input_commit")), ("reviewed", reviewed)):
@@ -212,6 +240,7 @@ class AuthoringTrial(DynamicTrial):
                 and bool(child) and child != author.get("child"),
         }
         checks.update(self.check_trial_provenance(worktree, retained))
+        checks["trial_evidence_regular_committed_blobs"] = self.committed_evidence_files(worktree, TRIAL_FILES)
         package = Path(result["client_path"]).parents[1]
         relative_targets = [LIBRARY + "/" + SKILL, LIBRARY + "/references/library-context.md",
                             LIBRARY + "/guidance/release.md", "release-input.json"]
@@ -244,11 +273,16 @@ class AuthoringTrial(DynamicTrial):
                                expected_contents=root_expected)
         checks["authoring_context_reapplied_before_review"] = root_reads["passed"]
         result["authoring_root_native_reads"] = root_reads
-        final_tree = self.git_text(worktree, "rev-parse", "HEAD:" + LIBRARY)
-        trial_tree = (self.git_text(worktree, "rev-parse", trial["input_commit"] + ":" + LIBRARY)
-                      if trial.get("input_commit") else None)
-        checks["final_library_has_exact_trial_evidence"] = bool(trial_tree) and final_tree == trial_tree
+        checks.update(self.final_library_checks(worktree, result))
         trial_request = requests.get("leaf-trial-v1", {})
         checks["trial_gathered_before_review"] = (isinstance(trial_request.get("gathered_at"), (int, float))
             and trial_request["gathered_at"] < review_request.get("accepted_at", 0))
         _extend(result, checks)
+
+
+    def final_library_checks(self, worktree, result):
+        trial = result["retained_results"].get("leaf-trial-v1", {})
+        final_tree = self.git_text(worktree, "rev-parse", "HEAD:" + LIBRARY)
+        trial_tree = (self.git_text(worktree, "rev-parse", trial["input_commit"] + ":" + LIBRARY)
+                      if trial.get("input_commit") else None)
+        return {"final_library_has_exact_trial_evidence": bool(trial_tree) and final_tree == trial_tree}

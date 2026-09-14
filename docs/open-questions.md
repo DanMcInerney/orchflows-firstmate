@@ -16,7 +16,8 @@ general composing Build. Historical dev.7 local-delivery evidence remains
 separately identified.
 | Order | Next work | Evidence required |
 | --- | --- | --- |
-| 1 | Close bounded leaf authoring delivery | Commit the observed post-Review repair-trial evidence with the final artifact; assess that precise extra Work and resolve required native-call evidence before claiming a pass. Preserve both failed receipts and existing owners |
+| Completed with qualification | Bounded leaf repair-trial evidence and local delivery | [Actual continuation](leaf-repair-verification.md) retained all eight evidence files and landed through existing owners. Strict fixture failed final-call syntax; a separate native-command assessment and administrative resume passed. A clean strict run remains open |
+| 1 | Select the next demonstrated custom/meta interface gap | Extend beyond leaf authoring through existing owners; do not make repeated harness trials the next milestone |
 | 2 | Broader custom/meta composition | Extend beyond non-delegating leaf authoring to a representative composing Build or SelfImprove case using the same owners; unrelated-project trials are required before claiming portability |
 | 3 | Recovery after partial cleanup | A failed authoring trial retained its unlanded branch, but ordinary relaunch refused the already removed endpoint after private-lab restoration. Determine the existing owner route when this case is selected; do not fabricate endpoint bindings or replace fleet records |
 | 4 | Targeted compatibility and recovery | Current actual Codex composition and any lifecycle gap affecting the selected feature; component continuation and larger artifacts need their own evidence |
