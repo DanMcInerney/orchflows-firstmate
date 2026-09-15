@@ -14,12 +14,15 @@ This increment:
 - Reduced `scripts/orchflows.py` to setup, doctor and resolve. Guidance and example libraries are unchanged from upstream.
 - Package version `0.2.0`. The 29 package tests pass on Windows (Python 3.14) and Ubuntu in WSL (Python 3.12), including the installed-core link check.
 
+## End-to-end trial complete (September 15, 2026)
+
+[docs/e2e-trial-2026-09-15.md](docs/e2e-trial-2026-09-15.md) records a live trial on stock FirstMate `b182d0f` with Herdr in Ubuntu/WSL. Half A: `orch-build-workflow` produced the `mixed-build:feature` library (Sonnet xhigh author, fresh Sonnet xhigh reviewer, one steer repair, `fm-merge-local.sh` landing, catalogs published). Half B: that workflow built `kvlog` through six FirstMate agents alternating Codex `gpt-5.6-luna` xhigh and Claude `claude-sonnet-5` xhigh, three steer repairs and two local-only landings; final artifact verified (20 tests, 17 acceptance items, README outputs exact). Evidence, briefs, steers and driver helpers are in `docs/e2e-2026-09-15/`; the trial record is committed into the library's `trials/`. The Linux trial state under `/tmp/orchflows-e2e` does not survive a reboot.
+
 ## Next
 
-1. Trial the dynamic workflow through a real FirstMate primary on a disposable project: one Work ship in local-only mode, one Review scout, one steer. Record the brief text that worked and fold improvements into `docs/firstmate.md`.
-2. Author a two-phase saved workflow with orch-build-workflow into the home and run it by name.
-3. Confirm or rule out a manual-only skill flag for a Codex primary; the Claude Code flag is documented in `docs/hosts.md`.
-4. Decide whether no-mistakes projects should keep Orchflows' own Review or treat no-mistakes as the Review; `docs/firstmate.md` documents both.
+1. Fold the trial's lessons into `docs/firstmate.md`: local-only projects carry no origin remote; reviewers need the detached-checkout instruction; makers need "do not delegate" and a fresh `done` line after a repair steer; expect Codex first-run dialogs and `blocked:` lines from tooling limits.
+2. Run one task through a model-driven FirstMate primary with the package installed, to show the primary itself follows the skills.
+3. Decide whether no-mistakes projects keep Orchflows' own Review or treat no-mistakes as the Review; `docs/firstmate.md` documents both.
 
 ## Constraints
 

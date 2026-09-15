@@ -1,0 +1,4 @@
+{"ts":"2025-01-03T00:00:00Z","level":"ERROR","service":"auth","msg":"timeout","request_id":"a"}
+{"ts":"2025-01-01T00:00:00-05:00","level":"INFO","service":"web","msg":"ok"}
+{"ts":"2025-01-02T00:00:00Z","level":"ERROR","service":"auth","msg":"denied"}
+{"ts":"2025-01-02T00:00:00Z","level":"ERROR","service":"auth","msg":"timeout"}
