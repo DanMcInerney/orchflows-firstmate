@@ -18,11 +18,17 @@ This increment:
 
 [docs/e2e-trial-2026-09-15.md](docs/e2e-trial-2026-09-15.md) records a live trial on stock FirstMate `b182d0f` with Herdr in Ubuntu/WSL. Half A: `orch-build-workflow` produced the `mixed-build:feature` library (Sonnet xhigh author, fresh Sonnet xhigh reviewer, one steer repair, `fm-merge-local.sh` landing, catalogs published). Half B: that workflow built `kvlog` through six FirstMate agents alternating Codex `gpt-5.6-luna` xhigh and Claude `claude-sonnet-5` xhigh, three steer repairs and two local-only landings; final artifact verified (20 tests, 17 acceptance items, README outputs exact). Evidence, briefs, steers and driver helpers are in `docs/e2e-2026-09-15/`; the trial record is committed into the library's `trials/`. The Linux trial state under `/tmp/orchflows-e2e` does not survive a reboot.
 
+## Model-driven primary trial complete (September 15, 2026)
+
+[docs/e2e-primary-2026-09-15.md](docs/e2e-primary-2026-09-15.md) records a stock FirstMate primary (Claude Code 2.1.269, Opus 5, launched in the clone with `--plugin-dir <core> --setting-sources project,local`) taking one plain-language request on a fresh local-only project and running the dynamic workflow unprompted: one Sonnet xhigh maker, one Codex luna xhigh reviewer who found a real defect, one repair steer with a fresh `done` line, a captain hold for the merge, `fm-merge-local.sh` and teardown, in 16 minutes over 21 watcher wakes. Its briefs follow the wording now in `docs/firstmate.md` almost verbatim. Evidence, including the extracted captain transcript, is in `docs/e2e-primary-2026-09-15/`.
+
+The same increment folded the first trial's lessons into `docs/firstmate.md` (brief wording, repair steers, the no-origin rule for local-only projects, Codex first-run prompts and `blocked:` lines, running owners from the checkout, the backlog note format), added "work alone without delegating" to `orch-work` and `orch-review`, and decided that on `no-mistakes` projects the pipeline is the Review unless the request or a saved workflow names a reviewer. `docs/plan.md` records the decision. Skill bodies stay under 200 words; the 29 tests pass.
+
 ## Next
 
-1. Fold the trial's lessons into `docs/firstmate.md`: local-only projects carry no origin remote; reviewers need the detached-checkout instruction; makers need "do not delegate" and a fresh `done` line after a repair steer; expect Codex first-run dialogs and `blocked:` lines from tooling limits.
-2. Run one task through a model-driven FirstMate primary with the package installed, to show the primary itself follows the skills.
-3. Decide whether no-mistakes projects keep Orchflows' own Review or treat no-mistakes as the Review; `docs/firstmate.md` documents both.
+1. Trial a saved workflow run by name through a model-driven primary, and one `direct-PR` or `no-mistakes` project, to cover the placements the two trials left untried.
+2. Try a Codex primary once, which would also settle the manual-only skill flag question in `docs/hosts.md`.
+3. Record a primary's cost from a `--output-format stream-json` run if cost per request matters.
 
 ## Constraints
 

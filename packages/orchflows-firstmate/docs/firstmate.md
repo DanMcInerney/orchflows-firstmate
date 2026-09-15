@@ -7,7 +7,7 @@ This library runs Orchflows' pattern with FirstMate's own agents. The FirstMate 
 1. Install this package into the harness that runs your FirstMate primary session, per [hosts](hosts.md#register-and-refresh), and run `python scripts/orchflows.py setup` once to create `~/.orchflows-firstmate` for your own libraries.
 2. Append the block below to `$FM_HOME/data/captain.md`. FirstMate prints that file in every session-start digest.
 3. Optionally add the role defaults below to `$FM_HOME/config/crew-dispatch.json`. FirstMate's bootstrap validates the file, and its quota ranker applies to any profile array.
-4. Register `~/.orchflows-firstmate` as a `local-only` FirstMate project so [orch-build-workflow](../skills/orch-build-workflow/SKILL.md) can ship saved workflows into it.
+4. Register `~/.orchflows-firstmate` as a `local-only` FirstMate project with [no origin remote](#local-only-projects) so [orch-build-workflow](../skills/orch-build-workflow/SKILL.md) can ship saved workflows into it.
 
 Start a new FirstMate session. A remote secondmate needs steps 1 and 4 on its own host; secondmates inherit `captain-shared.md` rather than `captain.md`, so put the block there when they should follow it.
 
@@ -51,27 +51,42 @@ Use models and efforts your harnesses accept; FirstMate omits an effort a harnes
 | --- | --- |
 | Work, a change | `fm-brief.sh <id> <repo> --mode <mode>`, then `fm-spawn.sh <id> <project> --mode <mode> --yolo <on\|off> --harness H --model M --effort E` |
 | Work, read-only | `fm-brief.sh <id> <repo> --scout`, then `fm-spawn.sh <id> <project> --scout --harness H --model M --effort E` |
-| Review | a scout whose brief names the candidate branch, PR or commit and asks for a detached checkout, the Review sections, and findings only |
+| Review | a scout spawned the same way, whose brief names the exact candidate, the detached checkout and findings only; see [brief wording](#brief-wording) |
 | Assignment and guidance | the brief's `## Firstmate spec`: assignment, input state, absolute guidance paths, checks, and "read and apply the Make sections" or "the Review sections" |
-| Wait | FirstMate's watcher; the captain acts on `done`, `needs-decision` and report events |
-| Repair | `fm-send.sh` with the findings; `fm-control.sh <id> relaunch --model M --effort E` when the fixer's profile differs; or a fresh Work |
+| Wait | FirstMate's watcher; the captain acts on `done`, `needs-decision`, `blocked` and report events |
+| Repair | `fm-send.sh <id>` with the report path and verdict, the numbered repairs, any finding deliberately deferred, and a request for a fresh `done:` line; `fm-control.sh <id> relaunch --model M --effort E` when the fixer's profile differs; or a fresh Work |
 | Deliver | the project's delivery mode and merge authority, unchanged |
-| State | backlog item note: `orchflows: <workflow> phase=<plan\|work\|review\|repair\|deliver> work=<ids> review=<id> repair=<id> guidance=<domains>` |
+| State | the request's backlog item note: `orchflows: <workflow> phase=<phase> work=<id> (fm/<id> @<sha>) review=<id> (<verdict>) repair=<steer\|relaunch\|id> guidance=<domains>`; each task's own note names the workflow, phase and role |
 
-The brief's captain's-intent section keeps the captain's words; Orchflows context belongs in the Firstmate spec. A worker never sees this library's skills; it sees its assignment and the guidance files named in its brief. A reviewer checks the candidate out detached (`git checkout --detach <ref>`, or `gh pr checkout` for a PR) in the scratch worktree FirstMate allocated.
+Phases are `plan`, `work`, `review`, `repair` and `deliver` for the dynamic workflow, or a saved workflow's own phase names. Run every owner from the FirstMate checkout with `FM_HOME` exported, never from a project worktree or a foreign checkout: the Treehouse lock path is hashed with a bare `git` call in the current directory, and teardown refuses when that call fails.
+
+The brief's captain's-intent section keeps the captain's words; Orchflows context belongs in the Firstmate spec. A worker never sees this library's skills; it sees its assignment and the guidance files named in its brief.
+
+### Brief wording
+
+The Firstmate spec of every Orchflows agent opens with its identity, and the trial showed each line below was needed:
+
+- A maker: "This is the `<phase>` phase of `<workflow>`: one Orchflows Work as a ship in this project's delivery mode. Do not delegate to subagents; one agent owns this result." It ends with "Commit on your branch with a clear message, then follow this brief's `<mode>` definition of done exactly." A read-only maker says "as a read-only scout" and "do not change project files".
+- A reviewer: "an independent read-only audit by a fresh agent who did not make the candidate. Do not edit any file, do not delegate. Your deliverable is findings with evidence in your report." Its candidate section gives the exact ref and the command: "Branch `fm/<id>` of this repository. In your scratch worktree run: `git checkout --detach fm/<id>` (the branch exists locally; `git branch -a` lists it). Record the commit SHA you reviewed at the top of your report. You may run the tests and the tool." For a PR, `gh pr checkout`; for a report, the report path.
+- Both: "Read first, then apply the Make sections" or "the Review sections", followed by absolute guidance paths, then the assignment, the numbered checks, and "end with a verdict: ready, ready with the listed repairs, or not ready" for a reviewer.
+- A repair steer names the report path and asks the worker to read it in full, lists exactly the repairs to make, names any finding not to act on and why, forbids other changes, and ends with "append a fresh `done: ...` line to your status file". A steered worker that finishes without a new status line never wakes the captain.
+
+Codex workers need the captain on their first launch in a project: the repository trust prompt, which FirstMate's `harness-adapters` reference covers, and on Codex 0.154 or later a one-time review of new or changed hooks. Answer the first with `fm-send.sh <id> --key Enter` and the second in the worker's pane; later Codex tasks in that project start unattended. A Codex worker may also report `blocked:` on a tooling limit, such as backticks in a shell command; answer by steer with a workaround, such as a committed script or the native file-edit tool.
 
 ## Delivery modes
 
-| Mode | Review placement | Repair | Landing |
+| Mode | Review | Repair | Landing |
 | --- | --- | --- | --- |
-| `no-mistakes` | after the maker's implementation commit, before FirstMate triggers validation | steer the maker, then trigger `/no-mistakes` on the same worker | no-mistakes owns review, fixes, push, PR and CI from that point; dispatch nothing else into it |
-| `direct-PR` | on the opened PR | steer the maker; it updates the PR | merge authority as configured |
-| `local-only` | on `fm/<id>` after `done: ready in branch` | steer the maker; it updates the branch | `fm-merge-local.sh` after captain approval |
-| scout only | on the report | steer the scout or dispatch a fresh scout | the report is the deliverable |
+| `no-mistakes` | the no-mistakes run: trigger `/no-mistakes` on the maker after its implementation commit; dispatch no scout unless the request or a saved workflow names a reviewer, who then reviews the branch before validation | inside the run; a named reviewer's findings by steer before validation | no-mistakes owns fixes, push, PR and CI; merge authority as configured |
+| `direct-PR` | a scout on the opened PR | steer the maker; it updates the PR | merge authority as configured |
+| `local-only` | a scout on `fm/<id>` after `done: ready in branch` | steer the maker; it updates the branch | `fm-merge-local.sh` after captain approval |
+| scout only | a scout on the report | steer the scout or dispatch a fresh scout | the report is the deliverable |
 
-In `no-mistakes` projects the pattern reviews twice. When one review is enough, say so in the request and the dynamic workflow treats no-mistakes as its Review.
+On a `no-mistakes` project the pipeline is the Review: FirstMate's captain contract gives no-mistakes sole ownership of review and fixes, and a second reviewer before it doubles the cost without a second landing. The `captain.md` block is therefore the standing request for an independent reviewer on `direct-PR`, `local-only` and scout work, where stock FirstMate would add none. Ask for a named reviewer, or save one in a workflow, when a different model or vendor should judge the code before no-mistakes runs.
 
-Stock FirstMate's captain contract prefers not to add an independent reviewer on the fast paths. The `captain.md` block is the captain's standing request for one; keep it there rather than arguing case by case.
+### Local-only projects
+
+A local-only project must have no `origin` remote. When a worktree has an origin configured, `fm-spawn.sh` fetches it and resets the pooled worktree to `origin/<default>`; `fm-merge-local.sh` advances only local `main`, so every task after the first would start from a stale base. Remove the remote before registering the project; a purely local project created through FirstMate's `project-management` skill has none.
 
 ## Manual-only workflows
 

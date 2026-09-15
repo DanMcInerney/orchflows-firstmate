@@ -40,7 +40,7 @@ records the exact commands and checkpoints.
 | Review | A fresh scout that checks the candidate out detached and reports findings only. |
 | Join | No captain-side merge. One maker per landed change by default; parallel makers only for independent deliverables, or a joining Work. |
 | Repair | Steer the maker when it can honor the fixer's settings, relaunch it with a new profile, or dispatch fresh Work. One pass, no second Review. |
-| Review versus delivery mode | no-mistakes: after the implementation commit, before validation. direct-PR: on the PR before merge. local-only: on `fm/<id>` before merge. |
+| Review versus delivery mode | no-mistakes: the pipeline is the Review; a named reviewer runs before validation only when the request or saved workflow asks (decided after the September 15 trial). direct-PR: on the PR before merge. local-only: on `fm/<id>` before merge. |
 | Model and effort defaults | `config/crew-dispatch.json` rules for the Orchflows Work and Review roles; request or saved-workflow settings override; FirstMate's effort fallback otherwise. |
 | Default workflow | `captain.md` states it; the dynamic skill's description makes it the catch-all. |
 | Custom workflows | Manual only: `disable-model-invocation: true` on Claude Code, a description convention elsewhere. Built-ins stay model-invocable. |
