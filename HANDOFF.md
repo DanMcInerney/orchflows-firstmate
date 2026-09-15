@@ -1,188 +1,28 @@
-# Handoff: continue the plug-and-play FirstMate upgrade
+# Handoff
 
-## Direction and development rules
+## Direction (September 15, 2026)
 
-The user wants FirstMate to use Orchflows' Work/Review primitives, dynamic
-workflow and custom/meta-workflows naturally. Orchflows owns skills, guidance
-and composition. FirstMate owns agents, worktrees, communication, supervision,
-recovery, cancellation, delivery and Claude/Codex integration on Herdr.
+The user redirected the project. FirstMate launches agents natively as it always has; this library supplies Orchflows' pattern for how that work is done: two terse composable skills, workflows built from workflows, per-agent model and effort, the dynamic workflow as FirstMate's default, and custom workflows that run only when named. Plug-and-play means nothing in FirstMate changes. [docs/plan.md](docs/plan.md) records the decisions and acceptance.
 
-Reuse those owners and add only demonstrated missing glue. Do not introduce
-another scheduler, recovery or writer service, direct Herdr adapter, native-child
-fallback or exhaustive harness program. FirstMate supervisor instructions in
-research sources do not make the development agent a fleet supervisor.
+## State
 
-Implementation remains authorized. Use Ubuntu in WSL, native Linux Python,
-Bash, Git and worker binaries. The shared repository is the edit source;
-disposable candidates/homes run on the Linux filesystem. Native Windows is
-deferred. Do not use design-loop or alter active installations.
+This increment:
 
-Use the pinned upstream Orchflows dynamic development workflow: scoped makers
-when useful, join/check, one fresh independent Review, then one repair/check
-pass without another Review. Installed orchflows-light is not the source target
-or this project's development workflow.
+- Retired `integrations/firstmate/` (nine FirstMate patches plus the task-group controller, bridge and overlay), `tools/`, the package client `scripts/firstmate.py`, `host_config.py`, `native_logs.py` and their tests. Their research and evidence moved to [archive/research](archive/research/README.md).
+- Rewrote the five skills at upstream length. Work and Review dispatch fresh FirstMate crewmates and scouts through `fm-brief.sh` and `fm-spawn.sh`; the dynamic workflow adds FirstMate's constraints; build-workflow ships into the home library; self-improve reads FirstMate task records.
+- Rewrote `docs/architecture.md`, `hosts.md`, `home.md`, `history.md` and added `docs/firstmate.md` (install, `captain.md` block, dispatch rules, command mapping, delivery modes, durable state).
+- Reduced `scripts/orchflows.py` to setup, doctor and resolve. Guidance and example libraries are unchanged from upstream.
+- Package version `0.2.0`. The 29 package tests pass on Windows (Python 3.14) and Ubuntu in WSL (Python 3.12), including the installed-core link check.
 
-## Current implementation: dev.9 delivered with qualified native evidence
+## Next
 
-The user authorized the [plug-and-play reassessment](docs/plug-and-play-reassessment.md)
-in parallel. Scoped makers implemented assignment model/effort controls, a
-FirstMate-owned saved-workflow home and normal identity selection, per-call
-Review scopes, and one level of authorized writable Work descendants. FirstMate
-keeps its existing launch, worktree, communication and lifecycle owners.
+1. Trial the dynamic workflow through a real FirstMate primary on a disposable project: one Work ship in local-only mode, one Review scout, one steer. Record the brief text that worked and fold improvements into `docs/firstmate.md`.
+2. Author a two-phase saved workflow with orch-build-workflow into the home and run it by name.
+3. Confirm or rule out a manual-only skill flag for a Codex primary; the Claude Code flag is documented in `docs/hosts.md`.
+4. Decide whether no-mistakes projects should keep Orchflows' own Review or treat no-mistakes as the Review; `docs/firstmate.md` documents both.
 
-Read the [implementation contract](docs/plug-and-play-implementation.md),
-[verification](docs/plug-and-play-verification.md) and
-[exact state](docs/plug-and-play-state.json). The final Linux check passed **135
-package and 191 integration tests: 326 passed**, plus **38 observer tests**, with
-ten explicit native Windows skips. All product inputs match the prepared build.
+## Constraints
 
-One fresh independent development Review found three defects: public capability
-advertisement, incompatible descendant caller reservation and invalid publication
-names. The post-review repair/check phase fixed them. Actual origin-backed reuse
-then exposed a stale pool base after local-only delivery; the existing
-launch-position owner now positions fresh roots at their retained input under
-spawn/project lock and Treehouse-slot custody. Four added regressions and actual
-reuse verify that repair. No second Review ran; do not start another development
-Review for this increment.
-
-Two actual Claude roots created, saved and reused release-triage:ship through
-seven Work/Review requests, with high Work and medium Review effort. The two
-reuse phases received separate independent Reviews. Exact retained results,
-native reads, replay and artifact behavior were verified. Publishing v2 preserved
-the running v1 snapshot; a future ordinary spawn callback retained v2.
-
-**The final result is qualified delivery, not an uninterrupted strict pass.**
-Original missing-capability, observer projection, watcher-startup and root-base
-failures remain intact. A private Claude outside-directory read prompt was
-confirmed through the existing owner. Separate observer assessments verified
-full child/profile or recomputed request/profile hash projections without
-weakening artifact checks. Final administrative delivery launched no new model.
-
-Ordinary owners landed author commit 0f22dff5202a28a7c93dac5c8b9978c671e25912
-and final release commit a942ff90bd2d743d64aeaeb4ea2ce78fc1b22915. All 31 regular
-Git blobs were exported and verified, output refs survive, both root metadata
-records are removed, origin is unchanged and zero scoped processes remain.
-Raw receipts, native traces, exact drivers and delivered files are preserved
-under ignored .scratch/plug-and-play. Active installations remain unchanged.
-
-## Historical runtime result: dev.8 repair-trial evidence delivered
-
-Read [leaf repair verification](docs/leaf-repair-verification.md) and
-[exact state](docs/leaf-repair-state.json) before making runtime claims.
-This continuation began at 4f63714d4497ff5ba11381b5774ffa75032958ab on
-codex/firstmate-workflow-authoring. Package dev.8 and the FirstMate candidate
-remain unchanged. The earlier Build/client clarification already required
-committing post-Review repair-trial evidence before readiness.
-
-The separate --authoring-repair case exercises author Work, fresh read-only
-leaf trial, ordinary root replacement, one Review, a bounded library refinement
-and a fresh repair Work. The root preserves original trial evidence and commits
-the repair output, full retained result and provenance plus the Review's report
-and result. The final library equals the repaired trial input; only those five
-new evidence files are added afterward. Existing FirstMate owners handle all
-execution and delivery.
-
-The final checks passed 128 package, 155 Linux integration and 39 driver tests:
-**322 passed**, with ten explicit native Windows skips. One independent
-development Review found that filesystem reads could accept external symlinks
-as committed evidence. The one repair/check pass now requires regular Git blobs
-with the exact evidence bytes, including after cleanup. No second Review ran.
-
-Actual Sonnet 5/high trial a-t27bkjzs completed the four requests, correct JSON
-outputs, full native reads, replay, recovery and committed original/repair
-evidence. The root signaled ready at
-76a1ca904c6b4eb8e2fefdb5a4e0ee2c19463160.
-
-**The strict fixture receipt remains failed.** The root prepended cd to its
-exact recorded worktree before the final test command, violating the required
-standalone-call form. Both strict final-command assertions failed; initial
-landing was skipped and the branch was protected. The tests actually succeeded
-after repair gathering.
-
-A separate labelled assessment verified the final regular Git blobs and the
-native same-directory-prefixed test's success and timing. The default observer
-and live fixture remain strict. This assessment preserves both failed checks;
-it does not relabel the original receipt. All 51 qualified delivery checks,
-including ordinary landing, passed. The same private lab was restored through
-its owner for structured endpoint absence checks; no task endpoint or worker
-was recreated. Existing merge-local and teardown owners landed the exact branch
-and completed cleanup. All eight evidence files and the author output ref
-survive, four delivered tests pass, root metadata is removed and zero scoped
-processes remain. The follow-up launched no additional model.
-
-The observed repair-trial evidence retention and local delivery gap is closed
-with a **qualified assessment and administrative delivery resume**. Do not call
-this an uninterrupted strict fixture pass, broad Build parity or portability.
-Original failed receipts, exact reviewed driver source, qualified receipt,
-native traces and delivered artifact bundle are preserved under ignored
-.scratch/leaf-repair. Historical dev.8 unlanded branches remain unchanged.
-
-## Remaining work and evidence boundaries
-
-The representative create/save/reuse story is completed through qualified
-ordinary delivery. Carry its observed gaps and original receipts forward; do
-not relabel it as uninterrupted, prompt-free, generally portable or full parity.
-The next work should address a concrete remaining user workflow rather than
-repeat narrow acceptance variants or build an exhaustive harness program.
-
-Current native Codex composition, actual nested composing Build trials, general
-SelfImprove, tracked symlink/submodule projects, other delivery modes and broad
-portability remain open. Component continuation, endpoint recovery after partial
-cleanup, full supervision, larger artifacts, remote homes, promotion,
-install/update/rollback and result/ref pruning remain in
-[open work](docs/open-questions.md). Near feature parity remains the target.
-
-Do not remove FirstMate's operational skills or add replacement runtime owners.
-No-mistakes retains its sole validation custody; incompatible selections refuse.
-Source and fixture checks alone do not establish a drop-in release.
-
-## Source and ownership constraints
-
-- Package: packages/orchflows-firstmate, version 0.1.0-dev.9; 1,092 files retaining
-  all 1,081 paths of Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 (0.7.0).
-- FirstMate pin: b182d0f908b78d08c7ccb8dce3775bdca8c5d657. Historical Orchflows
-  research pin: 0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a. Current source reference
-  remains ignored .scratch/orchflows-refresh-ca7225849348. Leave .sources
-  unchanged, including pre-existing CRLF-only differences.
-- Product FirstMate changes belong in integrations/firstmate; package changes
-  belong in the owned package. Twenty-seven inventoried deployables, including nine
-  sequential patches, reproduce a 571-path candidate with one symlink through
-  the distribution preparation tool.
-- Dynamic roots remain bounded to 32 components and scout or explicitly
-  selected ship/local-only delivery. Components return retained results to their
-  parent. Archival output refs are not a second workspace owner.
-- Live acceptance uses the user-selected current Ubuntu Claude cache through
-  the access-token-only driver. Do not refresh/copy/reset credential caches.
-  Keep profiles explicit: claude-sonnet-5/high for roots and Work, medium for
-  Review in the current story.
-
-PR #4 previously merged as d3cf51b6b6dd31887f2d7d35a28679426af19d90;
-the waiting heartbeat is paused. Historical dev.6/dev.7 evidence and the
-[previous authoring handoff](HANDOFF-through-dev8-authoring-2026-09-14.md) remain
-separate. Keep the original dated assessment intact.
-
-Inspect Git status and preserve existing changes. Keep reusable paths portable;
-store raw local evidence and disposable clones outside tracked documentation.
-
-## Reading order
-
-1. This handoff, [implementation](docs/plug-and-play-implementation.md),
-   [verification](docs/plug-and-play-verification.md), [state](docs/plug-and-play-state.json),
-   [reassessment](docs/plug-and-play-reassessment.md) and [README](README.md).
-2. [Leaf authoring contract](docs/leaf-authoring.md),
-   [repair verification](docs/leaf-repair-verification.md),
-   [repair state](docs/leaf-repair-state.json), then historical
-   [authoring verification](docs/leaf-authoring-verification.md) and
-   [authoring state](docs/leaf-authoring-state.json).
-3. [Local delivery contract](docs/local-delivery.md), historical
-   [verification](docs/local-delivery-verification.md) and
-   [state](docs/local-delivery-state.json), then [dynamic contract](docs/dynamic-composition.md).
-4. [Decisions](docs/decisions.md), [open work](docs/open-questions.md),
-   [owner mapping](docs/firstmate-owner-mapping.md), [normal launch](docs/normal-launch.md).
-5. [FirstMate contracts](docs/firstmate-contracts.md), affected pinned source
-   owners and [client contract](packages/orchflows-firstmate/docs/firstmate-client.md).
-6. [Fundamental design](docs/fundamental-design.md), [feature parity](docs/feature-parity.md),
-   [Linux development](docs/linux-development.md) and [acceptance driver](docs/linux-acceptance.md).
-
-Ignored native Linux dependencies are available through
---bin-dir .scratch/stage1-runtime/bin; they are not shipped dependencies.
+- No FirstMate changes, no subagents inside workers, no runtime in the package.
+- Keep guidance and example libraries identical to upstream unless a trial shows a defect.
+- `.sources/` and `.scratch/` are ignored local research copies and stay unchanged.

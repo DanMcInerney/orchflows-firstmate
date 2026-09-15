@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare the Orchflows FirstMate package home; runtime readiness is separate (Python 3.11+)."""
+"""Prepare the Orchflows FirstMate package home: setup, doctor and resolve (Python 3.11+)."""
 
 from __future__ import annotations
 
@@ -18,9 +18,7 @@ import venv
 if __name__ == "__main__":
     sys.dont_write_bytecode = True
 
-import host_config
-import native_logs
-from package_identity import CORE_ALIASES, CORE_NAME, CATALOG_NAME, check_setup_home, home_path, readiness
+from package_identity import CORE_ALIASES, CORE_NAME, CATALOG_NAME, check_setup_home, home_path
 
 
 CORE_ENTRIES = ("plugin.json", ".claude-plugin", ".codex-plugin", "skills", "guidance", "docs", "scripts",
@@ -29,7 +27,7 @@ NAME = re.compile(r"[a-z0-9][a-z0-9_-]{0,63}\Z")
 HOME_README = """# Orchflows FirstMate package home
 
 Docs: `.local/packages/orchflows-firstmate/AGENTS.md`. Edit `libraries/<name>/`; `.local/` and `artifacts/` are ignored.
-The experimental Work client requires FirstMate's task-group controller and exact task attachment. Setup and doctor check package files only.
+Register this home with the harness that runs your FirstMate primary; see `.local/packages/orchflows-firstmate/docs/firstmate.md`.
 """
 HOME_GITIGNORE = """/.local/
 **/__pycache__/
@@ -215,8 +213,7 @@ def _init_git(home: Path) -> tuple[str, list[str]]:
     return "initialized", []
 
 
-def setup(home: Path, source: Path, example: str | None = None, *,
-          concurrency: int | None = None, skip_host_config: bool = False) -> dict:
+def setup(home: Path, source: Path, example: str | None = None) -> dict:
     home, source = home.resolve(), source.resolve()
     _validate_core(source)
     check_setup_home(home)
@@ -226,8 +223,6 @@ def setup(home: Path, source: Path, example: str | None = None, *,
             raise ValueError(f"Setup does not write through links: {home / relative}")
     if example is not None:
         _example_plan(home, source, example)
-    configure_hosts = concurrency is not None and not skip_host_config
-    host_plans = host_config.prepare_host_configs(concurrency) if configure_hosts else []
     core_path = home / ".local/packages" / CORE_NAME
     core_path.parent.mkdir(parents=True, exist_ok=True)
     lock = core_path.parent / ".setup.lock"
@@ -260,13 +255,9 @@ def setup(home: Path, source: Path, example: str | None = None, *,
             files[relative] = _replace_text(home / relative, text)
         git, git_issues = _init_git(home)
         issues.extend(git_issues)
-        host_configs, host_issues = host_config.apply_host_configs(host_plans)
-        issues.extend(host_issues)
-        return {"status": "partial" if issues else "ready", **readiness(), "home": str(home), "files": files,
+        return {"status": "partial" if issues else "ready", "home": str(home), "files": files,
                 "runtime_python": str(runtime_python(home)), "core": core, "runtime": runtime, "example": example_info,
-                "git": git, "host_configs": host_configs,
-                "host_config_status": "skipped" if not configure_hosts else "partial" if host_issues else "configured",
-                "issues": issues}
+                "git": git, "issues": issues}
     finally:
         lock.unlink()
 
@@ -353,7 +344,7 @@ def doctor(home: Path) -> dict:
         checks["catalogs"][relative] = "stale" if stale else "ok"
         if stale:
             issues.append(f"Catalog {relative} does not match the installed libraries; rerun setup")
-    return {"status": "incomplete" if issues else "ready", **readiness(), "home": str(home), "checks": checks,
+    return {"status": "incomplete" if issues else "ready", "home": str(home), "checks": checks,
             "runtime_python": str(python) if checks["runtime"] == "ok" else None, "issues": issues}
 
 
@@ -365,10 +356,6 @@ def main(argv: list[str] | None = None) -> int:
     setup_parser.add_argument("--home", help=home_help)
     setup_parser.add_argument("--source", type=Path, default=Path(__file__).resolve().parents[1])
     setup_parser.add_argument("--example", metavar="NAME", help="Copy a named library from the source's example-workflows directory")
-    host_options = setup_parser.add_mutually_exclusive_group()
-    host_options.add_argument("--concurrency", type=int, metavar="N",
-                              help="Explicitly change both hosts' user concurrency; default leaves settings untouched")
-    host_options.add_argument("--skip-host-config", action="store_true", help="Leave both host settings untouched")
     doctor_parser = commands.add_parser("doctor", help="Check a home without changing it")
     doctor_parser.add_argument("--home", help=home_help)
     resolve_parser = commands.add_parser("resolve", help="Resolve a package, skill or resource")
@@ -377,18 +364,14 @@ def main(argv: list[str] | None = None) -> int:
     request = resolve_parser.add_mutually_exclusive_group()
     request.add_argument("--skill")
     request.add_argument("--resource")
-    native_logs.add_parser(commands)
     args = parser.parse_args(argv)
     try:
         if args.command == "setup":
-            result = setup(home_path(args.home), args.source.expanduser(), args.example,
-                           concurrency=args.concurrency, skip_host_config=args.skip_host_config)
+            result = setup(home_path(args.home), args.source.expanduser(), args.example)
         elif args.command == "doctor":
             result = doctor(home_path(args.home))
-        elif args.command == "resolve":
-            result = resolve(home_path(args.home), args.library, args.skill, args.resource)
         else:
-            result = native_logs.run(args)
+            result = resolve(home_path(args.home), args.library, args.skill, args.resource)
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         print(json.dumps({"status": "error", "error": str(exc)}), file=sys.stderr)
         return 2

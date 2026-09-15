@@ -1,7 +1,7 @@
 {
   "name": "orchflows-firstmate",
-  "version": "0.1.0-dev.9",
-  "description": "Experimental Work/Review workflows through FirstMate on Herdr, with retained libraries and assignment controls.",
+  "version": "0.2.0",
+  "description": "Orchflows for FirstMate: fresh FirstMate agents for Work and Review, composed into reusable workflows with per-agent model and effort.",
   "author": {
     "name": "orchflows"
   },
