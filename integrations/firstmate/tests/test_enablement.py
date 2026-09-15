@@ -121,7 +121,7 @@ class EnablementTests(unittest.TestCase):
                 self.attach("denied")
         self.assertFalse(self.owner.task("denied").exists())
 
-    def test_enable_rejects_unsupported_policy_dirty_origin_and_platform_before_publication(self):
+    def test_enable_rejects_unsupported_policy_dirty_and_platform_before_publication(self):
         for primitive, policy in (("Dynamic", "none"), ("Review", "none")):
             with self.subTest(primitive=primitive), self.assertRaises(GroupError):
                 enable(self.owner, self.package, self.project, primitive, policy)
@@ -131,11 +131,11 @@ class EnablementTests(unittest.TestCase):
         with self.assertRaisesRegex(GroupError, "dirty"):
             enable(self.owner, self.package, self.project)
         self.fixture.git("checkout", "--", "input.txt")
-        self.fixture.git("remote", "add", "origin", "https://example.invalid/project")
-        with self.assertRaisesRegex(GroupError, "without origin"):
-            enable(self.owner, self.package, self.project)
         self.assertFalse((self.owner.home / "config").exists())
         self.assertFalse((self.owner.home / "data/.orchflows").exists())
+        self.fixture.git("remote", "add", "origin", "https://example.invalid/project")
+        entry = enable(self.owner, self.package, self.project)
+        self.assertTrue(Path(entry["package_path"]).is_dir())
 
     def test_incomplete_or_inconsistent_package_is_refused(self):
         path = self.package / ".codex-plugin/plugin.json"
@@ -281,6 +281,44 @@ class EnablementTests(unittest.TestCase):
         self.assertFalse((self.owner.home / "config/orchflows.json").exists())
         self.assertFalse(list((self.owner.home / "data/.orchflows").glob(".enable-*")))
         self.assertFalse(list((self.owner.home / "data/.orchflows").glob("package-*")))
+
+    def test_selected_metadata_requires_matching_capability_before_enable_or_attach(self):
+        capability_path = self.package / "scripts/firstmate-client.json"
+        dynamic_skill = self.package / "skills/orch-dynamic-workflow/SKILL.md"
+        dynamic_skill.parent.mkdir(parents=True)
+        dynamic_skill.write_text("Work, join/check, Review, repair/check.\\n")
+        legacy = {"schema": 1, "launch_context_schema": 1, "workflows": ["dynamic"]}
+        cases = [
+            ("composition", {"calls": [{"id": "phase", "caller": "root"}]},
+             {}, "scoped-composition-v1"),
+            ("composition", {"calls": [{"id": "phase", "caller": "root"}]},
+             {"assignment_controls": ["model-effort-v1"]}, "scoped-composition-v1"),
+            ("workflow_preferences", {"operations": {"Work": {"effort": "high"}}},
+             {}, "model-effort-v1"),
+            ("workflow_preferences", {},
+             {"composition": ["scoped-composition-v1"]}, "model-effort-v1"),
+        ]
+        marker = self.package / "firstmate-libraries.json"
+        for field, value, advertised, expected in cases:
+            with self.subTest(field=field, advertised=advertised):
+                write_json(capability_path, {**legacy, **advertised})
+                selection = {"identity": "orchflows:orch-dynamic-workflow", field: value}
+                with self.assertRaisesRegex(GroupError, expected):
+                    enable(self.owner, self.package, self.project, workflow="dynamic",
+                           selection=selection, library_home=self.fixture.base)
+                self.assertFalse((self.owner.home / "config/orchflows.json").exists())
+                self.assertFalse((self.owner.home / "data/.orchflows").exists())
+                write_json(marker, {"schema": 1, "libraries": [], "selected_workflow": selection})
+                with self.assertRaisesRegex(GroupError, expected):
+                    self.owner.attach("denied-capability", self.package, self.project,
+                                      review_policy="workflow-review", workflow="dynamic")
+                self.assertFalse(self.owner.group("denied-capability").exists())
+                marker.unlink()
+        write_json(capability_path, legacy)
+        entry = enable(self.owner, self.package, self.project, workflow="dynamic")
+        self.assertEqual(entry["workflow"], "dynamic")
+        self.assertEqual(auto_attach(self.owner, "legacy-dynamic", "scout", "herdr",
+                                     "claude", self.project), "root")
 
     def test_enabled_store_does_not_occupy_an_ordinary_task_id(self):
         enable(self.owner, self.package, self.project)

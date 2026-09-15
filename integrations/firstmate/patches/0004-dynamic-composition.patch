@@ -114,7 +114,7 @@ diff --git a/bin/fm-spawn.sh b/bin/fm-spawn.sh
  if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ]; then
    freshen_spawn_worktree_base "$WT" || exit 1
 +  if [ "$TASK_GROUP_BOUND" = 1 ]; then
-+    # Apply the accepted component input only to this newly allocated worktree.
++    # Apply the retained task input only to this newly allocated worktree.
 +    fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" launch-position "$ID" \
 +      --worktree "$WT" >/dev/null || exit 1
 +  fi

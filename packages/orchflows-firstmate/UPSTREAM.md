@@ -2,7 +2,7 @@
 
 This standalone package began as a complete source copy of [DanMcInerney/orchflows](https://github.com/DanMcInerney/orchflows/tree/0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a) at commit `0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a`, upstream manifest version `0.7.0`. The initial copy contained all 1,064 tracked files. Its preserved local checkout includes CRLF line endings in some text files whose Git blobs use LF; file retention does not imply byte identity to every raw Git blob. Git metadata is not embedded in this package. The upstream LICENSE and all existing third-party notices are retained.
 
-The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.7`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
+The fork identifies as `orchflows-firstmate`, development version `0.1.0-dev.9`. It targets FirstMate running in Herdr only, with Claude Code and Codex CLI as worker harnesses. It has no direct native-host execution mode. The examined FirstMate revision is `b182d0f908b78d08c7ccb8dce3775bdca8c5d657`; this is source provenance, not a supported compatibility tuple.
 
 Deliberate foundation changes (version `0.1.0-dev.1`):
 
@@ -65,3 +65,12 @@ Deliberate bounded leaf-authoring increment:
 - The fresh leaf trial uses its frozen worktree and declared retained dependencies. Actual output and trial findings join the final candidate; recovery reuses accepted requests and rechecks authoring requirements. No runtime protocol or capability is added.
 - The matching FirstMate catalog points to this bounded contract. General composing/nested Build, SelfImprove, native registration and implicit user-home installation remain unavailable. Unrelated-project reuse uses existing outer FirstMate enablement/spawn owners and is separate evidence unless performed before final Review.
 - Original quoted skills, all upstream paths and optional library bytes remain retained. Source inspection and package/owner checks do not certify actual authoring behavior; exact worker evidence is recorded separately.
+
+
+Deliberate plug-and-play increment (version 0.1.0-dev.9):
+
+- Adds negotiated assignment model/effort controls, resolved independently through FirstMate and retained with request identity. Legacy requests preserve their previous contract.
+- FirstMate owns editable workflow-home setup, complete library publication, identity selection at brief intake, and immutable library bundles for launched tasks.
+- Selected composition descriptors authorize bounded dynamic call scopes and descendant assignments. Each dynamic invocation retains one independent Review and one repair/check phase; loading instructions remains in the caller context.
+- The existing FirstMate launch, worktree, inbox, lifecycle and local-delivery owners remain authoritative. Native Windows and other delivery modes remain deferred.
+- All upstream paths and optional examples remain retained at ca72258493480ddcfe73b3f01d0475ad532e4726. Package checks, owner fixtures and actual worker evidence are recorded separately in the integration verification.

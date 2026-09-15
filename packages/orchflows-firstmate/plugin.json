@@ -1,18 +1,18 @@
 {
   "name": "orchflows-firstmate",
-  "version": "0.1.0-dev.8",
-  "description": "Experimental read-only Work client for FirstMate/Herdr; broader workflows remain gated.",
+  "version": "0.1.0-dev.9",
+  "description": "Experimental Work/Review workflows through FirstMate on Herdr, with retained libraries and assignment controls.",
   "author": {
     "name": "orchflows"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Orchflows FirstMate",
-    "shortDescription": "Experimental FirstMate read-only Work client.",
-    "longDescription": "Standalone Orchflows variant for FirstMate/Herdr with Claude Code and Codex CLI workers. One read-only Work component requires a matching experimental controller and exact task attachment.",
+    "shortDescription": "Work/Review workflows through FirstMate.",
+    "longDescription": "Standalone Orchflows variant for FirstMate/Herdr with retained workflow libraries, scoped composition and FirstMate-owned Claude/Codex launch controls. Requires a matching experimental controller and admitted task attachment.",
     "developerName": "orchflows",
     "category": "Productivity",
     "capabilities": [],
-    "defaultPrompt": "Read the FirstMate execution gate. Only one experimental read-only Work component may run after controller and exact attachment checks; other workflows remain gated."
+    "defaultPrompt": "Read the FirstMate execution gate and select an admitted workflow from the retained launch catalog. FirstMate owns agent launches and delivery."
   }
 }

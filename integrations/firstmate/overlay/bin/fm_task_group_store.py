@@ -174,10 +174,8 @@ def clean_commit(project, expected=None):
     top = safe_path(git(project, "rev-parse", "--show-toplevel"), directory=True)
     if top != project:
         raise GroupError("project must be an exact Git worktree root")
-    if git(project, "config", "--get-regexp", r"^remote\.origin\.", accepted=(0, 1)):
-        raise GroupError("Stage 1 requires a local Git project without origin")
-    if "origin" in git(project, "remote").splitlines():
-        raise GroupError("Stage 1 requires a local Git project without origin")
+    # An origin is normal repository configuration. Existing FirstMate delivery
+    # owners decide whether a task may push; inspecting clean input grants none.
     if git(project, "status", "--porcelain", "--untracked-files=all"):
         raise GroupError("read-only Git input is dirty")
     modes = git(project, "ls-files", "--stage")

@@ -2,6 +2,77 @@
 
 This document preserves what the originating session established. The [original assessment](assessment-2026-09-13.md) remains the dated narrative record; this file can accumulate later evidence.
 
+## Plug-and-play implementation — September 14, 2026
+
+Following explicit implementation authorization, dev.9 adds per-assignment
+model/effort controls, FirstMate-owned saved-library publication/discovery,
+ordinary workflow identity selection and per-call Review scopes with one level
+of named writable Work descendants. Existing FirstMate owners retain launch,
+worktree, communication, supervision, recovery and delivery authority. The
+ordinary local-merge owner now has origin-backed project regression coverage.
+See the [contract](plug-and-play-implementation.md),
+[verification](plug-and-play-verification.md) and [state](plug-and-play-state.json).
+
+Parallel scoped makers joined before one independent development Review. Its
+three findings were repaired: public capability advertisement, incompatible
+descendant callers and invalid publication names. Native reuse then exposed the
+older-origin pooled-worktree base after local-only delivery; the existing
+launch-position owner now positions a fresh root at its retained input under
+normal custody. The final Linux check passed 135 package and 191 integration
+tests, with ten native Windows skips; 38 observer tests also pass. No second
+Review ran.
+
+Two actual Claude roots created, saved and reused the complete release-triage
+workflow through seven Work/Review requests. Native high/medium effort choices,
+replay, full result reads, separate phase Reviews and five v1/v2 snapshot checks
+were verified. Qualified ordinary delivery landed the final release commit
+`a942ff90bd2d743d64aeaeb4ea2ce78fc1b22915`; 31 regular Git blobs, output refs and
+cleanup passed with origin unchanged and zero scoped processes. Original failed
+receipts remain intact. Projection-aware observer assessments, administrative
+delivery resumes and one read-prompt confirmation in the disposable Claude
+configuration mean this is not an uninterrupted or prompt-free acceptance pass.
+See the verification and exact state for candidate lineage and precise limits.
+
+All 1,081 upstream paths remain present; the 1,092-file package and 27-deployable,
+nine-patch distribution prepare a 571-path FirstMate candidate. These counts
+establish retained source and reproducibility, not feature parity. Active
+installations and pinned research checkouts remain unchanged.
+
+## Product reassessment — September 14, 2026
+
+[The reassessment](plug-and-play-reassessment.md) records the latest user
+clarification and a fresh source trace at FirstMate
+b182d0f908b78d08c7ccb8dce3775bdca8c5d657 and Orchflows
+ca72258493480ddcfe73b3f01d0475ad532e4726, with owned dev.8 source at
+1e41a6d0e9dd4880389a23989ffa36c78cad5b9c. Both source HEADs were checked.
+The starting owned checkout was clean. Upstream agent instructions were treated
+as evidence rather than adopted roles.
+
+Seven isolated Linux source probes accepted a normal dynamic request, rejected
+model/effort/harness request fields, verified Claude/high and Codex/high flag
+emission, and reproduced Codex/max omission from the pinned pure effort
+function. No top-level spawn code, worker or endpoint was launched.
+
+A scoped source investigator also ran package setup in a disposable Linux home
+with host configuration skipped, wrote a personal workflow composing dynamic,
+reran setup, and resolved both the saved skill and the logical core alias to
+fork dev.8. Catalogs retained both libraries. This is save/catalog/resolve
+evidence only; it does not certify FirstMate home publication or runtime reuse.
+
+At the reassessment baseline, the adapter forced inherited parent controls, hardcoded one Review per
+whole root and forbade component delegation. At that baseline, the home path, assignment controls and broader composition
+remained proposals. That reassessment changed no runtime code, active
+installation, reference checkout or prior receipt; the implementation above
+follows its concrete product story.
+
+One fresh independent Review found that the initial proposed data/orchflows home
+could collide with an ordinary task ID. The one repair/check pass recommends
+data/.orchflows-home, corrects a bridge line citation and explicitly retains the
+no-origin/symlink/submodule and delivery limits. No second Review ran. The home
+smoke receipt and source-observation summary are preserved under ignored
+.scratch/product-reassessment-2026-09-14; reusable documents contain no private
+test-home paths.
+
 ## Bounded leaf authoring  September 14, 2026
 
 After PR #4 merged as d3cf51b6b6dd31887f2d7d35a28679426af19d90, dev.8

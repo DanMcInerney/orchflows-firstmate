@@ -1,5 +1,18 @@
 # Experimental FirstMate task-group integration
 
+The current dev.9 extension adds per-assignment model/effort controls, a
+FirstMate-owned saved-workflow home, ordinary `library:skill` selection,
+composition-scoped Reviews and one level of named writable Work descendants.
+Existing FirstMate owners retain fleet launch, worktree, communication, recovery,
+supervision and delivery authority. See the
+[implementation contract](../../docs/plug-and-play-implementation.md) for setup,
+publication and selection commands, and
+[verification](../../docs/plug-and-play-verification.md) for exact fixture and
+actual worker evidence. Ordinary clean origin-backed projects are admitted;
+tracked symlinks/submodules and incompatible delivery selections remain refused.
+
+## Earlier increments and manual attachment
+
 The dev.7 extension admits an explicitly selected ordinary ship/local-only root
 through the existing dynamic primitives and delivery owners. It binds the root's
 kind, mode and branch across relaunch; components still return to their parent.
@@ -35,7 +48,7 @@ python3 integrations/firstmate/prepare.py \
 
 The prepared directory is a modified detached FirstMate checkout. Its upstream instructions remain FirstMate source contracts; preparing it does not make this research task a fleet supervisor. Keep real runtime trials in a private FirstMate home and named Herdr lab with the original helper's default-session tripwire. The [runtime record](../../docs/stage1-runtime.md) describes the isolated tested prerequisites.
 
-The administrator creates an ordinary scout brief and clean no-origin Git fixture, then attaches the complete package before the root's first FirstMate launch:
+For the legacy manual fixture, the administrator creates an ordinary scout brief and clean Git project, then attaches the complete package before the root's first FirstMate launch:
 
 ```sh
 python3 "$CANDIDATE/bin/fm-task-group.py" --home "$FM_HOME" attach "$ROOT_TASK" \
@@ -58,7 +71,7 @@ The inherited FirstMate regression runner is `bin/fm-test-run.sh`; use its fixtu
 
 On Linux, current launch supervision checks the original parent lock claims, process identities and ancestry before treating a launching request as waiting. Unknown or abandoned custody remains attention. Attached POSIX teardown also refuses missing process-cleanup evidence and preserves worktree/task records. The [continuation verification](../../docs/stage1-continuation-verification.md) records the 81-case combined suite and separates fixtures from actual runtime acceptance.
 
-The Review extension requires explicit primitive Review and policy explicit-audit at attachment; see the [Review contract](../../docs/review-contract.md). Legacy attachments still refuse writers and additional components; explicit dynamic attachments use the bounded profile above. Nesting, ship delivery, promotion and remote homes remain unavailable. All upstream Orchflows example files remain available for migration; their presence does not certify runtime parity. No global install or published release is performed by this distribution.
+The Review extension requires explicit primitive Review and policy explicit-audit at attachment; see the [Review contract](../../docs/review-contract.md). Legacy attachments still refuse writers and additional components; explicit dynamic attachments use the bounded profile above. The legacy profile does not enable composition or ship delivery. Current dev.9 selections admit the bounded composition and local-only ship route described above; promotion and remote homes remain open. All upstream Orchflows example files remain available for migration; their presence does not certify runtime parity. No global install or published release is performed by this distribution.
 
 
 For attached Linux Claude workers, the spawn/relaunch owner now supplies
