@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import time
 from fm_task_group_runtime import runtime
+from fm_task_group_composition import (admit_call, caller_calls, pending_calls, request_call, validate_composition)
 from fm_task_group_delivery import local_delivery, root_delivery, validate_root_worktree
 from fm_task_group_primitives import (admit, attachment_primitive, component_fields, is_dynamic, scope,
                                       validate_metadata, validate_record)
@@ -79,6 +80,34 @@ class TaskGroups:
             raise GroupError("root project differs from attachment")
         return value, attachment
 
+    def root_for(self, caller):
+        binding = self.binding(caller)
+        return identifier(binding.get("group_root", binding["parent"]), "group root") if binding else caller
+
+    def caller_meta(self, caller, generation):
+        root = self.root_for(caller)
+        if root == caller:
+            return self.root_meta(root, generation)
+        binding, record, attachment = self.component_context(caller)
+        # Recheck the outer delivery policy, including no-mistakes custody.
+        current_root = self.meta(root)
+        self.root_meta(root, current_root.get("spawn_gen", ""))
+        value = self.component_meta(caller, binding, record)
+        if value.get("spawn_gen") != generation:
+            raise GroupError("stale parent generation")
+        if (record["state"] != "launched" or record.get("writable") is not True
+                or record.get("primitive") != "Work" or binding["parent"] != root
+                or not caller_calls(attachment, record["body"]["request_id"])):
+            raise GroupError("component has no active scoped Work delegation authority")
+        return value, attachment
+
+    def caller_records(self, root, caller):
+        return [record for record in self.requests(root) if record.get("parent", root) == caller]
+
+    def caller_request(self, caller):
+        binding = self.binding(caller)
+        return binding["request_id"] if binding else None
+
     def request_path(self, root, request_id=None):
         attachment = self.attachment(root, verify=False)
         if is_dynamic(attachment):
@@ -127,6 +156,14 @@ class TaskGroups:
         if request_id is not None and body["request_id"] != request_id:
             raise GroupError("saved request ID differs from requested identity")
         validate_record(value, attachment)
+        if is_dynamic(attachment):
+            parent = value.get("parent", root)
+            caller_request = self.caller_request(parent) if parent != root else None
+            selected = request_call(body, attachment, caller_request)
+            if value.get("workflow_call", "dynamic") != selected:
+                raise GroupError("saved workflow call differs from accepted request")
+        from fm_task_group_controls import validate_profile
+        validate_profile(value, attachment)
         return value
 
     @staticmethod
@@ -139,10 +176,16 @@ class TaskGroups:
             permitted = (basic, dynamic)
         else:
             permitted = (dynamic,) if is_dynamic(attachment) else (basic,)
-        if set(body) not in permitted:
+        from fm_task_group_controls import validate_request_controls, CONTROL_FIELDS
+        validate_request_controls(body)
+        optional = set(CONTROL_FIELDS) | {"workflow_call"}
+        shape = set(body) - optional
+        if shape not in permitted or (shape == basic and "workflow_call" in body):
             raise GroupError("request must contain only request_id and assignment; dynamic workflow additionally requires primitive and writable")
-        if set(body) == dynamic:
+        if shape == dynamic:
             component_fields(body, {"workflow": "dynamic"})
+        if "workflow_call" in body:
+            identifier(body["workflow_call"], "workflow call")
         identifier(body["request_id"], "request ID")
         assignment = body["assignment"]
         if (not isinstance(assignment, str) or not assignment.strip() or
@@ -155,6 +198,13 @@ class TaskGroups:
         admit(primitive, review_policy, workflow)
         root = identifier(root, "root ID")
         package = safe_path(package, directory=True)
+        from fm_orchflows import selected_workflow
+        selection = selected_workflow(package) or {}
+        composition = selection.get("composition")
+        if composition is not None:
+            validate_composition(composition)
+            if workflow != "dynamic":
+                raise GroupError("selected composition requires dynamic workflow admission")
         project = safe_path(project, directory=True)
         if delivery is not None:
             root_delivery({"root": root, "workflow": workflow, "root_delivery": delivery})
@@ -192,6 +242,11 @@ class TaskGroups:
                      "package_path": str(target), "attached_at": time.time()}
             if workflow == "dynamic":
                 value.update(workflow=workflow, readonly=False, max_components=32, review_policy=review_policy)
+                if selection.get("identity"):
+                    value["selected_workflow"] = selection["identity"]
+                for key in ("composition", "workflow_preferences"):
+                    if key in selection:
+                        value[key] = selection[key]
             elif primitive == "Review":
                 value["review_policy"] = review_policy
             if delivery is not None:
@@ -203,29 +258,26 @@ class TaskGroups:
 
     def submit(self, root, generation, body):
         body = self.request_body(body)
+        caller = root
+        root = self.root_for(caller)
         with group_lock(self.group(root)):
-            parent, attachment = self.root_meta(root, generation)
+            parent, attachment = self.caller_meta(caller, generation)
             body = self.request_body(body, attachment)
             dynamic = is_dynamic(attachment)
             records = self.requests(root)
             previous = self.request(root, body["request_id"]) if dynamic else (records[0] if records else None)
             if previous:
+                if previous.get("parent", root) != caller:
+                    raise GroupError("request belongs to another caller")
                 if previous["body"]["request_id"] != body["request_id"]:
                     raise GroupError("Stage 1 allows only one component assignment per attachment")
                 if previous["body_hash"] != digest(canonical(body)):
                     raise GroupError("request ID already used for a different body")
-                return self._view(root, previous)
+                return self._view(root, previous, caller=caller)
             if dynamic:
                 if len(records) >= attachment["max_components"]:
                     raise GroupError("dynamic workflow component bound reached")
-                reviews = [item for item in records if item["primitive"] == "Review"]
-                if body["primitive"] == "Review":
-                    if reviews:
-                        raise GroupError("dynamic workflow permits only one fresh independent Review")
-                    if any(not item.get("gathered") for item in records):
-                        raise GroupError("gather all accepted Work results before Review")
-                elif reviews and not reviews[0].get("gathered"):
-                    raise GroupError("gather Review before the single repair/check phase")
+                workflow_call, phase = admit_call(body, attachment, records, self.caller_request(caller))
                 # Verify every retained result before allowing a later phase.
                 for item in records:
                     self._view(root, item)
@@ -239,28 +291,30 @@ class TaskGroups:
             record = {"schema": 1, "root": root, "epoch": 1, "child": child, "body": body,
                       "body_hash": digest(canonical(body)), "accepted_parent_gen": generation,
                       "state": "launching", "gathered": False, "accepted_at": time.time(),
-                      "harness": parent["harness"], "model": parent.get("model", "default"),
-                      "effort": parent.get("effort", "default"), "package_digest": attachment["package_digest"],
+                      "package_digest": attachment["package_digest"],
                       "input_commit": input_commit}
+            from fm_task_group_controls import resolve_profile
+            record.update(resolve_profile(self, parent, attachment, body))
             record.update(component_fields(record, attachment))
             if dynamic:
-                record["phase"] = ("review" if body["primitive"] == "Review"
-                                   else "repair" if reviews else "work")
+                record.update(phase=phase, workflow_call=workflow_call, parent=caller)
             if self.spawn == self._spawn:
-                record["launch_custody"] = self.launch_custody(root, generation)
+                record["launch_custody"] = self.launch_custody(caller, generation)
             path = self.request_path(root, body["request_id"])
             path.parent.mkdir(parents=True, exist_ok=True)
             # Acceptance precedes all child scaffolding and every external side effect.
             write_json(path, record, exclusive=True)
             try:
                 child_dir.mkdir()
-                binding = {"schema": 1, "parent": root, "child": child, "epoch": 1,
+                binding = {"schema": 1, "parent": caller, "child": child, "epoch": 1,
                            "request_id": body["request_id"], "body_hash": record["body_hash"],
                            "accepted_parent_gen": generation}
+                if caller != root:
+                    binding["group_root"] = root
                 write_json(child_dir / "task-group-component.json", binding, exclusive=True)
                 from fm_task_group_launch import component_brief
                 write_bytes(child_dir / "brief.md", component_brief(self, binding, record, attachment).encode("utf-8"), exclusive=True)
-                result = self.spawn(root, generation, child, attachment["project"], record["harness"], record["model"], record["effort"])
+                result = self.spawn(caller, generation, child, attachment["project"], record["harness"], record["model"], record["effort"])
                 if result.returncode != 0:
                     raise GroupError(f"FirstMate spawn bridge exited {result.returncode}")
                 child_meta = self.component_meta(child, binding, record)
@@ -273,7 +327,7 @@ class TaskGroups:
             except (GroupError, OSError, subprocess.SubprocessError) as error:
                 record.update(state="uncertain", launch_error=str(error)[:1024])
             write_json(path, record)
-            return self._view(root, record)
+            return self._view(root, record, caller=caller)
 
     def launch_custody(self, root, generation, evidence=None):
         # Linux observation reuses FirstMate's process incarnation and symlink
@@ -312,13 +366,16 @@ class TaskGroups:
         binding = self.binding(child)
         if not binding:
             raise GroupError("task is not a task-group component")
-        root = identifier(binding.get("parent"), "component parent")
+        root = identifier(binding.get("group_root", binding.get("parent")), "group root")
+        parent = identifier(binding.get("parent"), "component parent")
         attachment = self.attachment(root)
         record = self.request(root, binding.get("request_id"))
-        expected = {"schema": 1, "parent": root, "child": child, "epoch": 1,
+        expected = {"schema": 1, "parent": record.get("parent", root) if record else None, "child": child, "epoch": 1,
                     "request_id": record["body"]["request_id"] if record else None,
                     "body_hash": record["body_hash"] if record else None,
                     "accepted_parent_gen": record["accepted_parent_gen"] if record else None}
+        if parent != root:
+            expected["group_root"] = root
         if binding != expected or not record or record["child"] != child:
             raise GroupError("component binding differs from accepted request")
         return binding, record, attachment
@@ -340,7 +397,7 @@ class TaskGroups:
         identifier(value.get("spawn_gen"), "component generation")
         if any(not value.get(key) for key in ("herdr_session", "herdr_workspace_id", "herdr_tab_id", "herdr_pane_id", "window")):
             raise GroupError("component metadata lacks exact Herdr endpoint identity")
-        attachment = self.attachment(binding["parent"])
+        attachment = self.attachment(binding.get("group_root", binding["parent"]))
         validate_record(record, attachment)
         validate_metadata(value, attachment, record)
         if safe_path(value.get("project", ""), directory=True) != Path(attachment["project"]):
@@ -351,11 +408,12 @@ class TaskGroups:
         safe_path(value.get("tasktmp", ""), directory=True)
         return value
 
-    def _view(self, root, record):
-        meta_path = self.home / "state" / f"{root}.meta"
-        current = self.meta(root) if meta_path.exists() or meta_path.is_symlink() else {}
+    def _view(self, root, record, *, caller=None):
+        caller = caller or root
+        meta_path = self.home / "state" / f"{caller}.meta"
+        current = self.meta(caller) if meta_path.exists() or meta_path.is_symlink() else {}
         attachment = self.attachment(root)
-        value = {"attached": True, "root": root, "epoch": 1,
+        value = {"attached": True, "root": caller, "epoch": 1,
                  "generation": current.get("spawn_gen"), "protocol": "firstmate-task-group",
                  "version": 1, "experimental": True, "scope": scope(attachment), "attachment": attachment,
                  "request_path": str(self.request_path(root, record["body"]["request_id"])) if record else None, "request": record}
@@ -376,16 +434,21 @@ class TaskGroups:
         return value
 
     def status(self, root, generation, gather=False, request_id=None):
+        caller = root
+        root = self.root_for(caller)
         with group_lock(self.group(root)):
-            _, attachment = self.root_meta(root, generation)
+            _, attachment = self.caller_meta(caller, generation)
             if is_dynamic(attachment) and request_id is None:
                 if gather:
                     raise GroupError("dynamic gather requires request_id")
-                value = self._view(root, None)
-                value["requests"] = [self._view(root, record) for record in self.requests(root)]
+                value = self._view(root, None, caller=caller)
+                value["requests"] = [self._view(root, record, caller=caller)
+                                     for record in self.caller_records(root, caller)]
                 return value
             record = self.request(root, request_id)
-            value = self._view(root, record)
+            if record and record.get("parent", root) != caller:
+                raise GroupError("request belongs to another caller")
+            value = self._view(root, record, caller=caller)
             if gather:
                 if not record or record["state"] != "complete":
                     raise GroupError("component has no complete retained result to gather")
@@ -393,7 +456,7 @@ class TaskGroups:
                 record.setdefault("gathered_at", time.time())
                 record.update(gathered=True, gathered_parent_gen=generation)
                 write_json(self.request_path(root, record["body"]["request_id"]), record)
-                value = self._view(root, record)
+                value = self._view(root, record, caller=caller)
         return value
 
     def complete(self, child, generation, report):
@@ -402,7 +465,7 @@ class TaskGroups:
 
     def _complete(self, child, generation, report):
         binding, _, _ = self.component_context(child)
-        root = binding["parent"]
+        root = binding.get("group_root", binding["parent"])
         with group_lock(self.group(root)):
             binding, record, attachment = self.component_context(child)
             value = self.component_meta(child, binding, record)
@@ -410,6 +473,10 @@ class TaskGroups:
                 raise GroupError("stale or unconfirmed component generation")
             if record["state"] not in ("launched", "complete"):
                 raise GroupError("uncertain component launch requires owner reconciliation")
+            descendants = self.caller_records(root, child)
+            if is_dynamic(attachment) and (any(not item.get("gathered") for item in descendants)
+                    or pending_calls(attachment, descendants, binding["request_id"])):
+                raise GroupError("gather descendants and finish every authorized dynamic call before component completion")
             output_commit = (clean_descendant(value["worktree"], record["input_commit"])
                              if record.get("writable") else clean_commit(value["worktree"], record["input_commit"]))
             report = safe_path(report)
@@ -429,8 +496,8 @@ class TaskGroups:
                         (record.get("writable") and output_commit != previous["result"]["output_commit"])):
                     raise GroupError("component result is immutable")
                 return previous
-            parent = self.meta(root)
-            self.root_meta(root, parent.get("spawn_gen", ""))
+            parent = self.meta(binding["parent"])
+            self.caller_meta(binding["parent"], parent.get("spawn_gen", ""))
             directory = self.group(root) / "results" / child
             directory.mkdir(parents=True, exist_ok=True)
             result = {"schema": 1, "root": root, "child": child, "request_id": binding["request_id"],
@@ -442,6 +509,8 @@ class TaskGroups:
                       "native_session_id": None,
                       "identity_limit": "Herdr endpoint and spawn generation recorded; native transcript session not verified"}
             result.update(component_fields(record, attachment))
+            if is_dynamic(attachment):
+                result.update(parent=record.get("parent", root), workflow_call=record.get("workflow_call", "dynamic"))
             if record.get("writable"):
                 result["output_commit"] = output_commit
                 result["output_ref"] = retain_output(
@@ -468,12 +537,13 @@ class TaskGroups:
             if not record or record["state"] != "complete" or record.get("gathered"):
                 return self._view(root, record)
             self._view(root, record)
-            parent = self.meta(root)
+            caller = record.get("parent", root)
+            parent = self.meta(caller)
             generation = parent.get("spawn_gen", "")
-            self.root_meta(root, generation)
+            self.caller_meta(caller, generation)
             expected = record["result_digest"]
         try:
-            notice = self.notify(root, generation, record["body"]["request_id"], expected)
+            notice = self.notify(caller, generation, record["body"]["request_id"], expected)
             delivered = notice.returncode == 0
             notice_error = None if delivered else f"FirstMate inbox owner exited {notice.returncode}"
         except (GroupError, OSError, subprocess.SubprocessError) as error:
@@ -491,18 +561,28 @@ class TaskGroups:
         binding = self.binding(task)
         if not task_role:
             return {"attached": False, "pending": False, "component": False, "cleanup_allowed": True}
-        root = binding["parent"] if binding else task
+        root = binding.get("group_root", binding["parent"]) if binding else task
         attachment = self.attachment(root)
         if binding:
             _, record, _ = self.component_context(task)
-            return self._waiting_record(root, record, True, _retry)
+            state = self._waiting_record(root, record, True, _retry)
+            descendants = self.caller_records(root, task)
+            if descendants or caller_calls(attachment, binding["request_id"]):
+                states = [self._waiting_record(root, item, False, _retry) for item in descendants]
+                state["descendants"] = states
+                state["composition_pending"] = bool(pending_calls(attachment, descendants, binding["request_id"]))
+                state["cleanup_allowed"] = (state["cleanup_allowed"] and not state["composition_pending"]
+                                            and all(item["cleanup_allowed"] for item in states))
+            return state
         records = self.requests(root)
         if not is_dynamic(attachment):
             return self._waiting_record(root, records[0] if records else None, False, _retry)
         states = [self._waiting_record(root, record, False, _retry) for record in records]
         pending = [state for state in states if state["pending"]]
-        composition_pending = not any(record["primitive"] == "Review" and record.get("gathered")
-                                      for record in records)
+        from fm_task_group_composition import calls
+        composition_pending = any(not any(record.get("workflow_call", "dynamic") == call["id"]
+                                         and record["primitive"] == "Review" and record.get("gathered")
+                                         for record in records) for call in calls(attachment))
         return {"attached": True, "pending": bool(pending), "component": False,
                 "composition_pending": composition_pending,
                 "cleanup_allowed": not pending and not composition_pending, "root": root, "requests": states,
@@ -519,8 +599,9 @@ class TaskGroups:
         if (not component and record and record["state"] == "launching"
                 and isinstance(record.get("launch_custody"), dict)):
             try:
-                self.root_meta(root, record["accepted_parent_gen"])
-                launching = self.launch_custody(root, record["accepted_parent_gen"], record["launch_custody"])
+                caller = record.get("parent", root)
+                self.caller_meta(caller, record["accepted_parent_gen"])
+                launching = self.launch_custody(caller, record["accepted_parent_gen"], record["launch_custody"])
                 current = self.request(root, record["body"]["request_id"])
                 if current != record:
                     if retry:

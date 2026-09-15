@@ -2,7 +2,13 @@
 
 This client implements the package side of protocol `firstmate-task-group`, version `1`, scopes `local-readonly-work`, `local-readonly-review`, `local-dynamic` and `local-dynamic-ship-local-only`. It requires the matching experimental FirstMate task-group controller. The upstream FirstMate revision alone does not provide this API. Controller negotiation establishes an interface, not authenticated worker access or a certified runtime tuple.
 
-The client supports legacy one-component read-only Work/Review attachments and an explicitly admitted bounded dynamic workflow from a normal Linux root scout or explicitly selected ordinary ship/local-only root. FirstMate retains the complete fork, selected custom libraries and accepted input commits. The component inherits the root's Claude/Codex harness, model and effort. The project must satisfy FirstMate's clean local Git/no-origin admission. [Bounded leaf authoring](#bounded-leaf-authoring) uses the existing dynamic local-only profile. Nesting, component continuation, model overrides, remote homes, direct-PR and no-mistakes delivery, promotion, general composing Build and SelfImprove remain gated. Optional examples remain migration source rather than certified workflows.
+The client supports legacy read-only Work/Review and selected Linux dynamic composition from a normal scout or explicit ship/local-only root. FirstMate retains the complete fork, selected custom libraries and accepted input commits. Negotiated requests support independent assignment model/effort choices and selected workflow call scopes. FirstMate chooses the harness, validates effective flags and preserves accepted settings across replay. Ordinary origin-backed clean Git projects are admitted; tracked symlinks and submodules remain outside this profile. Component continuation, remote homes, direct-PR/no-mistakes delivery, promotion and general SelfImprove remain gated. Optional examples remain migration source rather than certified workflows.
+
+## Saved workflow intake
+
+FirstMate's `fm-orchflows-home.py` owns setup, catalog, resolve and publication. Its default editable home is `$FM_HOME/data/.orchflows-home`; explicit home configuration is supported. Ordinary `fm-brief.sh --orchflows-skill library:skill` selects instructions and their declared complete dependency libraries. The launch owner freezes the selection and catalog for that task. Publication refreshes future task inputs without changing active attachments.
+
+A library can declare `firstmate.workflows[skill]` in its existing `plugin.json`. The entry contains optional `preferences`, `composition` and `libraries`. Preferences use `assignments` and `operations` maps with explicit model/effort values. Author-session settings are never inferred as saved preferences. Publication follows ordinary committed local delivery; source and owner checks remain distinct from actual worker evidence.
 
 ## Primitive and review authority
 
@@ -64,22 +70,25 @@ The returned dynamic view uses scope local-dynamic. Its attachment must have
 exactly the supported profile values: workflow dynamic, primitive Work,
 review_policy workflow-review, readonly false and max_components 32. Existing
 root, epoch, package path and digest checks still apply. Linux is required.
-These checks admit this profile only; arbitrary workflow names and expanded
-component limits refuse.
+The execution profile remains dynamic; a selected saved workflow can additionally authorize bounded call scopes. Arbitrary execution profiles and expanded component limits refuse.
 
-Write a dynamic request with exactly four fields:
+A basic dynamic request retains these four required fields:
 
 ~~~json
 {"request_id":"maker-1","assignment":"Implement the assigned change with retained Make guidance and return check evidence.","primitive":"Work","writable":true}
 ~~~
 
-Read-only investigation selects Work/writable false. The one independent audit
-selects Review/writable false. Review cannot be writable. Per-request primitive
-selection belongs in this JSON; the client's authority flag --primitive remains
-the launch attachment primitive and cannot override context. Other dispatch
-controls remain unsupported.
+Read-only investigation selects Work/writable false. Independent review selects Review/writable false. Review cannot be writable. Per-request primitive selection belongs in this JSON; the client authority flag --primitive remains the launch attachment primitive and cannot override context.
 
-FirstMate freezes the current clean root worktree commit for every new request.
+Negotiated optional fields are `model`, `effort`, `operation_defaults`, `assignment_name` and `workflow_call`. Model and effort resolve independently: request field, caller operation default, saved named-assignment preference, saved operation preference, then FirstMate default. `assignment_name` defaults to request ID. `operation_defaults` contains only model/effort. Explicit unsupported controls refuse; a model never changes the harness. Accepted controls and provenance are part of replay identity.
+
+~~~json
+{"request_id":"implementation","assignment":"Implement and check the scoped change.","primitive":"Work","writable":true,"model":"claude-sonnet-5","effort":"high","workflow_call":"build"}
+~~~
+
+`workflow_call` selects an already-authorized dynamic invocation; it cannot create a call or review permission. A selected composition stores `calls`, a bounded list of `{id, caller}` entries. Caller `root` names the outer task; another caller names an explicitly authorized root-owned writable Work request ID. Those Work callers may run one level of descendants through the same client. Review and read-only Work cannot delegate. Calls execute in listed order for each caller, with one Review then repair/check per call. The whole group, including descendants, is bounded to 32 components.
+
+FirstMate freezes the current clean caller worktree commit for every new request.
 Each request retains its own input_commit; a writer must commit its result and
 returns output_commit. Read and gather the result, then use ordinary Git in the
 root's assigned worktree to join the intended commit range. For example, inspect
@@ -95,12 +104,7 @@ python3 -B <snapshot>/scripts/firstmate.py status --request-id maker-1
 python3 -B <snapshot>/scripts/firstmate.py gather --request-id maker-1
 ~~~
 
-Dynamic gather always requires --request-id. Read the complete selected report
-and result first. Gather every prior Work, join useful output, run checks and
-commit the exact clean candidate before requesting the fresh independent Review.
-Its input_commit identifies that candidate. Gather the Review, then make one
-repair/check pass directly or through scoped Work requests; a second Review is
-not admitted. Keep total components within 32, including Review and repair work.
+Dynamic gather always requires --request-id. Read the complete selected report and result first. Gather prior Work in the selected call, join useful output, run checks and commit the exact clean candidate before requesting its fresh independent Review. Its input_commit identifies that candidate. Gather Review, then make one repair/check pass directly or through scoped Work requests. A second Review in the same call is refused. A later authorized call has its own Review obligation. Keep the total group within 32 components, including descendants and repair work. Each caller gathers its direct results; ancestor status can observe the whole retained group.
 
 A selected complete custom skill can compose the same bounded primitives with
 the same policy and limits. FirstMate's existing intake, spawn, worktree, inbox,
@@ -112,19 +116,14 @@ gates.
 
 [orch-build-workflow](../skills/orch-build-workflow/SKILL.md) composes existing
 Work/Review requests in an explicitly selected dynamic ship/local-only root.
-It authors a complete library whose leaf skill performs its assignment without
-delegating; the library may include domain guidance and declared dependencies.
-This adds no primitive, attachment mode, capability, runtime or installation
-authority. This Build composition in scouts, composing or nested trials and SelfImprove
-remain unavailable.
+It authors a complete library containing domain guidance and declared dependencies. A leaf trial loads its instructions in the trial worker context. A composing trial uses the selected descriptor's authorized Work caller and dynamic call scope; its descendants remain FirstMate-owned. The writable trial joins committed child results before its scoped Review and returns complete evidence. General SelfImprove and unrestricted recursion remain unavailable.
 
 The root joins the authored library and commits its clean candidate before a
 fresh Work trials the leaf. That component reads the candidate library from its
 own frozen worktree and resolves its declared dependencies from the retained
 package roots. Its assignment names repository-relative input/library locations
 and the supplied retained roots; it must not use the parent worktree's absolute
-paths, a mutable source catalog or an undeclared user home. Loading the leaf
-does not create an attachment or authorize delegation.
+paths, a mutable source catalog or an undeclared user home. Loading instructions does not create an attachment or authorize delegation; only the retained composition scope can do so.
 
 A read-only trial keeps project and Git state unchanged and writes its complete
 text output and findings in its recorded tasktmp report. The existing complete,
@@ -152,8 +151,7 @@ An outer caller may arrange an unrelated-project trial through ordinary
 FirstMate enablement and spawn using the complete authored library. The
 authoring root cannot launch that fleet task itself. A portability claim
 requires that evidence before final Review; a later reuse trial is reported
-separately. This bounded case does not establish general Build parity,
-native registration by skill name or implicit user-home publication.
+separately. Build and trial evidence does not establish every workflow's portability or full parity. Native slash registration is optional. After ordinary delivery, the narrow FirstMate publication operation saves the complete committed library and refreshes its catalog; workers never write arbitrary home paths.
 
 ### Trial digest meanings
 
@@ -191,18 +189,19 @@ the same retained attachment. An old worker keeps its original generation and
 must refuse when FirstMate considers it stale. The client never replaces that
 generation by reading mutable task metadata.
 
-The context is a regular UTF-8 JSON file of at most 16 KiB with exactly these
-fields; duplicate keys, unknown fields and symlinks refuse:
+The context is a regular UTF-8 JSON file of at most 16 KiB with these required fields and only the declared optional fields below. Duplicate keys, unknown fields and symlinks refuse:
 
 | Field | Meaning |
 | --- | --- |
 | `schema` | Integer `1` |
 | `firstmate_root` | Absolute canonical prepared FirstMate directory containing `bin/fm-task-group.py` |
 | `home` | Absolute canonical owning FirstMate directory, distinct from the package home |
-| `root` | Attached normal root task ID |
+| `root` | Admitted caller task ID; a scoped descendant caller additionally carries retained group identity |
 | `generation` | This launch's `spawn_gen` |
 | `primitive` | `Work` or `Review`, matching the admitted attachment; dynamic uses Work |
 | `package_path` | Absolute canonical retained snapshot directory; it must equal the running client's package root |
+| `root_delivery` (optional) | Exact retained ship/local-only delivery for the outer task |
+| `group_root` (optional) | Outer task ID for an authorized component caller; does not grant additional call authority |
 
 All directory fields must exist and contain no symlinks. Root and generation
 must be valid FirstMate identifiers. The client validates this context before

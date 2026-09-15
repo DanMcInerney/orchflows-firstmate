@@ -157,11 +157,8 @@ class ControllerTests(unittest.TestCase):
             self.submit()
         self.assertEqual(self.calls, [])
 
-    def test_origin_rejected_and_original_package_changes_do_not_mutate_snapshot(self):
+    def test_origin_allowed_and_original_package_changes_do_not_mutate_snapshot(self):
         self.git("remote", "add", "origin", "https://example.invalid/project.git")
-        with self.assertRaisesRegex(GroupError, "without origin"):
-            self.submit()
-        self.git("remote", "remove", "origin")
         (self.package / "guidance.md").write_text("new default package")
         self.assertEqual(self.submit()["attachment"]["package_digest"], self.attachment["package_digest"])
 

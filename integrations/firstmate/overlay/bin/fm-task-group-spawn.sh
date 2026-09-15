@@ -10,6 +10,7 @@ case "${1:-}" in
   --gather) { [ "$#" -eq 3 ] || [ "$#" -eq 4 ]; } || exit 2; mode=gather; root=$2 generation=$3 request_id=${4:-} ;;
   --capture-lock) [ "$#" -eq 3 ] || exit 2; mode=capture; root=$2 generation=$3 ;;
   --observe-lock) [ "$#" -eq 3 ] || exit 2; mode=observe; root=$2 generation=$3 ;;
+  --verify-root-position) [ "$#" -eq 4 ] || exit 2; mode=root-position; root=$2 project=$3 worktree=$4 ;;
   --verify-position) [ "$#" -eq 6 ] || exit 2; mode=position; root=$2 generation=$3 child=$4 project=$5 worktree=$6 ;;
   --verify-lock) [ "$#" -eq 3 ] || exit 2; mode=verify; root=$2 generation=$3 ;;
   *)
@@ -28,6 +29,28 @@ done
 . "$SCRIPT_DIR/fm-task-group-runtime.sh"
 . "$SCRIPT_DIR/fm-gate-refuse-lib.sh"
 fm_refuse_if_gate_agent
+verify_spawn_position() { # <task> <project> <worktree>
+  local task=$1 project=$2 worktree=$3 spawn_lock spawn_owner project_lock
+  . "$SCRIPT_DIR/fm-task-group-custody.sh"
+  spawn_lock="$FM_HOME/state/.spawn-$task.lock"
+  spawn_owner=$(cat "$spawn_lock/pid" 2>/dev/null) || return 1
+  fm_pid_alive "$spawn_owner" || return 1
+  fm_task_group_custody_ancestor "$PPID" "$spawn_owner" || return 1
+  project_lock=$(fm_treehouse_project_lock_path "$project") || return 1
+  [ "$(cat "$project_lock/pid" 2>/dev/null)" = "$spawn_owner" ] || return 1
+  fm_treehouse_pool_slot "$project" "$worktree" || return 1
+  fm_treehouse_slot_owner_state "$worktree" "$task"
+  [ "$FM_TREEHOUSE_SLOT_OWNER" = mine ] && [ "$FM_TREEHOUSE_SLOT_OWNER_HOME" = "$FM_HOME" ]
+}
+if [ "$mode" = root-position ]; then
+  # A fresh root has no parent or published metadata. Its existing spawn owns
+  # the project lock and exact pool slot; this read-only callback takes no locks.
+  [ ! -e "$FM_HOME/state/$root.meta" ] && [ ! -L "$FM_HOME/state/$root.meta" ] || exit 1
+  [ -f "$FM_HOME/data/$root/task-group/attachment.json" ] \
+    && [ ! -L "$FM_HOME/data/$root/task-group/attachment.json" ] || exit 1
+  verify_spawn_position "$root" "$project" "$worktree"
+  exit $?
+fi
 control_lock="$FM_HOME/state/.control-$root.lock"
 meta="$FM_HOME/state/$root.meta"
 meta_lock=$(fm_meta_lock_path "$meta")
@@ -78,7 +101,7 @@ fi
 [ "$(fm_meta_get "$meta" spawn_gen)" = "$generation" ] || { echo 'stale parent generation' >&2; exit 1; }
 [ "$(fm_meta_get "$meta" backend)" = herdr ] || exit 1
 case "$(fm_meta_get "$meta" kind)" in scout|ship) ;; *) exit 1 ;; esac
-[ "$(fm_meta_get "$meta" task_group_role)" = root ] || exit 1
+case "$(fm_meta_get "$meta" task_group_role)" in root|component) ;; *) exit 1 ;; esac
 case "$mode" in
   position)
     # The existing spawn owns both locks and the exact Treehouse slot claim.
@@ -86,15 +109,7 @@ case "$mode" in
     . "$SCRIPT_DIR/fm-task-group-custody.sh"
     [[ "$child" =~ ^tg-[a-f0-9]{20}$ ]] || exit 1
     [ "$(fm_meta_get "$meta" project)" = "$project" ] || exit 1
-    spawn_lock="$FM_HOME/state/.spawn-$child.lock"
-    spawn_owner=$(cat "$spawn_lock/pid" 2>/dev/null) || exit 1
-    fm_pid_alive "$spawn_owner" || exit 1
-    fm_task_group_custody_ancestor "$PPID" "$spawn_owner" || exit 1
-    project_lock=$(fm_treehouse_project_lock_path "$project") || exit 1
-    [ "$(cat "$project_lock/pid" 2>/dev/null)" = "$spawn_owner" ] || exit 1
-    fm_treehouse_pool_slot "$project" "$worktree" || exit 1
-    fm_treehouse_slot_owner_state "$worktree" "$child"
-    [ "$FM_TREEHOUSE_SLOT_OWNER" = mine ] && [ "$FM_TREEHOUSE_SLOT_OWNER_HOME" = "$FM_HOME" ] || exit 1
+    verify_spawn_position "$child" "$project" "$worktree" || exit 1
     exit 0 ;;
   verify) exit 0 ;;
   capture)
@@ -114,9 +129,11 @@ if [ "$(fm_meta_get "$meta" kind)" = ship ]; then
   fm_task_group_python "$SCRIPT_DIR/fm-task-group.py" --home "$FM_HOME" delivery-check "$root" >/dev/null || exit 1
 fi
 [ "$(fm_meta_get "$meta" project)" = "$project" ] || exit 1
-[ "$(fm_meta_get "$meta" harness)" = "$harness" ] || exit 1
 case "$harness" in claude|codex) ;; *) exit 1 ;; esac
-[ "$(fm_meta_get "$meta" model)" = "$model" ] && [ "$(fm_meta_get "$meta" effort)" = "$effort" ] || exit 1
+# Accepted child choices persist across replay independently of caller metadata.
+fm_task_group_python "$SCRIPT_DIR/fm_task_group_controls.py" --home "$FM_HOME" \
+  --code-root "$(cd "$SCRIPT_DIR/.." && pwd)" bridge "$root" "$generation" "$child" \
+  "$harness" "$model" "$effort" >/dev/null || exit 1
 args=("$child" "$project" --scout --backend herdr --harness "$harness")
 [ "$model" = default ] || args+=(--model "$model")
 [ "$effort" = default ] || args+=(--effort "$effort")

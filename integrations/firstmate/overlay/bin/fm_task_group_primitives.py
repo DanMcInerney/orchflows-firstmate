@@ -27,6 +27,11 @@ def admit(primitive, review_policy, workflow=None):
 
 def attachment_primitive(attachment):
     root_delivery(attachment)
+    if "composition" in attachment:
+        from fm_task_group_composition import validate_composition
+        validate_composition(attachment["composition"])
+        if not is_dynamic(attachment):
+            raise GroupError("composition requires dynamic attachment")
     primitive = admit(attachment.get("primitive"), attachment.get("review_policy", "none"), attachment.get("workflow"))
     readonly, maximum = (False, MAX_COMPONENTS) if is_dynamic(attachment) else (True, 1)
     if attachment.get("readonly") is not readonly or type(attachment.get("max_components")) is not int or attachment["max_components"] != maximum:
@@ -79,7 +84,24 @@ def validate_record(record, attachment, *, result=False, request=None):
             if record.get("request_id") != request["body"]["request_id"]:
                 raise GroupError("retained result request identity differs from accepted request")
             validate_metadata(record.get("component_meta", {}), attachment, request)
-            validate_metadata(record.get("parent_at_completion", {}), attachment)
+            parent = request.get("parent", request["root"])
+            if (record.get("parent", record["root"]) != parent
+                    or record.get("workflow_call", "dynamic") != request.get("workflow_call", "dynamic")):
+                raise GroupError("retained composition identity differs from accepted request")
+            parent_meta = record.get("parent_at_completion", {})
+            if parent == request["root"]:
+                validate_metadata(parent_meta, attachment)
+            else:
+                from fm_task_group_composition import calls
+                selected = next(call for call in calls(attachment)
+                                if call["id"] == request["workflow_call"])
+                expected_parent = {"endpoint_task_id": parent, "task_group_role": "component",
+                                   "task_group_parent": request["root"],
+                                   "task_group_request": selected["caller"],
+                                   "task_group_primitive": "Work", "task_group_workflow": "dynamic",
+                                   "task_group_writable": "true", "kind": "scout", "backend": "herdr"}
+                if any(parent_meta.get(key) != value for key, value in expected_parent.items()):
+                    raise GroupError("retained descendant parent metadata differs from authorized caller")
             if expected["writable"]:
                 if not re.fullmatch(r"[0-9a-f]{40,64}", record.get("output_commit", "")):
                     raise GroupError("retained writer result lacks an output commit")

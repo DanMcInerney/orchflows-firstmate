@@ -35,6 +35,25 @@ class SpawnBridgeTests(unittest.TestCase):
         self.env = {key: value for key, value in os.environ.items() if not key.startswith(("FM_", "HERDR_"))}
         self.env.update(FM_HOME=str(self.home), FM_ROOT_OVERRIDE=str(self.code), BRIDGE_HOME=str(self.home))
         self.spy = self.home / "spawn.json"
+        # Inject only stored owner data; execute the production profile checker.
+        for name in ("fm_task_group_store.py", "fm_task_group_runtime.py"):
+            shutil.copyfile(BRIDGE.with_name(name), self.code / "bin" / name)
+        shutil.copyfile(BRIDGE.with_name("fm_task_group_controls.py"),
+                        self.code / "bin" / "controls_fixture.py")
+        self.accepted = self.home / "accepted.json"
+        self.accepted.write_text(json.dumps({"state": "launching", "harness": "codex",
+                                             "model": "default", "effort": "default"}))
+        (self.code / "bin/fm_task_group_controls.py").write_text('''import json,os,sys
+from pathlib import Path
+from controls_fixture import check_launch
+from types import SimpleNamespace
+record=json.loads((Path(os.environ["FM_HOME"])/"accepted.json").read_text())
+binding={"parent":"root","accepted_parent_gen":"s1"}
+owner=SimpleNamespace(binding=lambda task:binding,
+    component_context=lambda task:(binding,record,{}),
+    root_meta=lambda task,generation:None)
+check_launch(owner,sys.argv[8],*sys.argv[9:12],parent=sys.argv[6],generation=sys.argv[7])
+''')
         (self.code / "bin/fm-spawn.sh").write_text("#!/usr/bin/env python3\nimport json,os,sys\nfrom pathlib import Path\nPath(os.environ['BRIDGE_HOME'],'spawn.json').write_text(json.dumps({'args':sys.argv[1:],'session':os.environ.get('HERDR_SESSION')}))\nsys.exit(int(os.environ.get('BRIDGE_SPAWN_EXIT','0')))\n")
         (self.code / "bin/fm-spawn.sh").chmod(0o755)
 
@@ -60,6 +79,22 @@ class SpawnBridgeTests(unittest.TestCase):
         self.assertEqual(report["session"], "fm-lab-bridge")
         self.assertEqual(report["args"], ["tg-" + "a" * 20, str(self.project), "--scout", "--backend", "herdr", "--harness", "codex"])
         self.assertEqual(list((self.home / "state").glob(".*.lock")), [])
+
+    def test_accepted_profile_can_differ_from_parent_but_arguments_cannot(self):
+        value = json.loads(self.accepted.read_text())
+        value.update(model="gpt-fixture", effort="high")
+        self.accepted.write_text(json.dumps(value))
+        args = list(self.args())
+        args[-2:] = ["gpt-fixture", "high"]
+        result = self.call(*args)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(self.spy.read_text())["args"][-4:],
+                         ["--model", "gpt-fixture", "--effort", "high"])
+        self.spy.unlink()
+        args[-1] = "medium"
+        result = self.call(*args)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(self.spy.exists())
 
     def test_internal_verification_rejects_unowned_environment_marker(self):
         env = dict(self.env, FM_TASK_GROUP_LOCK_OWNER=str(os.getpid()),

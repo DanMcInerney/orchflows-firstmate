@@ -46,12 +46,12 @@ ready=d.get("result_ready",False)
 if type(ready) is not bool: raise ValueError("result_ready")
 if launch and (d["component"] or not d["pending"] or ready or d.get("request_state")!="launching"): raise ValueError("inconsistent launch activity")
 composition=d.get("composition_pending",False)
-if type(composition) is not bool or (composition and (d["component"] or d["cleanup_allowed"])): raise ValueError("composition_pending")
+if type(composition) is not bool or (composition and d["cleanup_allowed"]): raise ValueError("composition_pending")
 for v in (d["component"],d["pending"],d["cleanup_allowed"],d.get("child_task_id") or "-",d.get("child_generation") or "-",ready,d.get("root") or "-",launch,composition):
     print(str(v).lower() if type(v) is bool else v)
-members=d.get("requests")
+members=d.get("requests",d.get("descendants"))
 if members is not None:
-    if d["component"] or not isinstance(members,list) or len(members)>32: raise ValueError("requests")
+    if not isinstance(members,list) or len(members)>32: raise ValueError("requests")
     pending=[]
     for member in members:
         if not isinstance(member,dict): raise ValueError("member")
@@ -66,8 +66,8 @@ if members is not None:
         if member["result_ready"] != (member["request_state"]=="complete"): raise ValueError("member result")
         if member["launch_active"] and (not member["pending"] or member["result_ready"] or member["request_state"]!="launching"): raise ValueError("member launch")
         if member["pending"]: pending.append(member)
-    if bool(pending)!=d["pending"]: raise ValueError("aggregate pending")
-    if d["result_ready"] != (bool(pending) and all(m["result_ready"] for m in pending)): raise ValueError("aggregate result")
+    if not d["component"] and bool(pending)!=d["pending"]: raise ValueError("aggregate pending")
+    if not d["component"] and d["result_ready"] != (bool(pending) and all(m["result_ready"] for m in pending)): raise ValueError("aggregate result")
     for member in pending:
         print("|".join((member.get("child_task_id") or "-",member.get("child_generation") or "-",
                         str(member["result_ready"]).lower(),str(member["launch_active"]).lower())))
@@ -192,7 +192,7 @@ fm_task_group_current() { # <home> <task> [state]
       FM_TASK_GROUP_DETAIL='retained component result; outer delivery belongs to its root'
       return 0
     fi
-    return 1
+    [ -n "$FM_TASK_GROUP_MEMBERS" ] || return 1
   fi
   [ "$FM_TASK_GROUP_PENDING" = true ] || return 1
   root_gen=$(fm_task_group_generation "$state/$task.meta") || return 0
@@ -265,6 +265,12 @@ fm_task_group_child_current() { # <home> <root> <state> <root-generation>
   [ "$gen" = "$FM_TASK_GROUP_CHILD_GEN" ] || return 0
   [ "$(fm_task_group_generation "$state/$task.meta")" = "$root_gen" ] || return 0
   child_state=${child_line#state: }; child_state=${child_state%% *}
+  case "$child_state:$child_line" in
+    waiting:*'source: task-group'*|group-ready:*'source: task-group'*)
+      FM_TASK_GROUP_CLASS=waiting
+      FM_TASK_GROUP_DETAIL="waiting for scoped descendants of component $FM_TASK_GROUP_CHILD"
+      return 0 ;;
+  esac
   if [ "$child_state" = working ]; then
     # A status-only working line is old prose, not positive activity evidence.
     case "$child_line" in

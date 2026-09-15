@@ -90,6 +90,8 @@ def main(argv=None):
                               "review_policies": ["explicit-audit", "workflow-review"],
                               "workflows": ["dynamic"],
                               "root_deliveries": ["ship-local-only"],
+                              "assignment_controls": ["model-effort-v1"],
+                              "composition": ["scoped-composition-v1"],
                               "commands": ["attach", "submit", "status", "gather", "complete",
                                            "waiting", "launch-check", "launch-meta", "launch-overlay"]}))
             return 0
