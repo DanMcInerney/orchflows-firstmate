@@ -1,0 +1,6 @@
+c08cb11 Refine kvlog usage docs and stdin error test
+ca74410 Complete kvlog docs QA ticket
+14cbc91 Document kvlog CLI and record acceptance results
+d0d0673 Repair three defects found by independent review
+dd1d4b2 Implement kvlog CLI per spec report
+682a53c Seed kvlog
