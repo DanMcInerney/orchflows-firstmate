@@ -1,18 +1,18 @@
 {
   "name": "orchflows-firstmate",
-  "version": "0.1.0-dev.9",
-  "description": "Experimental Work/Review workflows through FirstMate on Herdr, with retained libraries and assignment controls.",
+  "version": "0.2.0",
+  "description": "Orchflows for FirstMate: fresh FirstMate agents for Work and Review, composed into reusable workflows with per-agent model and effort.",
   "author": {
     "name": "orchflows"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Orchflows FirstMate",
-    "shortDescription": "Work/Review workflows through FirstMate.",
-    "longDescription": "Standalone Orchflows variant for FirstMate/Herdr with retained workflow libraries, scoped composition and FirstMate-owned Claude/Codex launch controls. Requires a matching experimental controller and admitted task attachment.",
+    "shortDescription": "Work and independent Review with FirstMate agents.",
+    "longDescription": "Composable delegation workflows and layered guidance for a FirstMate primary session. Every Work and Review is an ordinary FirstMate crewmate or scout; nothing in FirstMate is patched.",
     "developerName": "orchflows",
     "category": "Productivity",
     "capabilities": [],
-    "defaultPrompt": "Read the FirstMate execution gate and select an admitted workflow from the retained launch catalog. FirstMate owns agent launches and delivery."
+    "defaultPrompt": "Use the workflow the captain names; otherwise run orch-dynamic-workflow."
   }
 }

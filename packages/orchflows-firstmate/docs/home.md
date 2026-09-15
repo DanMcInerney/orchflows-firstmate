@@ -1,6 +1,4 @@
-# Package home
-
-This home prepares package files for the FirstMate/Herdr variant. **The [FirstMate execution gate](architecture.md#firstmate-execution-gate) conditionally permits only one experimental read-only Work component.** Package readiness does not certify a worker or enable workflow execution. The [client](firstmate-client.md) requires the actual controller and exact retained task attachment separately.
+# Home
 
 ```text
 ~/.orchflows-firstmate/
@@ -14,43 +12,46 @@ This home prepares package files for the FirstMate/Herdr variant. **The [FirstMa
     └── packages/orchflows-firstmate/ managed core                      replaced by setup
 ```
 
-Home selection: `--home PATH` → `ORCHFLOWS_FIRSTMATE_HOME` → `~/.orchflows-firstmate`; never the current directory. `ORCHFLOWS_HOME` does not select this fork's home. Setup refuses homes overlapping the normal `~/.orchflows` or an explicitly configured `ORCHFLOWS_HOME`, and refuses recognized normal Orchflows catalogs or cores. Use a separate dedicated directory. These protections are installation boundaries, not an operating-system security sandbox.
+Home selection: `--home PATH` → `ORCHFLOWS_FIRSTMATE_HOME` → `~/.orchflows-firstmate`; never the current directory. `ORCHFLOWS_HOME` does not select this package's home, and setup refuses a home that overlaps a normal Orchflows home or catalog. Package contracts: [architecture.md](architecture.md).
 
-CLI: `python <core>/scripts/orchflows.py COMMAND`, using Python 3.11+ with no dependencies. The retained filename supports library migration. `<core>` is this package checkout or `<home>/.local/packages/orchflows-firstmate`. The home interpreter is `.local/runtime/Scripts/python.exe` on Windows, `.local/runtime/bin/python` elsewhere.
+CLI: `python <core>/scripts/orchflows.py COMMAND`, using any Python 3.11+; no dependencies. `<core>` is a checkout or `<home>/.local/packages/orchflows-firstmate`. The home interpreter is `.local/runtime/Scripts/python.exe` on Windows, `.local/runtime/bin/python` elsewhere.
 
-Commands return one JSON line on stdout. Exit 0 means the requested package or history operation succeeded; exit 1 means `setup`/`doctor` has package `issues`; exit 2 means command error (JSON on stderr) or argument error. No exit status certifies live integration. Use `COMMAND --help` for flags.
+Commands return one JSON line on stdout. Exit 0: success; 1: `setup`/`doctor` has `issues`; 2: command error (JSON on stderr) or argument error. Use `COMMAND --help` for flags.
 
 ## setup
 
-`setup [--home PATH] [--source CORE] [--example NAME] [--concurrency N | --skip-host-config]`
+`setup [--home PATH] [--source CORE] [--example NAME]`
 
-- Creates the tree, dependency-free venv and both `orchflows-firstmate-home` catalogs; runs `git init` if available, never commits. Seeded files and existing runtime contents are preserved; an incomplete runtime is an issue.
-- Requires core identity `orchflows-firstmate`. The normal Orchflows core is rejected. Source defaults to the executing CLI's package.
-- `--example NAME` copies `<source>/example-workflows/NAME` once into `libraries/NAME/`, preserving an existing destination. Installed cores omit examples; supply a checkout. Examples retain upstream bytes and are uncertified migration fixtures, including their original dependency and host instructions. Copying is not migration.
-- Rerun to replace the managed core and regenerate this home's catalogs. Core staging/swap and restoration match upstream behavior. Running from the installed core reuses it; failed restoration reports the retained backup. This development installer does not retain successful prior versions for active tasks. Version pinning and reference-aware retention must be added before live use.
-- Leaves both hosts' settings untouched by default. `--skip-host-config` remains an explicit opt-out. `--concurrency N` explicitly enables upstream host-setting changes; both files are validated before home changes. Unsafe edits abort with exit 2. [Host setting scope](hosts.md#model-and-effort).
-- `.local/packages/.setup.lock` covers setup writes. Host changes share upstream `<file>.orchflows.lock` and `<file>.orchflows-<id>.bak` paths because they operate on the same host files. Remove a leftover lock only after checking for an active installer.
+- Creates the tree, dependency-free venv and both `orchflows-firstmate-home` catalogs; runs `git init` if available, never commits. Existing seeded files and runtime contents are preserved; an incomplete runtime is an issue.
+- Source defaults to the executing CLI's core and must identify as `orchflows-firstmate`. `--example NAME` copies `<source>/example-workflows/NAME` into `libraries/NAME/` once, preserving an existing destination. Installed cores omit examples; supply a checkout.
+- Rerun to update the managed core and regenerate catalogs. The core is staged and swapped; running from the installed core reuses it. A failed swap restores the previous copy. If restoration fails, the error names the retained backup; later setup preserves it.
+- Leaves every host setting untouched. FirstMate owns worker concurrency and quota.
+- `.local/packages/.setup.lock` covers all setup writes. Remove a leftover lock only after checking for an active installer.
 
-Result fields retain upstream package status and add `readiness_scope: package-only` plus `integration` with `status: not-implemented`, `execution_ready: false`, `required_contract: firstmate-task-group` and an explanation. `status: ready` refers only to successful package preparation. `host_config_status: skipped` is the default.
+Result: `status`, `home`, `files`, `runtime_python`, `core` (`status`, `package_root`, `name`, `version`), `runtime`, `example`, `git`, `issues`.
 
 ## doctor
 
 `doctor [--home PATH]`
 
-Read-only checks: core manifest and required files, runtime files, library manifests and `skills/`, seeded files, catalogs against installed libraries. Returns `checks`, `issues`, `status: ready|incomplete` and the same explicit package-only readiness fields. It does not inspect FirstMate, Herdr, authentication, worker launch tools, task groups, policy, cancellation or delivery. No successful doctor report opens the execution gate.
+Read-only checks: core manifest and required files, runtime files, library manifests and `skills/`, seeded files, catalogs against installed libraries. Returns `checks`, `issues` and `status: ready|incomplete`. It does not inspect FirstMate.
 
 ## resolve
 
 `resolve <library> [--home PATH] [--skill NAME | --resource RELATIVE/PATH]`
 
-Returns `name`, `version`, `package_root`, optional `skill_path`/`resource_path` and unverified `runtime_python`; launches nothing. Both `orchflows-firstmate` and logical alias `orchflows` resolve strictly to `<home>/.local/packages/orchflows-firstmate`, whose manifest must identify this fork. No lookup of a normal installed core occurs. A library declaring either reserved name makes core resolution fail rather than shadow it. The alias does not create native host skill aliases.
+Returns `name`, `version`, `package_root`, optional `skill_path`/`resource_path`, and unverified `runtime_python`; launches nothing. `orchflows-firstmate` and the alias `orchflows` select the managed core; other names match root `plugin.json` under `libraries/`. Rejects duplicate names and absolute or escaping resources.
 
-Other names match root `plugin.json` under `libraries/`. Duplicate names, unsafe or escaping resources are rejected. Missing package dependencies block dependent workflows; there is no fallback to normal Orchflows or native delegation.
+No home or runtime: use the installed plugin's own paths and report the gap. A missing library dependency blocks the workflow that needs it.
 
 ## Libraries
 
-Edit source packages in the task's assigned workspace. Installing them into this home is an explicit delivery operation. Names must be unique and cannot be `orchflows` or `orchflows-firstmate`; those names are omitted from library catalogs and reported as conflicts. Existing user library files are preserved. A catalog entry alone does not certify compatibility.
+Edit `libraries/<name>/`, never `.local/packages/`. Names must be unique across the home and cannot be `orchflows` or `orchflows-firstmate`. After adding a library, rerun setup to regenerate catalogs, then [register or refresh](hosts.md#register-and-refresh) it with the primary's harness.
+
+## Authoring
+
+Register the home as a `local-only` FirstMate project. [orch-build-workflow](../skills/orch-build-workflow/SKILL.md) dispatches a Work agent that ships a library into `libraries/<name>/`; after FirstMate merges it, rerun setup and refresh the registration. FirstMate itself never writes into the home.
 
 ## Another computer
 
-The packaging CLI can reconstruct a dedicated home from this fork's supplied core and preserved libraries. Setup downloads no dependencies and does not provision a FirstMate worker. The eventual FirstMate installer must provision each host independently, attach exact package identities to tasks and preserve complete dependency sets across upgrades and relaunches.
+After cloning the home, run the intended core's `setup --home <clone>`, reinstall library dependencies, then [register or refresh](hosts.md#register-and-refresh). Setup downloads nothing; `.local/`, `artifacts/` and Python caches are ignored by the seeded `.gitignore`.

@@ -10,7 +10,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import tomllib
 import unittest
 from unittest.mock import patch
 
@@ -54,7 +53,7 @@ class HomeSetupTests(unittest.TestCase):
         write(self.source / "docs/hosts.md", "Fixture host docs.\n")
         write(self.source / "README.md", "Fixture core.\n")
         (self.source / "scripts").mkdir()
-        for name in ("orchflows.py", "host_config.py", "native_logs.py", "package_identity.py"):
+        for name in ("orchflows.py", "package_identity.py"):
             shutil.copy2(SCRIPT.with_name(name), self.source / "scripts" / name)
         self.example = self.source / "example-workflows/social-search"
         package(self.example, "social-search")
@@ -103,32 +102,18 @@ class HomeSetupTests(unittest.TestCase):
                 self.assertFalse((self.root / "codex").exists())
                 self.assertFalse((self.root / "claude").exists())
 
-    def test_setup_cli_concurrency_override_and_opt_out(self) -> None:
+    def test_setup_cli_never_touches_host_settings(self) -> None:
         write(self.root / "codex/config.toml", "malformed = [\n")
-        result = self.cli(SCRIPT, "setup", "--home", str(self.home), "--source", str(self.source), "--skip-host-config")
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(json.loads(result.stdout)["host_config_status"], "skipped")
-        self.assertEqual((self.root / "codex/config.toml").read_text(), "malformed = [\n")
-        self.assertFalse((self.root / "claude").exists())
-        write(self.root / "codex/config.toml", 'model = "personal"\n')
-        result = self.cli(SCRIPT, "setup", "--home", str(self.home), "--source", str(self.source), "--concurrency", "22")
+        result = self.cli(SCRIPT, "setup", "--home", str(self.home), "--source", str(self.source))
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report["host_configs"]["codex"]["value"], 22)
-        self.assertEqual(tomllib.loads((self.root / "codex/config.toml").read_text())["agents"]["max_threads"], 22)
-        self.assertEqual(json.loads((self.root / "claude/settings.json").read_text())["env"]["CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY"], "22")
-
-    def test_host_preflight_and_invalid_concurrency_do_not_create_home(self) -> None:
-        write(self.root / "claude/settings.json", '{"env":null}')
-        with self.assertRaisesRegex(ValueError, "Host configuration preserved"):
-            orchflows.setup(self.home, self.source, concurrency=15)
-        self.assertFalse(self.home.exists())
-        self.assertFalse((self.root / "codex").exists())
-        for arguments in (("--concurrency", "0"), ("--concurrency", "-1"), ("--concurrency", "many"),
-                          ("--concurrency", "5", "--skip-host-config")):
+        self.assertNotIn("host_configs", report)
+        self.assertNotIn("host_config_status", report)
+        self.assertEqual((self.root / "codex/config.toml").read_text(), "malformed = [\n")
+        self.assertFalse((self.root / "claude").exists())
+        for arguments in (("--concurrency", "22"), ("--skip-host-config",)):
             result = self.cli(SCRIPT, "setup", "--home", str(self.home), "--source", str(self.source), *arguments)
             self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-            self.assertFalse(self.home.exists())
 
     def test_repeat_preserves_user_files_and_runtime_and_regenerates_owned_files(self) -> None:
         first = self.install(example=True)
@@ -282,7 +267,7 @@ class HomeSetupTests(unittest.TestCase):
             before = snapshot(self.home)
             for source in (core, other):
                 result = self.cli(core / "scripts/orchflows.py", "setup", "--home", str(home),
-                                  "--source", str(source), "--example", "social-search", "--skip-host-config")
+                                  "--source", str(source), "--example", "social-search")
                 self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
                 self.assertIn("Setup lock exists", json.loads(result.stderr)["error"])
                 self.assertEqual(snapshot(self.home), before)

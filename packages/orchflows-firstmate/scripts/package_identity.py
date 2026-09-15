@@ -1,4 +1,4 @@
-"""Package identity, installation boundaries, and honest readiness reporting."""
+"""Package identity and installation boundaries."""
 
 from __future__ import annotations
 
@@ -37,25 +37,3 @@ def check_setup_home(home: Path) -> None:
             continue  # Setup may repair a damaged catalog in its own home.
         if isinstance(catalog, dict) and catalog.get("name") in {"orchflows-home", "orchflows-local"}:
             raise ValueError(f"Normal Orchflows catalog is protected: {path}")
-
-
-def readiness() -> dict:
-    """Package checks never establish a running controller, binding or worker."""
-    return {
-        "readiness_scope": "package-only",
-        "integration": {
-            "status": "experimental-client",
-            "execution_ready": False,
-            "required_contract": "firstmate-task-group",
-            "protocol_version": 1,
-            "implemented_scope": "local-readonly-work",
-            "implemented_scopes": ["local-readonly-work", "local-readonly-review", "local-dynamic", "local-dynamic-ship-local-only"],
-            "review_policy": "explicit-audit",
-            "review_policies": ["explicit-audit", "workflow-review"],
-            "implemented_workflows": ["dynamic"],
-            "root_deliveries": ["ship-local-only"],
-            "target": "FirstMate/Herdr only; Claude Code and Codex CLI worker harnesses",
-            "reason": "The experimental client requires an actual FirstMate controller and exact task "
-                      "attachment. Package checks do not verify operational runtime or broader workflows.",
-        },
-    }
