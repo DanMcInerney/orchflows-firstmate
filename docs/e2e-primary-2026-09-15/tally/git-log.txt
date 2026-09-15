@@ -1,0 +1,20 @@
+3dfd86f Orchflows Trial Fix: report invalid UTF-8 input as a file-read error, not a traceback
+
+ README.md           |  4 +++-
+ tally.py            | 43 ++++++++++++++++++++++++++++++++++---------
+ tests/test_tally.py | 23 +++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 10 deletions(-)
+7bbb08c Orchflows Trial Implement tally CLI: word-frequency counter with tests and README
+
+ AGENTS.md           |  15 +++++
+ CLAUDE.md           |   2 +
+ README.md           | 115 +++++++++++++++++++++++++++++++-
+ tally.py            | 125 ++++++++++++++++++++++++++++++++++
+ tests/__init__.py   |   0
+ tests/test_tally.py | 188 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 444 insertions(+), 1 deletion(-)
+86f2ccd Orchflows Trial Seed tally
+
+ .gitignore | 3 +++
+ README.md  | 3 +++
+ 2 files changed, 6 insertions(+)

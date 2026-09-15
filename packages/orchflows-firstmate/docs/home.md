@@ -50,7 +50,7 @@ Edit `libraries/<name>/`, never `.local/packages/`. Names must be unique across 
 
 ## Authoring
 
-Register the home as a `local-only` FirstMate project. [orch-build-workflow](../skills/orch-build-workflow/SKILL.md) dispatches a Work agent that ships a library into `libraries/<name>/`; after FirstMate merges it, rerun setup and refresh the registration. FirstMate itself never writes into the home.
+Register the home as a `local-only` FirstMate project with [no origin remote](firstmate.md#local-only-projects). [orch-build-workflow](../skills/orch-build-workflow/SKILL.md) dispatches a Work agent that ships a library into `libraries/<name>/`; after FirstMate merges it, rerun setup and refresh the registration. FirstMate itself never writes into the home.
 
 ## Another computer
 
