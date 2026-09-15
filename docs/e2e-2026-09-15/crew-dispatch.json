@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {"when": "Orchflows Work: a maker with a clear, bounded assignment",
+     "use": {"harness": "claude", "model": "claude-sonnet-5", "effort": "xhigh"},
+     "why": "A cheaper model; the assignment and guidance carry the judgment"},
+    {"when": "Orchflows Review or investigation: a fresh reviewer, or a scout resolving ambiguity before work",
+     "use": {"harness": "codex", "model": "gpt-5.6-luna", "effort": "xhigh"},
+     "why": "A different vendor reviews what the maker built"}
+  ],
+  "default": {"harness": "claude", "model": "claude-sonnet-5", "effort": "xhigh"}
+}

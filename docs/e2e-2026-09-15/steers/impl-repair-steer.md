@@ -1,0 +1,7 @@
+Repair pass for fm/kvlog-impl-1. An independent review by a different vendor (full report: /tmp/orchflows-e2e/home/data/kvlog-impl-review-1/report.md; read it in full) executed every code acceptance item, all passed, and then found three defects with probes outside the checklist. Make exactly these repairs on your existing branch, each covered by a new unit test:
+
+1. Reject non-standard JSON constants (NaN, Infinity, -Infinity) anywhere in a record, including extra fields, as invalid JSON with the usual source-and-line diagnostic and exit 1. Use json.loads with parse_constant raising, or an equivalent.
+2. Catch OSError raised while iterating an opened input stream, not only around open(), and translate it to the documented "kvlog: <source>: cannot read input: <reason>" diagnostic with exit 1.
+3. Treat an OverflowError from UTC conversion of an extreme but syntactically valid timestamp as a source-aware invalid timestamp (exit 1, canonical diagnostic), and format the time range with a fixed four-digit year (for example isoformat-based formatting) so year 0001 renders as 0001-01-01T00:00:00Z.
+
+Do not act on the review's finding 3 (README stub): the docs-qa phase owns the README by the workflow's design. Do not change anything else. Run python3 -m unittest, commit the repairs on your branch, and append a fresh "done: ready in branch fm/kvlog-impl-1" line to your status file.
