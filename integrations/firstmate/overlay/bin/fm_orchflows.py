@@ -87,8 +87,9 @@ def _configuration(owner):
         if (not isinstance(project, str) or
                 str(safe_path(project, directory=True, exists=False)) != project or
                 not isinstance(entry, dict) or
-                set(entry) not in ({"package_path", "package_digest", "primitive", "review_policy"},
-                                   {"package_path", "package_digest", "primitive", "review_policy", "workflow"})):
+                not {"package_path", "package_digest", "primitive", "review_policy"}.issubset(entry) or
+                set(entry) - {"package_path", "package_digest", "primitive", "review_policy",
+                              "workflow", "selected_workflow", "library_home"}):
             raise GroupError("invalid Orchflows project entry")
         identity = entry["package_digest"]
         if not isinstance(identity, str) or not re.fullmatch(r"[0-9a-f]{64}", identity):
@@ -96,6 +97,11 @@ def _configuration(owner):
         if entry["package_path"] != str(_store(owner) / ("package-" + identity)):
             raise GroupError("enabled package path differs from its immutable identity")
         admit(entry["primitive"], entry["review_policy"], entry.get("workflow"))
+        if "selected_workflow" in entry or "library_home" in entry:
+            from fm_orchflows_home import identity
+            identity(entry.get("selected_workflow"))
+            if str(safe_path(entry.get("library_home", ""), directory=True, exists=False)) != entry.get("library_home"):
+                raise GroupError("invalid selected workflow home")
     return value
 
 
@@ -127,7 +133,12 @@ def supports_launch_context(package):
     expected = {"schema": 1, "launch_context_schema": 1}
     dynamic = {**expected, "workflows": ["dynamic"]}
     local = {**dynamic, "root_deliveries": [LOCAL_DELIVERY]}
-    if (value not in (expected, dynamic, local) or any(type(value.get(key)) is not int for key in expected)):
+    extensions = {"assignment_controls": ["model-effort-v1"],
+                  "composition": ["scoped-composition-v1"]}
+    base = {key: item for key, item in value.items() if key not in extensions}
+    if (base not in (expected, dynamic, local) or
+            any(type(value.get(key)) is not int for key in expected) or
+            any(value[key] != allowed for key, allowed in extensions.items() if key in value)):
         raise GroupError("unsupported retained client capability metadata")
     return True
 
@@ -142,7 +153,8 @@ def supports_local_delivery(package):
             read_json(Path(package) / "scripts/firstmate-client.json").get("root_deliveries") == [LOCAL_DELIVERY])
 
 
-def enable(owner, package, project, primitive="Work", review_policy="none", libraries=(), workflow=None):
+def enable(owner, package, project, primitive="Work", review_policy="none", libraries=(), workflow=None,
+           *, selection=None, library_home=None):
     """Freeze one project default without changing already attached tasks."""
     _linux(owner)
     if workflow == "dynamic" and review_policy == "none":
@@ -174,6 +186,12 @@ def enable(owner, package, project, primitive="Work", review_policy="none", libr
     names = [item[1] for item in selected]
     if len(set(names)) != len(names):
         raise GroupError("duplicate selected library name")
+    if selection is not None:
+        selection = _selection(selection)
+        _selection_capabilities(package, selection)
+        if workflow != "dynamic" or library_home is None:
+            raise GroupError("selected workflows require dynamic and an owned library home")
+        library_home = str(safe_path(library_home, directory=True))
     # Fail malformed existing configuration before preparing or publishing data.
     _configuration(owner)
     store = _store(owner)
@@ -191,7 +209,11 @@ def enable(owner, package, project, primitive="Work", review_policy="none", libr
                     _copy_inventory(source, assembled / relative, entries)
                     catalog.append({"name": name, "root": relative.as_posix(),
                                     "skills": [(relative / skill).as_posix() for skill in skills]})
-                write_json(assembled / _MARKER, {"schema": 1, "libraries": catalog}, exclusive=True)
+                marker = {"schema": 1, "libraries": catalog}
+                if selection is not None:
+                    marker["selected_workflow"] = selection
+                write_json(assembled / _MARKER, marker, exclusive=True)
+                selected_workflow(assembled)
                 identity = digest(canonical(package_inventory(assembled)))
                 destination = safe_path(store / ("package-" + identity), directory=True, exists=False)
                 if destination.exists():
@@ -212,6 +234,8 @@ def enable(owner, package, project, primitive="Work", review_policy="none", libr
                          "primitive": primitive, "review_policy": review_policy}
                 if workflow is not None:
                     entry["workflow"] = workflow
+                if selection is not None:
+                    entry.update(selected_workflow=selection["identity"], library_home=library_home)
                 configuration["projects"][str(project)] = entry
                 _write_config(owner, configuration)
             finally:
@@ -248,6 +272,10 @@ def auto_attach(owner, task, kind, backend, harness, project, workflow="default"
         return task_role
     if workflow == "none":
         return None
+    from fm_orchflows_home import brief_selection, enable_selection
+    selected_skill = brief_selection(owner, task)
+    if selected_skill:
+        workflow = "dynamic"
     local = kind == "ship" and mode == "local-only" and workflow == "dynamic"
     if kind != "scout" and not local:
         if workflow == "dynamic":
@@ -257,6 +285,15 @@ def auto_attach(owner, task, kind, backend, harness, project, workflow="default"
         raise GroupError("dynamic scout cannot carry a ship delivery mode")
     project = safe_path(project, directory=True)
     entry = _configuration(owner)["projects"].get(str(project))
+    if selected_skill:
+        _linux(owner)
+        if backend != "herdr" or harness not in ("claude", "codex"):
+            raise GroupError("selected Orchflows workflow requires Herdr with Claude or Codex CLI")
+        if any(os.environ.get(variable) for variable in _OVERRIDES):
+            raise GroupError("selected Orchflows workflow requires the owning home's default paths")
+        # Freeze selected complete libraries through the existing enable owner.
+        # The attached task thereafter has no reads from the editable home.
+        entry = enable_selection(owner, selected_skill, project)
     if entry is None:
         if workflow == "dynamic":
             raise GroupError("dynamic selection requires an enabled project package")
@@ -281,13 +318,26 @@ def auto_attach(owner, task, kind, backend, harness, project, workflow="default"
 
 def launch_context(owner, task, generation):
     """Publish exact-generation inputs after fm-spawn publishes its metadata."""
-    if role(owner, task) != "root":
+    task_role = role(owner, task)
+    if task_role not in ("root", "component"):
         return ""
     _linux(owner)
     # These callbacks can run while submit owns the task-group lock. fm-spawn's
     # existing task locks serialize this root's metadata/context publication.
-    meta, attachment = owner.root_meta(task, generation, check_worktree=False)
-    validate_root_launch_worktree(meta, attachment)
+    if task_role == "root":
+        meta, attachment = owner.root_meta(task, generation, check_worktree=False)
+        validate_root_launch_worktree(meta, attachment)
+    else:
+        from fm_task_group_composition import caller_calls
+        binding, record, attachment = owner.component_context(task)
+        if (record.get("writable") is not True or record.get("primitive") != "Work" or
+                not caller_calls(attachment, binding["request_id"])):
+            return ""
+        if binding["parent"] != attachment["root"]:
+            raise GroupError("nested delegation caller exceeds the selected composition scope")
+        meta = owner.component_meta(task, binding, record)
+        if meta.get("spawn_gen") != generation:
+            raise GroupError("stale component launch generation")
     if not supports_launch_context(attachment["package_path"]):
         return ""
     value = {"schema": 1, "firstmate_root": str(owner.code_root), "home": str(owner.home),
@@ -295,7 +345,10 @@ def launch_context(owner, task, generation):
              "primitive": attachment_primitive(attachment), "package_path": attachment["package_path"]}
     if root_delivery(attachment):
         value["root_delivery"] = attachment["root_delivery"]
-    directory = safe_path(owner.group(task) / "contexts", directory=True, exists=False)
+    if task_role == "component":
+        value["group_root"] = attachment["root"]
+    directory = safe_path((owner.group(task) / "contexts" if task_role == "root"
+                           else owner.task(task) / "orchflows-context"), directory=True, exists=False)
     directory.mkdir(exist_ok=True)
     path = safe_path(directory / (identifier(generation, "generation") + ".json"), exists=False)
     if path.exists():
@@ -307,6 +360,54 @@ def launch_context(owner, task, generation):
     return str(path)
 
 
+
+def _selection(value):
+    if (not isinstance(value, dict) or "identity" not in value or
+            set(value) - {"identity", "composition", "workflow_preferences"}):
+        raise GroupError("invalid selected workflow metadata")
+    from fm_orchflows_home import identity
+    identity(value["identity"])
+    if "composition" in value:
+        from fm_task_group_composition import validate_composition
+        validate_composition(value["composition"])
+    if "workflow_preferences" in value:
+        from fm_task_group_controls import validate_preferences
+        validate_preferences(value["workflow_preferences"])
+    return value
+
+
+def _selection_capabilities(package, value):
+    """Reject newer workflow declarations before enabling or attaching old clients."""
+    if not {"composition", "workflow_preferences"}.intersection(value):
+        return
+    from fm_task_group_composition import CAPABILITY as COMPOSITION_CAPABILITY
+    from fm_task_group_controls import CAPABILITY as CONTROLS_CAPABILITY, supports_controls
+    if not supports_launch_context(package):
+        raise GroupError("selected workflow metadata requires declared client capabilities")
+    capabilities = read_json(Path(package) / "scripts/firstmate-client.json")
+    if "composition" in value and capabilities.get("composition") != [COMPOSITION_CAPABILITY]:
+        raise GroupError("selected composition requires declared " + COMPOSITION_CAPABILITY + " client capability")
+    if "workflow_preferences" in value and not supports_controls(package):
+        raise GroupError("saved workflow preferences require declared " + CONTROLS_CAPABILITY + " client capability")
+
+
+def selected_workflow(package):
+    marker = safe_path(Path(package) / _MARKER, exists=False)
+    if not marker.exists():
+        return {}
+    value = read_json(marker).get("selected_workflow")
+    if value is None:
+        return {}
+    value = _selection(value)
+    _selection_capabilities(package, value)
+    library, skill = value["identity"].split(":")
+    relative = (Path("skills") / skill / "SKILL.md" if library in {"orchflows", "orchflows-firstmate"}
+                else Path(_LIBRARY_DIR) / library / "skills" / skill / "SKILL.md")
+    if not read_bytes(Path(package) / relative).strip():
+        raise GroupError("selected workflow skill is empty")
+    return value
+
+
 def library_overlay(attachment):
     """Render only the selected catalog retained in this exact attachment."""
     package = safe_path(attachment["package_path"], directory=True)
@@ -314,7 +415,8 @@ def library_overlay(attachment):
     if not marker.exists() and not marker.is_symlink():
         return ""
     catalog = read_json(marker)
-    if (set(catalog) != {"schema", "libraries"} or type(catalog["schema"]) is not int or
+    if (set(catalog) not in ({"schema", "libraries"}, {"schema", "libraries", "selected_workflow"}) or
+            type(catalog["schema"]) is not int or
             catalog["schema"] != 1 or not isinstance(catalog["libraries"], list)):
         raise GroupError("invalid retained FirstMate library catalog")
     lines = ["# Retained Orchflows libraries", "",
@@ -324,19 +426,27 @@ def library_overlay(attachment):
              "Custom skills may compose only that admitted primitive. Additional components, writers, "
              "Dynamic, Build and SelfImprove remain gated; never use native-child fallback."]
     if is_dynamic(attachment):
-        lines[3] = ("This attachment selects dynamic composition: custom and meta skills may use "
-                    "scoped Work components and one fresh read-only Review through this same client. "
-                    "Read library READMEs and dependency references. Join and check before Review, then "
-                    "perform one repair/check pass. Bounded leaf authoring requires an explicitly "
-                    "selected ship/local-only root; follow the retained "
-                    f"{package / 'skills/orch-build-workflow/SKILL.md'}. General composing Build, "
-                    "SelfImprove and nesting remain gated; never use native-child fallback.")
+        lines[3] = ("This attachment selects dynamic composition through the existing client. "
+                    "Custom and meta skills load in the current caller. Each authorized dynamic call "
+                    "uses scoped Work, join/check, one fresh independent read-only Review, then one "
+                    "repair/check pass. Only a writable Work explicitly named as a caller in the "
+                    "selected composition may request its authorized descendants. Read library "
+                    "READMEs and dependency references. For composing workflow authoring, follow "
+                    f"the retained {package / 'skills/orch-build-workflow/SKILL.md'}. "
+                    "FirstMate owns dispatch and delivery; never use native-child fallback.")
     if catalog["libraries"]:
         lines.append("On initial launch and every relaunch, read the full retained custom skill selected "
                      "for this task and its required dependency guidance at the catalog paths below before "
                      "continuing. Reapply its deliverable and validation requirements to retained results "
                      "and remaining work. Before ordinary root completion, reread that skill and verify "
                      "its required report content, artifacts and checks are satisfied in the delivered result.")
+    selected = selected_workflow(package)
+    if selected:
+        library, skill = selected["identity"].split(":")
+        relative = (Path("skills") / skill / "SKILL.md" if library in {"orchflows", "orchflows-firstmate"}
+                    else Path(_LIBRARY_DIR) / library / "skills" / skill / "SKILL.md")
+        selected_path = safe_path(package / relative)
+        lines.append(f"Selected workflow {selected['identity']}: {selected_path}")
     names = set()
     for entry in catalog["libraries"]:
         if not isinstance(entry, dict) or set(entry) != {"name", "root", "skills"}:

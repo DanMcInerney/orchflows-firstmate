@@ -167,7 +167,7 @@ class FirstMateClientTests(unittest.TestCase):
         self.assertEqual(self.calls(), [])
 
     def test_invalid_request_never_contacts_controller(self):
-        cases = [{"request_id": "one", "assignment": "inspect", "model": "override"},
+        cases = [{"request_id": "one", "assignment": "inspect", "harness": "codex"},
                  {"request_id": "one"}, {"request_id": "", "assignment": "inspect"},
                  {"request_id": "one", "assignment": None}, []]
         for value in cases:

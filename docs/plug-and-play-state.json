@@ -1,0 +1,176 @@
+{
+  "administrative_continuations": [
+    {
+      "cleanup_passed": false,
+      "error": "Ordinary watcher exited before root launch",
+      "id": "evidence-resume",
+      "receipt_sha256": "c5951bb63d412284f61b3a8737838454b6fb17dbfcc6152a69e3c9843f617f9a",
+      "reuse_workers_launched": 0,
+      "scoped_processes_remaining": 0,
+      "status": "failed"
+    },
+    {
+      "cleanup_passed": true,
+      "error": "Ordinary watcher exited before root launch",
+      "id": "evidence-reuse",
+      "receipt_sha256": "caa71e1f8fa5beb18a64c08a720e87e55bff316596cd8139a2ce6ac874bf39eb",
+      "reuse_workers_launched": 0,
+      "scoped_processes_remaining": 0,
+      "status": "failed"
+    },
+    {
+      "cleanup_passed": true,
+      "error": "Ordinary root launch failed",
+      "id": "evidence-reuse2",
+      "receipt_sha256": "bfb7952bf3eebaa01cd2cf8373ecd0fe6a6fe6a72be78574f21786c287e0fbf5",
+      "reuse_workers_launched": 0,
+      "scoped_processes_remaining": 0,
+      "status": "failed"
+    }
+  ],
+  "base_commit": "1e41a6d0e9dd4880389a23989ffa36c78cad5b9c",
+  "development_review": {
+    "count": 1,
+    "findings": [
+      "P1 public controller omitted negotiated capabilities",
+      "P2 incompatible named descendant caller accepted without completion path",
+      "P2 invalid published names poisoned home catalog"
+    ],
+    "second_review": false,
+    "status": "three findings repaired in the post-review check phase; actual root-base gap also repaired and verified; no second Review",
+    "targeted_tests_passed": 27
+  },
+  "final_check": {
+    "candidate": {
+      "files": 571,
+      "sha256": "a62fde249093805278bb03f93335f1665c63f8766cd438773ec555ae8ba70c60",
+      "symlinks": 1
+    },
+    "id": "check-58qx6kf0",
+    "inputs": {
+      "integrations/firstmate": {
+        "files": 54,
+        "sha256": "77a8a645859836c2bf6aaae6643dcedacdb26699135ffdd4b72c654d3369ae4d",
+        "symlinks": 0
+      },
+      "packages/orchflows-firstmate": {
+        "files": 1092,
+        "sha256": "63fcf9ec1ff4d930de800922b50460bddd042d2a22e684c47ba4b79fc7ae02b0",
+        "symlinks": 0
+      }
+    },
+    "native_windows_skips": 10,
+    "passed": 326,
+    "raw_evidence": ".scratch/plug-and-play/checks/check-58qx6kf0",
+    "receipt_sha256": "8ef366edc4beef215dc5c8280f714fbc79a4567b4da79802d9fa2b30b60584ca",
+    "status": "passed"
+  },
+  "final_live_continuation": {
+    "after_cleanup": {
+      "final_commit": "a942ff90bd2d743d64aeaeb4ea2ce78fc1b22915",
+      "metadata_removed": true,
+      "origin_never_pushed": true,
+      "release_behavior": true,
+      "writer_refs_resolve": true
+    },
+    "author_checks_passed": 18,
+    "author_ready_commit": "0f22dff5202a28a7c93dac5c8b9978c671e25912",
+    "candidate_lineage": {
+      "author": "77fb928bed88ae8889f1444399f8a8ebf76b782317dbc08f58ee6adaa8da5045",
+      "reuse": "a62fde249093805278bb03f93335f1665c63f8766cd438773ec555ae8ba70c60"
+    },
+    "cleanup_passed": true,
+    "component_requests": 7,
+    "delivered_final_commit": "a942ff90bd2d743d64aeaeb4ea2ce78fc1b22915",
+    "delivery_driver_sha256": "6f30c2a511dd0745b0a516229fd181619e46d9e4b9adb2f0ac8eea71bfb6f64c",
+    "driver_sha256": "bc0304ef6f8003e4a1e71a56e6f2afd74c7703f219e369239ba4c6dea0f18a3d",
+    "exported_regular_git_blobs": 31,
+    "final_delivery_models_launched": 0,
+    "native_roots": 2,
+    "no_private_credentials": true,
+    "original_reuse_receipt_sha256": "8efc5df477881cf62133d40ad229c0f3167907a19ce13c730fa0d2c8603889c0",
+    "private_read_prompt": "One authorized outside-directory read confirmed through fm-send.sh in the disposable Claude config; not a prompt-free run",
+    "publication_snapshot_checks_passed": 5,
+    "raw_evidence": ".scratch/plug-and-play/a-13p2cmfd-qualified",
+    "receipt_sha256": "cb5536b7d0ba67c3cb7d47862b48303a4e87c9a263097b6c6331772d46df9de6",
+    "reuse_checks_passed": 17,
+    "reviews": 3,
+    "scoped_processes_remaining": 0,
+    "status": "qualified-delivery-passed",
+    "work_requests": 4
+  },
+  "firstmate_commit": "b182d0f908b78d08c7ccb8dce3775bdca8c5d657",
+  "initial_check": "check-rfmwdwb2",
+  "initial_check_receipt_sha256": "51ac3543f38178b748327bd786b8fa5d035c3c519789c463a5a0e6fbfeeba12f",
+  "live_trial": {
+    "cause": "public protocol lacks required model-effort-v1; root blocked before component admission",
+    "cleanup_passed": false,
+    "component_launches": 0,
+    "driver_sha256": "fd548352d90bdcd18be51fccf1f513b9ac0301048f84b77a40aef7b0ac9ac74e",
+    "raw_evidence": ".scratch/plug-and-play/a-j6aevmd2-original",
+    "receipt_error_type": "FileNotFoundError while observer read absent author output",
+    "receipt_sha256": "b7f904574766cf93999fed3b11337d0054c97927ba1b8f9b388a45cb46fb926b",
+    "root_records_preserved": true,
+    "scoped_processes_remaining": 0,
+    "status": "failed",
+    "trial": "a-j6aevmd2"
+  },
+  "observer_checks": {
+    "passed": 38,
+    "story_driver_sha256": "bc0304ef6f8003e4a1e71a56e6f2afd74c7703f219e369239ba4c6dea0f18a3d",
+    "submit_and_model_observer": 25,
+    "watcher_observer": 13
+  },
+  "orchflows_commit": "ca72258493480ddcfe73b3f01d0475ad532e4726",
+  "package_version": "0.1.0-dev.9",
+  "repaired_check": {
+    "candidate": {
+      "files": 571,
+      "sha256": "77fb928bed88ae8889f1444399f8a8ebf76b782317dbc08f58ee6adaa8da5045",
+      "symlinks": 1
+    },
+    "id": "check-5r5vcal4",
+    "inputs": {
+      "integrations/firstmate": {
+        "files": 53,
+        "sha256": "a082c0cdc2be0a975b21b48a4bd8600e302e635423291684802d22c41a29d442",
+        "symlinks": 0
+      },
+      "packages/orchflows-firstmate": {
+        "files": 1092,
+        "sha256": "63fcf9ec1ff4d930de800922b50460bddd042d2a22e684c47ba4b79fc7ae02b0",
+        "symlinks": 0
+      }
+    },
+    "native_windows_skips": 10,
+    "passed": 322,
+    "raw_evidence": ".scratch/plug-and-play/checks/check-5r5vcal4",
+    "receipt_sha256": "fb74d86b00a8ca11bb629531cd0a37e7940e36db50026a05a7b757c9b3058c07",
+    "status": "passed"
+  },
+  "repaired_live_trial": {
+    "author_checks_passed": 16,
+    "author_ready_commit": "0f22dff5202a28a7c93dac5c8b9978c671e25912",
+    "cause": "Observer required full submit JSON on stdout; native worker saved full JSON and printed complete child/profile projection",
+    "check": "check-5r5vcal4",
+    "cleanup_passed": false,
+    "failed_assertions": [
+      "replay_same_profile"
+    ],
+    "product_code_changed": false,
+    "qualified_resume": "delivered separately; original remains failed",
+    "raw_evidence": ".scratch/plug-and-play/a-13p2cmfd-original",
+    "receipt_sha256": "eb9b485d92de018271c583d062d4ea418e796a307c2ac708210a9d776e5fc01c",
+    "scoped_processes_remaining": 0,
+    "status": "failed",
+    "trial": "a-13p2cmfd"
+  },
+  "runtime_root_base_gap": {
+    "cause": "After local-only delivery advanced local main, ordinary FirstMate freshening selected older origin/main; component-only launch-position left a new root at the wrong commit",
+    "guard": "launch-check refused Git input commit changed before worker launch",
+    "status": "repaired; four real-custody regressions, full prepared suite and actual saved-workflow reuse passed"
+  },
+  "schema": 1,
+  "status": "implemented; qualified native create/save/reuse delivery completed",
+  "upstream_paths_retained": 1081
+}

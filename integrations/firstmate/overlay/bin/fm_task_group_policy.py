@@ -2,6 +2,7 @@
 import re
 
 from fm_task_group_launch import role
+from fm_task_group_composition import caller_calls
 from fm_task_group_delivery import validate_root_launch_worktree
 from fm_task_group_store import GroupError, identifier, safe_path
 
@@ -48,6 +49,11 @@ def claude_permissions(owner, task, generation):
              (data / "brief.md", False), (data / "launch-brief.md", False),
              (tasktmp, True)]
     writes = [(tasktmp, True), (state / f"{task}.status", False)]
+    if task_role == "component" and caller_calls(attachment, binding["request_id"]):
+        reads.append((data / "orchflows-context", True))
+        # Results arrive after launch. This group's retained evidence is
+        # read-only; request/gather authority stays bound to the actual caller.
+        reads.append((owner.group(attachment["root"]) / "results", True))
     if task_role == "root":
         reads.extend([(owner.group(task), True), (data / "report.md", False),
                       (owner.code_root / ".agents/skills/captain-hold-lifecycle/SKILL.md", False),

@@ -1,7 +1,7 @@
 {
   "name": "orchflows-firstmate",
-  "version": "0.1.0-dev.8",
-  "description": "Experimental read-only Work client for FirstMate/Herdr; broader workflows remain gated.",
+  "version": "0.1.0-dev.9",
+  "description": "Experimental Work/Review workflows through FirstMate on Herdr, with retained libraries and assignment controls.",
   "author": {
     "name": "orchflows"
   },

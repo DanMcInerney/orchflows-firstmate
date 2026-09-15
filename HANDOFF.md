@@ -22,7 +22,50 @@ when useful, join/check, one fresh independent Review, then one repair/check
 pass without another Review. Installed orchflows-light is not the source target
 or this project's development workflow.
 
-## Current result: repair-trial evidence delivered
+## Current implementation: dev.9 delivered with qualified native evidence
+
+The user authorized the [plug-and-play reassessment](docs/plug-and-play-reassessment.md)
+in parallel. Scoped makers implemented assignment model/effort controls, a
+FirstMate-owned saved-workflow home and normal identity selection, per-call
+Review scopes, and one level of authorized writable Work descendants. FirstMate
+keeps its existing launch, worktree, communication and lifecycle owners.
+
+Read the [implementation contract](docs/plug-and-play-implementation.md),
+[verification](docs/plug-and-play-verification.md) and
+[exact state](docs/plug-and-play-state.json). The final Linux check passed **135
+package and 191 integration tests: 326 passed**, plus **38 observer tests**, with
+ten explicit native Windows skips. All product inputs match the prepared build.
+
+One fresh independent development Review found three defects: public capability
+advertisement, incompatible descendant caller reservation and invalid publication
+names. The post-review repair/check phase fixed them. Actual origin-backed reuse
+then exposed a stale pool base after local-only delivery; the existing
+launch-position owner now positions fresh roots at their retained input under
+spawn/project lock and Treehouse-slot custody. Four added regressions and actual
+reuse verify that repair. No second Review ran; do not start another development
+Review for this increment.
+
+Two actual Claude roots created, saved and reused release-triage:ship through
+seven Work/Review requests, with high Work and medium Review effort. The two
+reuse phases received separate independent Reviews. Exact retained results,
+native reads, replay and artifact behavior were verified. Publishing v2 preserved
+the running v1 snapshot; a future ordinary spawn callback retained v2.
+
+**The final result is qualified delivery, not an uninterrupted strict pass.**
+Original missing-capability, observer projection, watcher-startup and root-base
+failures remain intact. A private Claude outside-directory read prompt was
+confirmed through the existing owner. Separate observer assessments verified
+full child/profile or recomputed request/profile hash projections without
+weakening artifact checks. Final administrative delivery launched no new model.
+
+Ordinary owners landed author commit 0f22dff5202a28a7c93dac5c8b9978c671e25912
+and final release commit a942ff90bd2d743d64aeaeb4ea2ce78fc1b22915. All 31 regular
+Git blobs were exported and verified, output refs survive, both root metadata
+records are removed, origin is unchanged and zero scoped processes remain.
+Raw receipts, native traces, exact drivers and delivered files are preserved
+under ignored .scratch/plug-and-play. Active installations remain unchanged.
+
+## Historical runtime result: dev.8 repair-trial evidence delivered
 
 Read [leaf repair verification](docs/leaf-repair-verification.md) and
 [exact state](docs/leaf-repair-state.json) before making runtime claims.
@@ -74,51 +117,44 @@ Original failed receipts, exact reviewed driver source, qualified receipt,
 native traces and delivered artifact bundle are preserved under ignored
 .scratch/leaf-repair. Historical dev.8 unlanded branches remain unchanged.
 
-## Next implementation work
+## Remaining work and evidence boundaries
 
-1. Extend the representative custom/meta case beyond non-delegating leaf
-   authoring when its next demonstrated missing interface is known. Use existing
-   FirstMate owners for composing Build, SelfImprove and unrelated-project
-   trials. A portability claim requires an unrelated-project trial before final
-   Review. Catalog retention alone does not establish executed parity.
-2. Target compatibility or lifecycle work affecting that feature. Current actual
-   Codex composition, component continuation, native background retirement and
-   complete supervisor wake/drain/rearm remain open.
-3. Extend delivery through existing owners only when needed. Direct-PR,
-   no-mistakes and promotion stay open; preserve sole validation custody.
-4. Investigate the existing recovery route if cleanup has removed an endpoint
-   but unfinished worker activity is still needed for an unlanded branch. This
-   continuation needed only administrative landing of completed work. It does
-   not resolve ordinary relaunch refusal or authorize fabricated endpoint
-   bindings/task records.
+The representative create/save/reuse story is completed through qualified
+ordinary delivery. Carry its observed gaps and original receipts forward; do
+not relabel it as uninterrupted, prompt-free, generally portable or full parity.
+The next work should address a concrete remaining user workflow rather than
+repeat narrow acceptance variants or build an exhaustive harness program.
 
-A clean --authoring-repair fixture pass remains open because of the explicit
-final-call syntax failure. If that targeted check is selected, require the final
-command with no preceding cd; keep all original receipts unchanged. Do not make
-repeated harness trials the next product milestone.
+Current native Codex composition, actual nested composing Build trials, general
+SelfImprove, tracked symlink/submodule projects, other delivery modes and broad
+portability remain open. Component continuation, endpoint recovery after partial
+cleanup, full supervision, larger artifacts, remote homes, promotion,
+install/update/rollback and result/ref pruning remain in
+[open work](docs/open-questions.md). Near feature parity remains the target.
 
-Other open work includes per-assignment controls, artifact/history retention,
-broader optional examples, remote homes, install/update/rollback and joint
-archival-ref/result pruning. Near feature parity remains the target.
+Do not remove FirstMate's operational skills or add replacement runtime owners.
+No-mistakes retains its sole validation custody; incompatible selections refuse.
+Source and fixture checks alone do not establish a drop-in release.
 
 ## Source and ownership constraints
 
-- Package: packages/orchflows-firstmate, version 0.1.0-dev.8; 1,091 files retaining
+- Package: packages/orchflows-firstmate, version 0.1.0-dev.9; 1,092 files retaining
   all 1,081 paths of Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 (0.7.0).
 - FirstMate pin: b182d0f908b78d08c7ccb8dce3775bdca8c5d657. Historical Orchflows
   research pin: 0fc6cb7ac7da7b275a83cc90807fba15b8ceb15a. Current source reference
   remains ignored .scratch/orchflows-refresh-ca7225849348. Leave .sources
   unchanged, including pre-existing CRLF-only differences.
 - Product FirstMate changes belong in integrations/firstmate; package changes
-  belong in the owned package. Nineteen inventoried deployables, including six
-  sequential patches, reproduce a 566-path candidate with one symlink through
+  belong in the owned package. Twenty-seven inventoried deployables, including nine
+  sequential patches, reproduce a 571-path candidate with one symlink through
   the distribution preparation tool.
 - Dynamic roots remain bounded to 32 components and scout or explicitly
   selected ship/local-only delivery. Components return retained results to their
   parent. Archival output refs are not a second workspace owner.
 - Live acceptance uses the user-selected current Ubuntu Claude cache through
   the access-token-only driver. Do not refresh/copy/reset credential caches.
-  Keep the selected claude-sonnet-5/high profile explicit.
+  Keep profiles explicit: claude-sonnet-5/high for roots and Work, medium for
+  Review in the current story.
 
 PR #4 previously merged as d3cf51b6b6dd31887f2d7d35a28679426af19d90;
 the waiting heartbeat is paused. Historical dev.6/dev.7 evidence and the
@@ -130,7 +166,9 @@ store raw local evidence and disposable clones outside tracked documentation.
 
 ## Reading order
 
-1. This handoff and [README](README.md).
+1. This handoff, [implementation](docs/plug-and-play-implementation.md),
+   [verification](docs/plug-and-play-verification.md), [state](docs/plug-and-play-state.json),
+   [reassessment](docs/plug-and-play-reassessment.md) and [README](README.md).
 2. [Leaf authoring contract](docs/leaf-authoring.md),
    [repair verification](docs/leaf-repair-verification.md),
    [repair state](docs/leaf-repair-state.json), then historical

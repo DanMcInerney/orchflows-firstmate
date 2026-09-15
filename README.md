@@ -5,19 +5,13 @@ Code and Codex CLI as worker harnesses. The target is near feature parity with
 Orchflows through FirstMate's existing agent, workspace, communication, recovery,
 supervision and delivery owners.
 
-The current owned package is **0.1.0-dev.8**, retaining all 1,081 source paths at
+The current owned package is **0.1.0-dev.9**, retaining all 1,081 source paths at
 Orchflows ca72258493480ddcfe73b3f01d0475ad532e4726 (0.7.0). The experimental
 design-loop library remains inactive migration source and is not used.
 
-**Current increment:** bounded authoring of a complete non-delegating leaf
-workflow or guidance library through an explicitly selected Linux
-ship/local-only root. Work authors it, a fresh Work trials the exact joined
-library, one Review assesses the committed artifact and trial evidence, and
-FirstMate's existing local delivery owners land it.
-See [leaf authoring](docs/leaf-authoring.md) and
-[repair-trial verification](docs/leaf-repair-verification.md). The continuation
-checks committed evidence and local delivery for an explicit post-Review repair
-trial; earlier strict dev.8 failures remain separately recorded.
+**Current implementation:** assignment model/effort controls, a FirstMate-owned saved-workflow home, normal selection by `library:skill`, and composition-scoped reviews with bounded descendants. See the [implementation contract](docs/plug-and-play-implementation.md), [source reassessment](docs/plug-and-play-reassessment.md), and [verification](docs/plug-and-play-verification.md). FirstMate keeps every launch and lifecycle owner.
+
+The earlier [leaf repair verification](docs/leaf-repair-verification.md) retains its qualified delivery result and original strict failures. Dev.9 source and fixtures do not relabel that history or establish broad runtime parity.
 
 Enable the fork and selected complete custom libraries once; select dynamic
 through ordinary FirstMate spawn. The retained package client uses immutable
@@ -31,7 +25,7 @@ workflow is the pinned upstream Orchflows dynamic workflow: scoped makers,
 joined checks, one fresh independent Review and one repair/check pass.
 
 The owned source is [packages/orchflows-firstmate](packages/orchflows-firstmate/README.md).
-Direct-PR/no-mistakes delivery, nesting, general Build/SelfImprove, broader custom/meta
+Direct-PR/no-mistakes delivery, unrestricted nesting, full Build/SelfImprove, broader custom/meta
 and optional-library execution, current Codex runtime evidence and release
 installation/update/rollback remain open. Source coverage and package checks
 are distinct from actual fleet execution.
@@ -39,8 +33,10 @@ are distinct from actual fleet execution.
 | Document | Purpose |
 | --- | --- |
 | [Handoff](HANDOFF.md) | User intent, next assignment, expected outputs and completion criteria |
+| [Plug-and-play contract](docs/plug-and-play-implementation.md) | Current assignment controls, workflow home, selection, composition and owner commands |
+| [Plug-and-play verification](docs/plug-and-play-verification.md) | Current prepared checks, native create/save/reuse evidence and limitations |
 | [Fundamental design](docs/fundamental-design.md) | Selected architecture, required FirstMate changes, staged implementation and fixed runtime acceptance |
-| [Leaf authoring verification](docs/leaf-authoring-verification.md) | Current authoring checks, independent Review, actual trials and delivery gaps |
+| [Leaf authoring verification](docs/leaf-authoring-verification.md) | Historical dev.8 authoring checks, actual trials and delivery gaps |
 | [Local delivery verification](docs/local-delivery-verification.md) | Historical dev.7 delivery evidence |
 | [Dynamic verification](docs/dynamic-verification.md) | Historical dev.6 scout composition, workers, review and repair evidence |
 | [Review verification](docs/review-verification.md) | Historical bounded Review and recovery evidence |

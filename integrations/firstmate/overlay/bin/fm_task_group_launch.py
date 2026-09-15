@@ -8,6 +8,7 @@ from pathlib import Path
 import shlex
 
 from fm_task_group_store import GroupError, clean_commit, git, safe_path
+from fm_task_group_composition import caller_calls
 from fm_task_group_delivery import (LOCAL_DELIVERY, root_delivery, validate_root_worktree,
                                     validate_root_launch_worktree)
 from fm_task_group_primitives import (attachment_primitive, component_primitive, is_dynamic,
@@ -55,7 +56,7 @@ def launch_check(owner, task, kind, backend, harness, project, worktree=None, mo
             raise GroupError("component relaunch is unsupported; preserve the existing request")
         if (owner.home / "state" / f"{task}.meta").exists():
             raise GroupError("component metadata already exists; duplicate launch refused")
-        owner.root_meta(binding["parent"], binding["accepted_parent_gen"])
+        owner.caller_meta(binding["parent"], binding["accepted_parent_gen"])
     else:
         attachment = owner.attachment(task)
     delivery = root_delivery(attachment) if task_role == "root" else None
@@ -86,45 +87,66 @@ def launch_check(owner, task, kind, backend, harness, project, worktree=None, mo
 
 
 def launch_position(owner, task, worktree):
-    """Position a newly allocated component through the existing spawn owner.
+    """Position fresh dynamic workers through the existing spawn transaction.
 
     The call site is after isolation/freshening and before launch-check or metadata
-    publication. Never move a root, a published child, or the parent's worktree.
+    publication. Existing roots retain their joined and dirty work on relaunch.
     """
-    if role(owner, task) != "component":
+    task_role = role(owner, task)
+    if not task_role:
         return
-    binding, record, attachment = owner.component_context(task)
+    binding = None
+    if task_role == "component":
+        binding, record, attachment = owner.component_context(task)
+    else:
+        attachment = owner.attachment(task)
     if not is_dynamic(attachment):
         return
-    parent, _ = owner.root_meta(binding["parent"], binding["accepted_parent_gen"])
-    if record["state"] != "launching" or (owner.home / "state" / f"{task}.meta").exists():
-        raise GroupError("only a fresh launching component may be positioned")
+    published = (owner.home / "state" / f"{task}.meta").exists()
+    if task_role == "root":
+        if published:
+            return
+        input_commit = attachment["input_commit"]
+        parent_worktree = None
+    else:
+        parent, _ = owner.caller_meta(binding["parent"], binding["accepted_parent_gen"])
+        if record["state"] != "launching" or published:
+            raise GroupError("only a fresh launching component may be positioned")
+        input_commit = record["input_commit"]
+        parent_worktree = safe_path(parent["worktree"], directory=True)
     worktree = safe_path(worktree, directory=True)
     project = safe_path(attachment["project"], directory=True)
-    parent_worktree = safe_path(parent["worktree"], directory=True)
     if worktree in (project, parent_worktree):
-        raise GroupError("component positioning requires its own worktree")
+        raise GroupError("worker positioning requires its own worktree")
     top = safe_path(git(worktree, "rev-parse", "--show-toplevel"), directory=True)
     common = safe_path(git(worktree, "rev-parse", "--path-format=absolute", "--git-common-dir"), directory=True)
     project_common = safe_path(git(project, "rev-parse", "--path-format=absolute", "--git-common-dir"), directory=True)
     if top != worktree or common != project_common:
-        raise GroupError("component positioning requires an isolated worktree of the attached repository")
+        raise GroupError("worker positioning requires an isolated worktree of the attached repository")
     clean_commit(worktree)
-    verify_position(owner, binding, project, worktree)
-    git(worktree, "reset", "--hard", record["input_commit"])
-    clean_commit(worktree, record["input_commit"])
+    if task_role == "root":
+        clean_commit(project, attachment["input_commit"])
+        if git(worktree, "symbolic-ref", "--quiet", "--short", "HEAD", accepted=(0, 1)):
+            raise GroupError("fresh root positioning requires a detached worktree")
+        verify_position(owner, {"root": task}, project, worktree)
+    else:
+        verify_position(owner, binding, project, worktree)
+    git(worktree, "reset", "--hard", input_commit)
+    clean_commit(worktree, input_commit)
 
 
 def verify_position(owner, binding, project, worktree):
     """Ask the existing shell owners to prove this spawn's locks and pool claim."""
+    arguments = (["--verify-root-position", binding["root"], str(project), str(worktree)]
+                 if "root" in binding else
+                 ["--verify-position", binding["parent"], binding["accepted_parent_gen"],
+                  binding["child"], str(project), str(worktree)])
     result = owner.runtime.run(
-        owner.code_root / "bin" / "fm-task-group-spawn.sh",
-        ["--verify-position", binding["parent"], binding["accepted_parent_gen"],
-         binding["child"], str(project), str(worktree)],
+        owner.code_root / "bin" / "fm-task-group-spawn.sh", arguments,
         env=owner.runtime.environment(home=owner.home, code_root=owner.code_root),
         capture_output=True, timeout=10, check=False)
     if result.returncode:
-        raise GroupError("component positioning requires current spawn custody and its own Treehouse slot")
+        raise GroupError("worker positioning requires current spawn custody and its own Treehouse slot")
 
 
 def launch_meta(owner, task):
@@ -206,13 +228,18 @@ def component_overlay(owner, binding, attachment, record=None):
             "Apply the assigned package's relevant Review guidance. Report findings with evidence, "
             "file references and remaining gaps; do not make or delegate repairs. "
             "Do not change project files, dependencies, Git state or the attached package.\n")
+    delegated = (record.get("writable") is True and binding["parent"] == attachment["root"]
+                 and caller_calls(attachment, binding["request_id"]))
+    delegation = ("Use only the Work/Review calls authorized below through the attached client; "
+                  "direct fleet commands remain unavailable.\n" if delegated else
+                  "Do not invoke Work or Review or another fleet command.\n")
     return ("# FirstMate task-group component completion contract\n\n"
             f"Role: component; disposition: return evidence to parent {binding['parent']}; "
             f"request {binding['request_id']}; attachment epoch 1.\n"
             + review_contract +
             "This component contract governs completion. Do not write ordinary scout done status, "
             "deliver to the captain, open a PR, merge, promote, run no-mistakes, or complete the parent. "
-            "Do not invoke Work or Review or another fleet command.\n"
+            + delegation +
             f"The immutable package is {attachment['package_path']} (SHA-256 {attachment['package_digest']}). "
             f"You may read your worktree, that package, your brief, and your metadata at "
             f"{owner.home / 'state' / (child + '.meta')}.\n"
@@ -222,7 +249,33 @@ def component_overlay(owner, binding, attachment, record=None):
             "Replace the two argument values from your actual metadata/report. A busy group can be "
             "retried with the same generation and same report. Success requires a retained complete result; "
             "process exit, a transcript message or ordinary done status does not complete this assignment. "
-            "After the controller accepts the report, stop work and leave cleanup to FirstMate.\n")
+            "After the controller accepts the report, stop work and leave cleanup to FirstMate.\n"
+            + (composition_overlay(owner, child, attachment, binding["request_id"]) if delegated else ""))
+
+
+def composition_overlay(owner, task, attachment, caller_request=None):
+    authorized = caller_calls(attachment, caller_request)
+    if not authorized:
+        return ""
+    package = Path(attachment["package_path"])
+    client = python_command(owner, package / "scripts/firstmate.py")
+    listing = ", ".join(call["id"] for call in authorized)
+    return ("\n# Authorized caller-context composition\n\n"
+            f"Your authorized dynamic workflow_call IDs, in order, are: {listing}. "
+            "Loading a workflow's instructions stays in this context; only Work or Review creates an agent. "
+            "Every request selects its workflow_call. Each call gathers and joins its Work, requests one fresh "
+            "read-only Review, then gathers that Review and performs one repair/check pass. Never repeat a "
+            "call's Review; another declared call starts its own bounded dynamic phase. "
+            "Finish and gather a phase before beginning the next declared phase. "
+            "The whole group, including descendants, shares the 32-request capacity. "
+            "Only writable root Work request IDs named as callers in the immutable selected composition "
+            "may delegate one level through this same client. Review and read-only components do not delegate. "
+            "All descendant results must be read and gathered and their declared calls finished before "
+            "returning this component's result. FirstMate owns every launch and lifecycle action.\n"
+            f"Use ORCHFLOWS_FIRSTMATE_CONTEXT from your own launch with {client} status, submit --request "
+            "REQUEST_JSON_PATH, and gather --request-id REQUEST_ID. "
+            "Put request files in your recorded tasktmp, commit your current clean worktree before new Work/Review, "
+            "and join retained writer commits into your own worktree.\n")
 
 
 def launch_overlay(owner, task):
@@ -252,7 +305,9 @@ def launch_overlay(owner, task):
         invocation_note = ("This retained client uses explicit arguments. Read the current spawn_gen "
                            "from your metadata before each call and replace CURRENT_SPAWN_GEN below. ")
     if is_dynamic(attachment):
-        return dynamic_root_overlay(owner, task, attachment, client, invocation_note) + libraries
+        return (dynamic_root_overlay(owner, task, attachment, client, invocation_note)
+                + (composition_overlay(owner, task, attachment) if attachment.get("composition") else "")
+                + libraries)
     if attachment_primitive(attachment) == "Review":
         return review_root_overlay(owner, task, attachment, client, invocation_note) + libraries
     windows_note = ("On native Windows, pass a native absolute request path to the package client; "
@@ -338,8 +393,11 @@ def dynamic_root_overlay(owner, task, attachment, client, invocation_note):
             "to the retained results and remaining work; it composes these same primitives.\n"
             + invocation_note +
             f"Use your recorded tasktmp from {owner.home / 'state' / (task + '.meta')} for request files. "
-            "Every request JSON has exactly request_id, assignment, primitive (Work or Review), "
-            "and writable (a JSON boolean). Work may write when scoped and useful; Review requires writable=false. "
+            "Every request JSON has request_id, assignment, primitive (Work or Review), "
+            "and writable (a JSON boolean). With negotiated assignment controls, optional model, effort, "
+            "assignment_name and operation_defaults resolve independently through FirstMate. "
+            "Selected compositions additionally use workflow_call. "
+            "Work may write when scoped and useful; Review requires writable=false. "
             "Each new request freezes your current clean worktree HEAD. Commit your own changes before submitting. "
             f"The group permits at most {attachment['max_components']} component requests.\n\n"
             f"    {client} status\n"
@@ -349,7 +407,8 @@ def dynamic_root_overlay(owner, task, attachment, client, invocation_note):
             "Status without an ID lists all retained requests. Ready independent Work requests may run together. "
             "Replay only the same request ID and exact body; an uncertain launch cannot authorize a replacement. "
             "FirstMate owns every child, workspace, endpoint, notice, recovery and cancellation. "
-            "No native children, nested components, or direct fleet commands are authorized.\n"
+            "No native children or direct fleet commands are authorized. "
+            "Descendant Work/Review requires the selected composition's explicit caller scope.\n"
             "For each request, run status --request-id REQUEST_ID and read the complete files at the exact "
             "top-level report_path and result_path returned by that response before gathering the request. "
             "The result's component_meta.tasktmp and component_meta.worktree record provenance; they are not "
@@ -363,9 +422,9 @@ def dynamic_root_overlay(owner, task, attachment, client, invocation_note):
             "joined or dirty work after relaunch; inspect status and reread any selected retained custom skill "
             "before resuming its remaining deliverables and validation.\n"
             "After gathering all earlier Work results and joining and checking the exact clean candidate, "
-            "request one fresh independent read-only Review. Then gather it and perform one repair/check pass, "
-            "using scoped repair Work if useful or repairing directly. Do not request another Review "
-            "or repeat the review/repair cycle. Never wait for repeated clean verdicts. "
+            "request one fresh independent read-only Review for that dynamic call. Then gather it and perform "
+            "one repair/check pass, using scoped repair Work if useful or repairing directly. Do not request "
+            "another Review for the same call or repeat its review/repair cycle. Never wait for repeated clean verdicts. "
             "Once no-mistakes validation starts it alone owns review, fixes, tests, documentation, push, PR and CI; "
             "this selected workflow does not start or replace that pipeline. FirstMate self-development is refused.\n"
             "Keep unfinished joins pending while FirstMate supervises; do not mark done or paused for a person. "

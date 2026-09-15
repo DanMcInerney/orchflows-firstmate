@@ -323,7 +323,7 @@ export FM_TASK_GROUP_LOCK_OWNER FM_TASK_GROUP_LOCK_ROOT=root FM_TASK_GROUP_LOCK_
                          "reconcile through FirstMate's existing owner before continuing"):
             self.assertIn(expected, overlay)
         self.assertNotIn("Additional components, writers, Dynamic", library_overlay(attachment))
-        self.assertIn("custom and meta skills", library_overlay(attachment))
+        self.assertIn("Custom and meta skills load in the current caller", library_overlay(attachment))
         self.assertIn(attachment["package_path"], overlay)
 
 

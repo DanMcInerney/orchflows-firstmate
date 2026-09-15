@@ -169,7 +169,7 @@ class FirstMateReviewClientTests(unittest.TestCase):
     def test_review_request_cannot_smuggle_policy_or_primitive(self):
         self.review()
         for extra in ({"primitive": "Review"}, {"review_policy": "explicit-audit"},
-                      {"model": "override"}):
+                      {"harness": "codex"}):
             with self.subTest(extra=extra):
                 legacy.write_json(self.request, {"request_id": "audit", "assignment": "Inspect.", **extra})
                 result = self.rejected_before_mutation()

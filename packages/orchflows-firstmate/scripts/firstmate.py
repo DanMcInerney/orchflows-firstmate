@@ -26,6 +26,10 @@ AUTHORITY_FIELDS = ("firstmate_root", "home", "root", "generation", "primitive")
 CONTEXT_FIELDS = {"schema", *AUTHORITY_FIELDS, "package_path"}
 IDENTIFIER = r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}"
 DYNAMIC_FIELDS = {"request_id", "assignment", "primitive", "writable"}
+CONTROL_FIELDS = {"model", "effort", "operation_defaults", "assignment_name"}
+OPTIONAL_FIELDS = CONTROL_FIELDS | {"workflow_call"}
+MODEL_TOKEN = r"[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,255}"
+EFFORTS = {"default", "low", "medium", "high", "xhigh", "max", "ultra"}
 
 
 class ClientError(Exception):
@@ -84,13 +88,16 @@ def read_context(path: Path) -> dict:
         if len(raw) > CONTEXT_LIMIT:
             raise ValueError("Context exceeds 16 KiB")
         context = parse_object(raw.decode("utf-8"))
-        if set(context) not in (CONTEXT_FIELDS, CONTEXT_FIELDS | {"root_delivery"}):
+        if not CONTEXT_FIELDS <= set(context) or set(context) - CONTEXT_FIELDS - {"root_delivery", "group_root"}:
             raise ValueError("Context must contain exactly schema, firstmate_root, home, root, "
                              "generation, primitive and package_path")
         if type(context["schema"]) is not int or context["schema"] != 1:
             raise ValueError("Unsupported FirstMate launch context schema")
-        if "root_delivery" in context and context["root_delivery"] != local_delivery(context.get("root")):
+        if "root_delivery" in context and context["root_delivery"] != local_delivery(context.get("group_root", context.get("root"))):
             raise ValueError("Unsupported immutable root delivery identity")
+        if "group_root" in context and (not isinstance(context["group_root"], str)
+                or re.fullmatch(IDENTIFIER, context["group_root"]) is None):
+            raise ValueError("group_root must identify the retained outer task")
         for key in ("firstmate_root", "home", "package_path"):
             context[key] = context_path(context[key], directory=True)
         if context["package_path"] != PACKAGE_ROOT:
@@ -115,6 +122,7 @@ def resolve_authority(args: argparse.Namespace) -> argparse.Namespace:
         for key in AUTHORITY_FIELDS:
             setattr(args, key, selected[key])
         args.root_delivery = selected.get("root_delivery")
+        args.group_root = selected.get("group_root", args.root)
     else:
         if any(getattr(args, key, None) is None for key in AUTHORITY_FIELDS[:-1]):
             raise ClientError("FirstMate launch context or complete explicit authority is required", "preflight")
@@ -210,7 +218,7 @@ def validate_view(response: dict, args: argparse.Namespace, operation: str) -> N
     attachment = response.get("attachment")
     workflow = attachment.get("workflow") if isinstance(attachment, dict) else None
     delivery = attachment.get("root_delivery") if isinstance(attachment, dict) else None
-    if (delivery is not None and (workflow != "dynamic" or delivery != local_delivery(args.root))) or (
+    if (delivery is not None and (workflow != "dynamic" or delivery != local_delivery(getattr(args, "group_root", args.root)))) or (
             hasattr(args, "root_delivery") and args.root_delivery != delivery):
         raise ClientError("FirstMate root delivery differs from the immutable launch context", operation,
                           uncertain=operation in {"submit", "gather"})
@@ -219,7 +227,7 @@ def validate_view(response: dict, args: argparse.Namespace, operation: str) -> N
             or response.get("generation") != args.generation or not isinstance(attachment, dict)):
         raise ClientError("FirstMate did not confirm this attached root and generation", operation,
                           uncertain=operation in {"submit", "gather"})
-    expected = {"schema": 1, "root": args.root, "epoch": 1, "primitive": primitive,
+    expected = {"schema": 1, "root": getattr(args, "group_root", args.root), "epoch": 1, "primitive": primitive,
                 "readonly": True, "max_components": 1}
     if workflow == "dynamic":
         expected.update(workflow="dynamic", primitive="Work", review_policy="workflow-review",
@@ -248,13 +256,49 @@ def validate_view(response: dict, args: argparse.Namespace, operation: str) -> N
                           uncertain=operation in {"submit", "gather"})
 
 
+
+def validate_controls(request: dict) -> None:
+    for axes in ({key: request[key] for key in ("model", "effort") if key in request},
+                 request.get("operation_defaults", {})):
+        if not isinstance(axes, dict) or not set(axes) <= {"model", "effort"}:
+            raise ValueError("operation_defaults contains only optional model and effort")
+        if "model" in axes and (not isinstance(axes["model"], str) or
+                                re.fullmatch(MODEL_TOKEN, axes["model"]) is None):
+            raise ValueError("model must be a concrete harness model token or default")
+        if "effort" in axes and (not isinstance(axes["effort"], str) or axes["effort"] not in EFFORTS):
+            raise ValueError("effort must be a supported FirstMate profile token")
+    if "assignment_name" in request and (not isinstance(request["assignment_name"], str) or
+            re.fullmatch(IDENTIFIER, request["assignment_name"]) is None):
+        raise ValueError("assignment_name must be a valid identifier")
+
+
+
+def package_controls() -> bool:
+    path = PACKAGE_ROOT / "scripts" / "firstmate-client.json"
+    if not path.exists():
+        return False
+    try:
+        value = parse_object(path.read_text(encoding="utf-8"))
+        return value.get("schema") == 1 and value.get("assignment_controls") == ["model-effort-v1"]
+    except (OSError, ValueError, UnicodeError) as exc:
+        raise ClientError("Invalid FirstMate client capability: " + str(exc), "preflight") from exc
+
+
+def require_capability(protocol: dict, key: str, name: str) -> None:
+    values = protocol.get(key)
+    if (not isinstance(values, list) or any(not isinstance(value, str) for value in values)
+            or len(set(values)) != len(values) or name not in values):
+        raise ClientError("FirstMate must explicitly advertise " + name, "protocol")
+
+
 def validate_request(path: Path, primitive: str = "Work") -> dict:
     """Validate syntax before controller calls; the attachment selects the shape."""
     try:
         request = parse_object(path.read_text(encoding="utf-8"))
         fields = set(request)
-        if fields != {"request_id", "assignment"} and not (
-                primitive == "Work" and fields == DYNAMIC_FIELDS):
+        required = fields - OPTIONAL_FIELDS
+        if required != {"request_id", "assignment"} and not (
+                primitive == "Work" and required == DYNAMIC_FIELDS):
             raise ValueError("Request must contain request_id and assignment, with primitive and "
                              "writable only for a dynamic attachment")
         for key in ("request_id", "assignment"):
@@ -264,7 +308,12 @@ def validate_request(path: Path, primitive: str = "Work") -> dict:
             raise ValueError("request_id must be a valid FirstMate identifier")
         if "\0" in request["assignment"] or len(request["assignment"].encode("utf-8")) > 32768:
             raise ValueError("assignment must be at most 32768 UTF-8 bytes without NUL")
-        if fields == DYNAMIC_FIELDS:
+        validate_controls(request)
+        if "workflow_call" in request and (required != DYNAMIC_FIELDS or
+                not isinstance(request["workflow_call"], str) or
+                re.fullmatch(IDENTIFIER, request["workflow_call"]) is None):
+            raise ValueError("workflow_call requires a valid dynamic call identifier")
+        if required == DYNAMIC_FIELDS:
             if request["primitive"] not in ("Work", "Review") or type(request["writable"]) is not bool:
                 raise ValueError("dynamic requests require primitive Work or Review and boolean writable")
             if request["primitive"] == "Review" and request["writable"]:
@@ -315,10 +364,18 @@ def run(args: argparse.Namespace) -> dict:
                           delivery=current["attachment"].get("root_delivery"))
     if request is not None:
         expected_fields = DYNAMIC_FIELDS if workflow == "dynamic" else {"request_id", "assignment"}
-        if set(request) != expected_fields:
+        if set(request) - OPTIONAL_FIELDS != expected_fields or (
+                workflow != "dynamic" and "workflow_call" in request):
             raise ClientError("Request fields must match the admitted " +
                               ("dynamic" if workflow == "dynamic" else "single-primitive") +
                               " attachment", "preflight")
+    if (package_controls() or (request is not None and CONTROL_FIELDS & set(request))
+            or current["attachment"].get("workflow_preferences")):
+        require_capability(protocol, "assignment_controls", "model-effort-v1")
+    if ((request is not None and "workflow_call" in request)
+            or current["attachment"].get("composition")
+            or getattr(args, "group_root", args.root) != args.root):
+        require_capability(protocol, "composition", "scoped-composition-v1")
     if args.operation == "status":
         return current
     if args.operation == "gather" and workflow == "dynamic" and request_id is None:

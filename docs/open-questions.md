@@ -6,36 +6,29 @@ Updated September 14, 2026 during Stage 1 verification. **Source** means an insp
 
 ## Current implementation queue
 
-The dev.8 continuation adds bounded leaf workflow/guidance authoring through
-the existing dynamic ship/local-only profile: author Work, a fresh read-only
-Work trial using the frozen library, committed output and provenance, one
-Review and repair/check, then ordinary delivery. See the [contract](leaf-authoring.md),
-[verification](leaf-authoring-verification.md) and [exact state](leaf-authoring-state.json).
-Same-project evidence does not establish unrelated-project portability or
-general composing Build. Historical dev.7 local-delivery evidence remains
-separately identified.
-| Order | Next work | Evidence required |
-| --- | --- | --- |
-| Completed with qualification | Bounded leaf repair-trial evidence and local delivery | [Actual continuation](leaf-repair-verification.md) retained all eight evidence files and landed through existing owners. Strict fixture failed final-call syntax; a separate native-command assessment and administrative resume passed. A clean strict run remains open |
-| 1 | Select the next demonstrated custom/meta interface gap | Extend beyond leaf authoring through existing owners; do not make repeated harness trials the next milestone |
-| 2 | Broader custom/meta composition | Extend beyond non-delegating leaf authoring to a representative composing Build or SelfImprove case using the same owners; unrelated-project trials are required before claiming portability |
-| 3 | Recovery after partial cleanup | A failed authoring trial retained its unlanded branch, but ordinary relaunch refused the already removed endpoint after private-lab restoration. Determine the existing owner route when this case is selected; do not fabricate endpoint bindings or replace fleet records |
-| 4 | Targeted compatibility and recovery | Current actual Codex composition and any lifecycle gap affecting the selected feature; component continuation and larger artifacts need their own evidence |
-| 5 | Broader delivery when required | Direct-PR/no-mistakes or promotion through existing FirstMate policy owners, preserving sole validation custody |
-| Later | Release and remaining parity | Broader optional-library trials, complete install/update/rollback, artifact/history retention, remote homes and promotion |
+Dev.9 implements the [reassessment](plug-and-play-reassessment.md)'s missing
+interfaces: assignment controls, saved-library publication and discovery,
+composition-scoped reviews and bounded descendants. See [implementation](plug-and-play-implementation.md)
+and [verification](plug-and-play-verification.md) for source and tested behavior.
+The editable home defaults to `$FM_HOME/data/.orchflows-home`, with explicit override.
 
-The latest direction remains a plug-and-play FirstMate upgrade. FirstMate owns
-Claude/Codex integration, dispatch, workspaces, inboxes, supervision, recovery
-and delivery. Do not restart the completed owner survey or build a new
-scheduler, recovery daemon or exhaustive harness program.
+| Next work / remaining boundary | Evidence needed |
+| --- | --- |
+| Broader save/reuse operation | One useful Claude story has qualified ordinary delivery, separate phase Reviews and v1/v2 snapshot evidence. Uninterrupted/prompt-free operation and broader library/project shapes need their own evidence; preserve original failures |
+| Broader Claude/Codex compatibility | Actual evidence for both advertised harnesses, native model/effort settings and scoped descendant trials. Flag/controller tests alone do not certify current native composition |
+| Ordinary project shapes | Origin-backed clean repositories now have targeted local-delivery coverage. Tracked symlinks/submodules, other default-branch shapes and portability require separate evidence |
+| General Build and SelfImprove | Current composition is bounded to declared required call scopes and one level of named writable Work callers. Unrestricted recursion, history correlation and complete meta-workflow parity remain open |
+| Remaining lifecycle and distribution work | Component continuation, full supervision cycle, cleanup recovery, larger artifacts, other delivery modes, remote homes, promotion, install/update/rollback and result/ref pruning |
 
-Known limits: dynamic composition supports bounded local Linux scout and
-explicit ship/local-only roots, with at most 32 components. Direct-PR/no-mistakes,
-nesting, general composing Build/SelfImprove, unrelated-project portability, general component relaunch, native background-tool
-retirement, full supervisor wake/drain/rearm, current Codex runtime acceptance,
-remote homes, promotion, bundle pruning and general rollback remain open.
-Native Windows is deferred. Source-retained examples are not executed parity.
-Do not use design-loop for this work.
+Loading one workflow from another remains in the caller context. Work and Review
+are the only component launches. FirstMate owns harness selection, worktrees,
+endpoints, inboxes, recovery, supervision and delivery. No-mistakes retains sole
+validation custody when selected; incompatible workflow delivery is refused.
+Native Windows is deferred. The experimental design-loop is not used.
+
+The prior [leaf repair continuation](leaf-repair-verification.md) retains its
+qualified delivery result and failed strict assertions. No historical receipt is
+relabeled, and a clean repetition of that old fixture is not the next product milestone.
 
 ## Earlier research questions and source answers
 

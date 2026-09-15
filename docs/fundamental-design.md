@@ -1,5 +1,13 @@
 # Fundamental design: Orchflows for FirstMate running in Herdr
 
+## Current design priority after the step-back request
+
+The [reassessment](plug-and-play-reassessment.md) remains the source-backed rationale. Dev.9 implements its assignment controls, FirstMate-owned workflow home and publication, normal identity selection, and composition-scoped Review. The selected default editable home is `$FM_HOME/data/.orchflows-home`; explicit configuration can override it. See the [implementation contract](plug-and-play-implementation.md) and [verification](plug-and-play-verification.md).
+
+Loading one workflow from another stays in the caller context. Only Work/Review launches an agent. A selected composition authorizes dynamic call scopes; each has one Review and a repair/check phase. A writable Work trial may delegate one level through explicitly assigned scopes, sharing the root capacity and existing lifecycle owners. FirstMate retains operational skills, no-mistakes validation custody, worktrees, endpoints, communication, recovery and delivery.
+
+The staged roadmap below remains design history and the broader parity inventory. It does not require a replacement runtime or exhaustive lifecycle matrix before the useful create/save/reuse story. Implemented source and fixture results do not establish a new native compatibility tuple; actual outcomes are recorded separately.
+
 The dev.8 [bounded leaf-authoring extension](leaf-authoring.md) composes the
 existing Work/Review interface to produce a complete non-delegating leaf or
 guidance library, trial its exact joined source in a fresh component, retain
