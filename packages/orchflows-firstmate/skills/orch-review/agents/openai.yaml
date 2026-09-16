@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orch Review"
+  short_description: "Dispatch a fresh FirstMate scout to review without repairs"
+
+policy:
+  allow_implicit_invocation: false

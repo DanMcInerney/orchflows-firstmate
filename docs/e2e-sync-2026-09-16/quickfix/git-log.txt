@@ -1,0 +1,3 @@
+2a5ca6d 2026-09-16 16:07:41 -0400 Orchflows Trial Refine quickfix:fix per trial findings
+8811905 2026-09-16 15:52:50 -0400 Orchflows Trial Add quickfix library with fix workflow
+a7fbb5d 2026-09-16 15:17:17 -0400 Orchflows Trial Seed orchflows-home

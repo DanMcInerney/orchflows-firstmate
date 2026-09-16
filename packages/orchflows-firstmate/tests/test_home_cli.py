@@ -13,7 +13,7 @@ from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILLS = {"orch-work", "orch-review", "orch-dynamic-workflow", "orch-self-improve", "orch-build-workflow"}
+SKILLS = {"orch-work", "orch-review", "orch-dynamic-workflow", "orch-build-workflow"}
 
 
 class InstalledCliTests(unittest.TestCase):
@@ -55,8 +55,9 @@ class InstalledCliTests(unittest.TestCase):
                     resolved_core = cli(python, script, "resolve", alias, "--skill", skill)
                     self.assertEqual(Path(resolved_core["skill_path"]), core / "skills" / skill / "SKILL.md")
                 text = (core / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
-                self.assertRegex(text, rf"^---\nname: {skill}\ndescription: .+\n---\n", "frontmatter")
+                self.assertRegex(text, rf"^---\nname: {skill}\ndescription: .+\ndisable-model-invocation: (true|false)\n---\n", "frontmatter")
                 self.assertLess(len(text.split()), 260, f"{skill} is not terse")
+                self.assertTrue((core / "skills" / skill / "agents/openai.yaml").is_file(), "Codex policy shipped")
             self.assertIn("Use when no more specific workflow is named",
                           (core / "skills/orch-dynamic-workflow/SKILL.md").read_text(encoding="utf-8"))
             unavailable = cli(python, script, "resolve", "orchflows", "--skill", "orch-parallel", expected=2)

@@ -1,0 +1,1 @@
+Run quickfix:fix on the roman project: add a --json flag that prints one JSON object per input value with keys input, output and ok, so invalid values produce ok false with a message instead of stopping, while the exit code rules stay the same. Cover it with tests and a README example.

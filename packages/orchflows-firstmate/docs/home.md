@@ -46,7 +46,7 @@ No home or runtime: use the installed plugin's own paths and report the gap. A m
 
 ## Libraries
 
-Edit `libraries/<name>/`, never `.local/packages/`. Names must be unique across the home and cannot be `orchflows` or `orchflows-firstmate`. After adding a library, rerun setup to regenerate catalogs, then [register or refresh](hosts.md#register-and-refresh) it with the primary's harness.
+Edit `libraries/<name>/`, never `.local/packages/`. Names must be unique across the home and cannot be `orchflows` or `orchflows-firstmate`. After adding a library, rerun setup to regenerate catalogs, then [register or refresh](hosts.md#register-and-refresh) it with the primary's harness. Bump manifest versions before refreshing a changed library; Claude Code can retain stale cached files at the same version.
 
 ## Authoring
 

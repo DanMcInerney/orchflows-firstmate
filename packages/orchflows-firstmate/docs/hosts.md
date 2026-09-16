@@ -2,11 +2,11 @@
 
 The FirstMate primary session is the only host that loads these skills. Workers need no registration: their briefs carry absolute guidance and reference paths, which they read as files.
 
-CLI commands checked 2026-09-12: Codex 0.144.0, Claude Code 2.1.233. Host behavior is version-dependent.
+Registration commands checked 2026-09-12: Codex 0.144.0, Claude Code 2.1.233. The trials of 2026-09-15 ran a Claude Code 2.1.269 primary with Claude Code and Codex 0.154 workers. Host behavior is version-dependent.
 
 ## Register and refresh
 
-Setup writes catalogs into the home; register the home with the harness that runs the primary, install the core and each library, then start a new FirstMate session. Keep one enabled core installation. If edits are missing, check the installed cache and restart.
+Setup writes catalogs into the home; register the home with the harness that runs the primary, install the core and each library, then start a new FirstMate session. Keep one enabled core installation. Bump the package version in every host manifest before refreshing; Claude Code can reuse its cached copy at an unchanged version. If edits are missing, check the installed cache and restart.
 
 | | Codex | Claude Code |
 | --- | --- | --- |
@@ -24,9 +24,16 @@ Registration references: [Codex plugins](https://developers.openai.com/plugins/b
 
 Resolve links from the containing file, scripts from the loaded skill's directory, and inputs and outputs from the assignment workspace. Copying only skill folders breaks package-relative links such as `../../guidance/`. Orchflows built-ins use the current context. [Codex skills](https://developers.openai.com/codex/skills), [Claude skills](https://code.claude.com/docs/en/skills).
 
-## Manual-only workflows
+## Invocation policy
 
-A custom workflow runs only when the captain names it. On Claude Code, put `disable-model-invocation: true` in its `SKILL.md` frontmatter so the model cannot select it on its own; the captain invokes it by name or reads it by path. Codex has no verified equivalent; begin the description with `Manual:` and state the exact trigger so it never matches an ordinary request. Built-in `orch-*` workflows stay model-invocable, and [orch-dynamic-workflow](../skills/orch-dynamic-workflow/SKILL.md) is the catch-all.
+Apply the [invocation policy](architecture.md#invocation) per skill; a library manifest does not set it. `orch-dynamic-workflow` opts into automatic selection with `disable-model-invocation: false` in its frontmatter and `policy.allow_implicit_invocation: true` in `skills/<skill>/agents/openai.yaml`. Every other skill carries the manual-only settings below.
+
+| Host | Manual-only setting | Explicit invocation |
+| --- | --- | --- |
+| Codex | `policy.allow_implicit_invocation: false` in `skills/<skill>/agents/openai.yaml` | `$<library>:<skill>` or the skill picker |
+| Claude Code | `disable-model-invocation: true` in `SKILL.md` frontmatter | `/<library>:<skill>` |
+
+Include `interface.display_name` and `interface.short_description` in the Codex metadata. Opting a skill into automatic selection requires changing both settings; refresh the installed plugin afterwards. Claude Code also blocks model calls to a manual-only skill, so the captain reads a named workflow's `SKILL.md` by path when the request does not invoke it, and a primary on Pi, omp, Grok or Cursor reads every skill by path. A Codex primary has not yet exercised this policy. [Codex invocation policy](https://learn.chatgpt.com/docs/build-skills#optional-metadata), [Claude invocation control](https://code.claude.com/docs/en/skills#control-who-invokes-a-skill).
 
 ## Model and effort
 

@@ -1,0 +1,1 @@
+Yes, land the --lower trial branch into roman main. Mixed-case input with --lower is fine as it is.

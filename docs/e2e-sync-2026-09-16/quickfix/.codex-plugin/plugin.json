@@ -1,0 +1,18 @@
+{
+  "name": "quickfix",
+  "version": "0.1.1",
+  "description": "One saved Orchflows workflow, fix, for a small bounded change to an existing project: Work with tests on a branch, one independent cross-vendor Review, one repair pass, then the project's delivery mode.",
+  "author": {
+    "name": "orchflows"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Quickfix",
+    "shortDescription": "Bounded fix: Work with tests, cross-vendor Review, one repair, then delivery.",
+    "longDescription": "A single named workflow, quickfix:fix, for small bounded changes to an existing project. One Work implements the change with tests on a branch in the project's own delivery mode; one independent Review by a fresh agent from a different vendor audits that branch; one repair pass steers the same Work agent with the findings; the project's delivery mode lands it. Runs only when the captain names it.",
+    "developerName": "orchflows",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Run quickfix:fix only when I name it, for a small bounded change to an existing project."
+  }
+}

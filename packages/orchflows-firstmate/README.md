@@ -62,7 +62,7 @@ flowchart TD
 
 Saved workflows keep such preferences beside their assignments when you ask them to. [Resolution order](docs/architecture.md#model-and-effort).
 
-**Custom workflows.** Use [orch-build-workflow](skills/orch-build-workflow/SKILL.md) to turn a recurring request into a reusable workflow in `~/.orchflows-firstmate/libraries/`. It drafts the composition, has FirstMate run a real trial, and refines it before independent review. Custom workflows run only when you name them; the built-ins stay available by description.
+**Custom workflows.** Use [orch-build-workflow](skills/orch-build-workflow/SKILL.md) to turn a recurring request into a reusable workflow in `~/.orchflows-firstmate/libraries/`. It drafts the composition, has FirstMate run a real trial, and refines it before independent review. Only the dynamic workflow runs by description; Work, Review, build-workflow, the examples and your custom workflows are manual-only, so name them or invoke them by slash command. [Invocation policy](docs/hosts.md#invocation-policy).
 
 ## Design
 
@@ -73,7 +73,7 @@ Saved workflows keep such preferences beside their assignments when you ask them
 
 ## Example workflows
 
-The upstream example libraries are retained unchanged under `example-workflows/`. Add one with `python scripts/orchflows.py setup --example <name>` and install it through your host. They compose the same two primitives and should run through FirstMate as written, but none has been trialed there yet.
+The upstream example libraries are retained unchanged under `example-workflows/`: social-search, short-video, research-acquire, 3d-browser-game, design-loop, evolve, benchmaker, software-factory, export-workflow and self-improve. Add one with `python scripts/orchflows.py setup --example <name>` and install it through your host. They compose the same two primitives and should run through FirstMate as written, but none has been trialed there yet. Self-improve reads FirstMate's task records through this package's [history](docs/history.md).
 
 ## Tests
 

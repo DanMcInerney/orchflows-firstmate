@@ -1,0 +1,6 @@
+interface:
+  display_name: "Quickfix"
+  short_description: "Bounded fix: Work with tests, cross-vendor Review, one repair, then delivery"
+
+policy:
+  allow_implicit_invocation: false

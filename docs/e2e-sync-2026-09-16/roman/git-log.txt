@@ -1,0 +1,5 @@
+746e01d 2026-09-16 16:29:10 -0400 Orchflows Trial Add --json flag for structured per-value conversion output
+f032c56 2026-09-16 15:56:24 -0400 Orchflows Trial Add --lower flag for lowercase numeral output and input
+0f83743 2026-09-16 15:40:21 -0400 Orchflows Trial Reject lowercase Roman numerals as non-canonical
+c7fa4fd 2026-09-16 15:32:46 -0400 Orchflows Trial Add roman.py CLI for integer/Roman numeral conversion
+989a91d 2026-09-16 15:17:17 -0400 Orchflows Trial Seed roman

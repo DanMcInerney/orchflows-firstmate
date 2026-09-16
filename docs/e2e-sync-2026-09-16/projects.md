@@ -1,0 +1,2 @@
+- orchflows-home [local-only] - Orchflows FirstMate package home; saved workflows ship into libraries/ (added 2026-09-16)
+- roman [local-only] - trial target: Roman numeral CLI (added 2026-09-16)
