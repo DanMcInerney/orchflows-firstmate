@@ -34,7 +34,7 @@ Synced with upstream Orchflows `f34f886e`, thirteen commits past the previous pi
 
 ## Next
 
-0. Before making the repository public: decide whether to rewrite history to drop the Nightbind evidence blobs (most of the 28 MiB pack), and replace the GitHub description, which still says research and design.
+0. Flip the repository public. On September 16 the history was rewritten to drop the Nightbind snapshot (pack 28 MiB to 4.4 MiB, every commit's tree unchanged, merged feature branches pruned from the remote) and the GitHub description was replaced; the pre-rewrite history is kept in a local bundle outside the repository. Trial evidence keeps machine-local paths such as `/home/danhm/...`; no secrets are tracked.
 1. Trial one `direct-PR` or `no-mistakes` project, and a saved workflow whose review returns repairs, so the repair-by-steer branch of a saved workflow runs through a model-driven primary.
 2. Try a Codex primary once, which would exercise the `agents/openai.yaml` invocation policy through a Codex primary.
 3. Record a primary's cost from a `--output-format stream-json` run if cost per request matters.
