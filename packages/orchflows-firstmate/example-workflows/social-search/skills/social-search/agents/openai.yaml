@@ -1,6 +1,0 @@
-interface:
-  display_name: "Social Search"
-  short_description: "Research bounded public source scopes, then return one..."
-
-policy:
-  allow_implicit_invocation: false

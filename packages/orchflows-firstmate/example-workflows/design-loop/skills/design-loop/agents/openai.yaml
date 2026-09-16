@@ -1,6 +1,0 @@
-interface:
-  display_name: "Design Loop"
-  short_description: "Develop a project endgoal through N bounded cycles of..."
-
-policy:
-  allow_implicit_invocation: false

@@ -10,30 +10,28 @@
 
 Skill libraries grow around a model's current limitations, and the procedure they embed ages badly. Orchflows keeps two skills and moves everything else into workflows, which describe the relationships between making and reviewing, and guidance documents, which hold domain preferences and removable model corrections. A workflow is reusable because it names assignments and guidance, not a runtime.
 
-FirstMate already owns the runtime: briefs, spawns, worktrees, supervision, steering, recovery and delivery. This library gives the first mate the pattern to use those owners well, so an ordinary request becomes fresh agents for the work and one fresh reviewer, with any model and effort per agent.
+FirstMate already owns the runtime: briefs, spawns, worktrees, supervision, steering, recovery, records and delivery. This library never duplicates any of it. It gives the first mate the pattern to use those owners well, so an ordinary request becomes fresh agents for the work and one fresh reviewer, with any model and effort per agent, plus the guidance and a home for the workflows you save.
 
 ## Install
 
-Requires Python 3.11+ and a FirstMate primary running on Claude Code or Codex.
+Requires Python 3.11+ and a FirstMate primary running on Claude Code or Codex. The checkout is the package: install it as a plugin, then create a home for the workflows you will save.
 
 ```sh
-cd packages/orchflows-firstmate
-python scripts/orchflows.py setup
-```
+git clone https://github.com/DanMcInerney/orchflows-firstmate.git
+cd orchflows-firstmate/packages/orchflows-firstmate
 
-Then register the home with the primary's harness and install the package:
-
-```sh
 # Claude Code
-claude plugin marketplace add ~/.orchflows-firstmate
-claude plugin install orchflows-firstmate@orchflows-firstmate-home --scope user
+claude plugin marketplace add .
+claude plugin install orchflows-firstmate@orchflows-firstmate-local --scope user
 
 # Codex
-codex plugin marketplace add ~/.orchflows-firstmate
-codex plugin add orchflows-firstmate@orchflows-firstmate-home
+codex plugin marketplace add .
+codex plugin add orchflows-firstmate@orchflows-firstmate-local
+
+python scripts/orchflows.py setup   # creates ~/.orchflows-firstmate
 ```
 
-Append the Orchflows block to `$FM_HOME/data/captain.md`, optionally add the role rules to `$FM_HOME/config/crew-dispatch.json`, and start a new FirstMate session. [Full steps](docs/firstmate.md#install) · [Setup options](docs/home.md#setup) · [Registration](docs/hosts.md#register-and-refresh).
+Append the Orchflows block to `$FM_HOME/data/captain.md`, optionally add the role rules to `$FM_HOME/config/crew-dispatch.json`, register the home as a local-only FirstMate project, and start a new FirstMate session. [Full steps](docs/firstmate.md#install) · [Home](docs/home.md) · [Registration](docs/hosts.md#register-and-refresh).
 
 ## Usage
 
@@ -69,11 +67,8 @@ Saved workflows keep such preferences beside their assignments when you ask them
 - [Architecture](docs/architecture.md): the two primitives, where things live, model and effort, guidance selection.
 - [FirstMate](docs/firstmate.md): how each step maps onto FirstMate commands, review placement per delivery mode, durable state.
 - [Guidance](guidance/): domain preferences in `## Make` and `## Review`, extended by dotted specializations and your libraries.
+- [Home](docs/home.md): where saved workflows live and the two-command CLI that catalogs them.
 - [Provenance](UPSTREAM.md): the upstream pin and every deliberate difference.
-
-## Example workflows
-
-The upstream example libraries are retained unchanged under `example-workflows/`: social-search, short-video, research-acquire, 3d-browser-game, design-loop, evolve, benchmaker, software-factory, export-workflow and self-improve. Add one with `python scripts/orchflows.py setup --example <name>` and install it through your host. They compose the same two primitives and should run through FirstMate as written, but none has been trialed there yet. Self-improve reads FirstMate's task records through this package's [history](docs/history.md).
 
 ## Tests
 

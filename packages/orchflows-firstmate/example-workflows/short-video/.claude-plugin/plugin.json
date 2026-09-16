@@ -1,9 +1,0 @@
-{
-  "name": "short-video",
-  "version": "0.3.0",
-  "description": "Composable short-video making and independent export review.",
-  "skills": "./skills/",
-  "author": {
-    "name": "orchflows"
-  }
-}

@@ -46,6 +46,7 @@ records the exact commands and checkpoints.
 | Invocation | Only `orch-dynamic-workflow` is model-invocable. Work, Review, build-workflow, examples and custom workflows are manual-only: `disable-model-invocation: true` on Claude Code and `policy.allow_implicit_invocation: false` in `agents/openai.yaml` on Codex, following upstream (adopted September 16). |
 | Durable state | Phase and task IDs in the backlog item note. |
 | Authoring | The home is a registered local-only FirstMate project; build-workflow dispatches a Work into it. |
+| Scope (September 16) | Build on FirstMate and never duplicate what it owns. No example libraries ship; the checkout is the core; the home holds only saved libraries and their catalogs; the CLI is `setup` and `doctor`. |
 
 ## Work items
 

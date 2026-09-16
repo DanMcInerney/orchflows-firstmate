@@ -32,6 +32,10 @@ Synced with upstream Orchflows `f34f886e`, thirteen commits past the previous pi
 
 [docs/e2e-sync-2026-09-16.md](docs/e2e-sync-2026-09-16.md) records three requests to one stock FirstMate primary (Claude Code 2.1.269, Opus 5, Herdr 0.7.4 in Ubuntu under WSL) on the 0.3.0 package: a plain build ran the dynamic workflow through the Skill tool with a Codex review, one repair by steer and a landing in 18 minutes; a request naming `orch-build-workflow` had the primary read the manual-only skill by path, author the `quickfix` library, trial its `fix` workflow on roman as written, return findings to the author, take a clean final Codex review and land the library in 39 minutes; and `quickfix:fix` named by the captain was read from the home library path and landed a third change in 14 minutes. Every spawn carried explicit harness, model and effort; every landing went through a captain hold. The lab was rebuilt under `~/orchflows-e2e` because WSL clears `/tmp` when the VM restarts; `docs/e2e-sync-2026-09-16/driver/` holds the rebuild and pane scripts. `docs/firstmate.md` now says spawn takes the clone path.
 
+## FirstMate-first cut (September 16, 2026)
+
+The user set the standing principle: build on FirstMate and avoid overlapping its functionality, and ship no example workflows. This cut removed `example-workflows/` (all ten upstream libraries), the managed core copy, the venv runtime, the `resolve` command and the `--source`/`--example` flags. The checkout is now the core that the host's plugin system installs and that `captain.md` names as `<core>`; `scripts/orchflows.py` keeps `setup` and `doctor` for the home, which holds only saved libraries and their catalogs. Package version `0.4.0`; the tests are rewritten around that shape. The September 16 trial ran on the previous install shape (core copied into the home); the skills and the captain.md block are unchanged, so only the `<core>` path differs.
+
 ## Next
 
 0. Flip the repository public. On September 16 the history was rewritten to drop the Nightbind snapshot (pack 28 MiB to 4.4 MiB, every commit's tree unchanged, merged feature branches pruned from the remote) and the GitHub description was replaced; the pre-rewrite history is kept in a local bundle outside the repository. Trial evidence keeps machine-local paths such as `/home/danhm/...`; no secrets are tracked.
@@ -42,5 +46,5 @@ Synced with upstream Orchflows `f34f886e`, thirteen commits past the previous pi
 ## Constraints
 
 - No FirstMate changes, no subagents inside workers, no runtime in the package.
-- Keep guidance and example libraries identical to upstream unless a trial shows a defect.
+- Build on FirstMate; never duplicate what it owns. Keep guidance identical to upstream unless a trial shows a defect. No example libraries.
 - `.sources/` and `.scratch/` are ignored local research copies and stay unchanged.

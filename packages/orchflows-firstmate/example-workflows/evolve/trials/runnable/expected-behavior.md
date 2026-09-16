@@ -1,1 +1,0 @@
-The workflow infers useful evaluation, calibrates it and checks the original. Makers change isolated snapshots; independent review confirms any measured gain. Behavioral regressions cannot win. Evidence identifies exact artifacts, both sides' measurements and evaluator version. The bound ends the search with a resumable best, even if neither challenger wins.
