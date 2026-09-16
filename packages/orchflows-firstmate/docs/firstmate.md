@@ -49,8 +49,8 @@ Use models and efforts your harnesses accept; FirstMate omits an effort a harnes
 
 | Orchflows step | FirstMate action |
 | --- | --- |
-| Work, a change | `fm-brief.sh <id> <repo> --mode <mode>`, then `fm-spawn.sh <id> <project> --mode <mode> --yolo <on\|off> --harness H --model M --effort E` |
-| Work, read-only | `fm-brief.sh <id> <repo> --scout`, then `fm-spawn.sh <id> <project> --scout --harness H --model M --effort E` |
+| Work, a change | `fm-brief.sh <id> <repo> --mode <mode>`, then `fm-spawn.sh <id> <project-path> --mode <mode> --yolo <on\|off> --harness H --model M --effort E` |
+| Work, read-only | `fm-brief.sh <id> <repo> --scout`, then `fm-spawn.sh <id> <project-path> --scout --harness H --model M --effort E` |
 | Review | a scout spawned the same way, whose brief names the exact candidate, the detached checkout and findings only; see [brief wording](#brief-wording) |
 | Assignment and guidance | the brief's `## Firstmate spec`: assignment, input state, absolute guidance paths, checks, and "read and apply the Make sections" or "the Review sections" |
 | Wait | FirstMate's watcher; the captain acts on `done`, `needs-decision`, `blocked` and report events |
@@ -58,7 +58,7 @@ Use models and efforts your harnesses accept; FirstMate omits an effort a harnes
 | Deliver | the project's delivery mode and merge authority, unchanged |
 | State | the request's backlog item note: `orchflows: <workflow> phase=<phase> work=<id> (fm/<id> @<sha>) review=<id> (<verdict>) repair=<steer\|relaunch\|id> guidance=<domains>`; each task's own note names the workflow, phase and role |
 
-Phases are `plan`, `work`, `review`, `repair` and `deliver` for the dynamic workflow, or a saved workflow's own phase names. Run every owner from the FirstMate checkout with `FM_HOME` exported, never from a project worktree or a foreign checkout: the Treehouse lock path is hashed with a bare `git` call in the current directory, and teardown refuses when that call fails.
+`<repo>` is the registered project name; `<project-path>` is its clone under `$FM_HOME/projects/`, which spawn requires as a path. Phases are `plan`, `work`, `review`, `repair` and `deliver` for the dynamic workflow, or a saved workflow's own phase names. Run every owner from the FirstMate checkout with `FM_HOME` exported, never from a project worktree or a foreign checkout: the Treehouse lock path is hashed with a bare `git` call in the current directory, and teardown refuses when that call fails.
 
 The brief's captain's-intent section keeps the captain's words; Orchflows context belongs in the Firstmate spec. A worker never sees this library's skills; it sees its assignment and the guidance files named in its brief.
 

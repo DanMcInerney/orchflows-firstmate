@@ -2,5 +2,8 @@
 *.json text eol=lf
 .gitignore text eol=lf
 .gitattributes text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.txt text eol=lf
 # Preserve the retained package bytes, including the upstream example libraries.
 packages/orchflows-firstmate/** -text whitespace=cr-at-eol

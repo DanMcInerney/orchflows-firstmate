@@ -28,10 +28,14 @@ The same increment folded the first trial's lessons into `docs/firstmate.md` (br
 
 Synced with upstream Orchflows `f34f886e`, thirteen commits past the previous pin. Adopted: the invocation policy (only `orch-dynamic-workflow` is model-invocable; every other skill carries `disable-model-invocation: true` and a Codex `agents/openai.yaml` policy), the dynamic workflow's wait-for-the-reviewer wording, build-workflow's matched-conditions trial rule, and the example libraries copied byte-for-byte (benchmaker, software-factory, export-workflow and self-improve added; Nightbind removed as upstream did). `orch-self-improve` left the core in favor of the upstream `self-improve` example. Upstream's multi-host installers were not ported; `UPSTREAM.md` lists every difference. The package's copied `reports/` were removed, a root `LICENSE` was added, and the package is version `0.3.0`; its 32 tests pass on Windows (Python 3.14) and Ubuntu in WSL (Python 3.12). Docs now describe the policy in `docs/architecture.md#invocation`, `docs/hosts.md#invocation-policy` and the `captain.md` block.
 
+## Trial of the synced library (September 16, 2026)
+
+[docs/e2e-sync-2026-09-16.md](docs/e2e-sync-2026-09-16.md) records three requests to one stock FirstMate primary (Claude Code 2.1.269, Opus 5, Herdr 0.7.4 in Ubuntu under WSL) on the 0.3.0 package: a plain build ran the dynamic workflow through the Skill tool with a Codex review, one repair by steer and a landing in 18 minutes; a request naming `orch-build-workflow` had the primary read the manual-only skill by path, author the `quickfix` library, trial its `fix` workflow on roman as written, return findings to the author, take a clean final Codex review and land the library in 39 minutes; and `quickfix:fix` named by the captain was read from the home library path and landed a third change in 14 minutes. Every spawn carried explicit harness, model and effort; every landing went through a captain hold. The lab was rebuilt under `~/orchflows-e2e` because WSL clears `/tmp` when the VM restarts; `docs/e2e-sync-2026-09-16/driver/` holds the rebuild and pane scripts. `docs/firstmate.md` now says spawn takes the clone path.
+
 ## Next
 
 0. Before making the repository public: decide whether to rewrite history to drop the Nightbind evidence blobs (most of the 28 MiB pack), and replace the GitHub description, which still says research and design.
-1. Trial a saved workflow run by name through a model-driven primary, and one `direct-PR` or `no-mistakes` project, to cover the placements the two trials left untried.
+1. Trial one `direct-PR` or `no-mistakes` project, and a saved workflow whose review returns repairs, so the repair-by-steer branch of a saved workflow runs through a model-driven primary.
 2. Try a Codex primary once, which would exercise the `agents/openai.yaml` invocation policy through a Codex primary.
 3. Record a primary's cost from a `--output-format stream-json` run if cost per request matters.
 

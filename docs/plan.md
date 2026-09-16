@@ -71,6 +71,8 @@ records the exact commands and checkpoints.
 
 ## Not done here
 
-A trial of the dynamic workflow through a real FirstMate primary on a real
-project; the Codex invocation policy exercised through a Codex primary; Pi and omp primaries
-beyond the `captain.md` pointer.
+Done since, on local-only projects through a Claude Code primary: the dynamic
+workflow, a workflow built by name and a saved workflow run by name (see the
+trial records in the root README). Still untried: the Codex invocation policy
+through a Codex primary; Pi and omp primaries beyond the `captain.md` pointer;
+`direct-PR` and `no-mistakes` placements.

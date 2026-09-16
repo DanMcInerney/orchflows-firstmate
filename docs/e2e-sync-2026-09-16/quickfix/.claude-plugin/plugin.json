@@ -1,0 +1,9 @@
+{
+  "name": "quickfix",
+  "version": "0.1.1",
+  "description": "One saved Orchflows workflow, fix, for a small bounded change to an existing project: Work with tests on a branch, one independent cross-vendor Review, one repair pass, then the project's delivery mode.",
+  "author": {
+    "name": "orchflows"
+  },
+  "skills": "./skills/"
+}
