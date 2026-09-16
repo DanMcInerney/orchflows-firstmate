@@ -43,7 +43,7 @@ records the exact commands and checkpoints.
 | Review versus delivery mode | no-mistakes: the pipeline is the Review; a named reviewer runs before validation only when the request or saved workflow asks (decided after the September 15 trial). direct-PR: on the PR before merge. local-only: on `fm/<id>` before merge. |
 | Model and effort defaults | `config/crew-dispatch.json` rules for the Orchflows Work and Review roles; request or saved-workflow settings override; FirstMate's effort fallback otherwise. |
 | Default workflow | `captain.md` states it; the dynamic skill's description makes it the catch-all. |
-| Custom workflows | Manual only: `disable-model-invocation: true` on Claude Code, a description convention elsewhere. Built-ins stay model-invocable. |
+| Invocation | Only `orch-dynamic-workflow` is model-invocable. Work, Review, build-workflow, examples and custom workflows are manual-only: `disable-model-invocation: true` on Claude Code and `policy.allow_implicit_invocation: false` in `agents/openai.yaml` on Codex, following upstream (adopted September 16). |
 | Durable state | Phase and task IDs in the backlog item note. |
 | Authoring | The home is a registered local-only FirstMate project; build-workflow dispatches a Work into it. |
 
@@ -72,5 +72,5 @@ records the exact commands and checkpoints.
 ## Not done here
 
 A trial of the dynamic workflow through a real FirstMate primary on a real
-project; a verified manual-only flag for a Codex primary; Pi and omp primaries
+project; the Codex invocation policy exercised through a Codex primary; Pi and omp primaries
 beyond the `captain.md` pointer.

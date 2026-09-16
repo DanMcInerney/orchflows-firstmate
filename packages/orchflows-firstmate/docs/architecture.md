@@ -25,10 +25,14 @@ Give each instruction and mechanism one owner; reference shared facts. READMEs a
 | Deterministic mechanics | Owning skill's `scripts/`, with sibling `tests/`; core CLI in `scripts/` |
 | Package identity | Root `plugin.json` |
 | Agent execution, isolation, steering, recovery, delivery | FirstMate; [firstmate.md](firstmate.md) |
-| Host registration and manual-only workflows | [hosts.md](hosts.md) |
+| Host registration and invocation policy | [hosts.md](hosts.md) |
 | Setup, updates and home paths | [home.md](home.md) |
 | Task records and their interpretation | [history.md](history.md) |
 | Run outputs and evidence | Worker worktree, scout report or delivered branch, never a package |
+
+## Invocation
+
+[orch-dynamic-workflow](../skills/orch-dynamic-workflow/SKILL.md) is the automatic fallback when the request names no workflow; the `captain.md` block makes it FirstMate's default. Every other core skill, every workflow under `example-workflows/` and every custom workflow in `~/.orchflows-firstmate/libraries/` is manual-only: the captain runs one when the request names it, by its slash command or by reading its `SKILL.md` from the resolved path. A skill that a running workflow links is read as a file and needs no invocation. When creating or copying a workflow, write and verify the [host invocation settings](hosts.md#invocation-policy) for every skill, including helpers.
 
 ## Model and effort
 
@@ -79,13 +83,14 @@ Setup's `CORE_ENTRIES` in `scripts/orchflows.py` owns the shipped file list. Tes
 ├── README.md                       composition, agent count, install, dependencies
 ├── references/                     shared context and contracts
 ├── guidance/<domain>.md            domain or dotted specialization
-├── skills/<skill>/SKILL.md          frontmatter name + description; instructions
+├── skills/<skill>/SKILL.md          frontmatter, invocation policy; instructions
+├── skills/<skill>/agents/openai.yaml Codex invocation policy and UI metadata
 ├── skills/<skill>/references/       knowledge used by this skill only
 ├── skills/<skill>/scripts/          mechanics; sibling tests/
 └── trials/                         request.md, expected-behavior.md
 ```
 
-Skill identity is `<library>:<skill>`. Keep links within the package; reach other packages by resolved paths. Never embed machine-specific paths. Declare runtime dependencies in the README; setup installs none for libraries.
+Skill identity is `<library>:<skill>`. Keep links within the package; reach other packages by resolved paths. Never embed machine-specific paths. Declare runtime dependencies in the README; setup installs none for libraries. Upstream example libraries also carry a `.kimi-plugin/plugin.json`; neither primary host here reads it.
 
 ## Invariants
 

@@ -4,9 +4,9 @@
 
 The user redirected the project. FirstMate launches agents natively as it always has; this library supplies Orchflows' pattern for how that work is done: two terse composable skills, workflows built from workflows, per-agent model and effort, the dynamic workflow as FirstMate's default, and custom workflows that run only when named. Plug-and-play means nothing in FirstMate changes. [docs/plan.md](docs/plan.md) records the decisions and acceptance.
 
-## State
+## Increment of September 15, 2026
 
-This increment:
+That increment:
 
 - Retired `integrations/firstmate/` (nine FirstMate patches plus the task-group controller, bridge and overlay), `tools/`, the package client `scripts/firstmate.py`, `host_config.py`, `native_logs.py` and their tests. Their research and evidence moved to [archive/research](archive/research/README.md).
 - Rewrote the five skills at upstream length. Work and Review dispatch fresh FirstMate crewmates and scouts through `fm-brief.sh` and `fm-spawn.sh`; the dynamic workflow adds FirstMate's constraints; build-workflow ships into the home library; self-improve reads FirstMate task records.
@@ -24,10 +24,15 @@ This increment:
 
 The same increment folded the first trial's lessons into `docs/firstmate.md` (brief wording, repair steers, the no-origin rule for local-only projects, Codex first-run prompts and `blocked:` lines, running owners from the checkout, the backlog note format), added "work alone without delegating" to `orch-work` and `orch-review`, and decided that on `no-mistakes` projects the pipeline is the Review unless the request or a saved workflow names a reviewer. `docs/plan.md` records the decision. Skill bodies stay under 200 words; the 29 tests pass.
 
+## Upstream sync and release preparation (September 16, 2026)
+
+Synced with upstream Orchflows `f34f886e`, thirteen commits past the previous pin. Adopted: the invocation policy (only `orch-dynamic-workflow` is model-invocable; every other skill carries `disable-model-invocation: true` and a Codex `agents/openai.yaml` policy), the dynamic workflow's wait-for-the-reviewer wording, build-workflow's matched-conditions trial rule, and the example libraries copied byte-for-byte (benchmaker, software-factory, export-workflow and self-improve added; Nightbind removed as upstream did). `orch-self-improve` left the core in favor of the upstream `self-improve` example. Upstream's multi-host installers were not ported; `UPSTREAM.md` lists every difference. The package's copied `reports/` were removed, a root `LICENSE` was added, and the package is version `0.3.0`; its 32 tests pass on Windows (Python 3.14) and Ubuntu in WSL (Python 3.12). Docs now describe the policy in `docs/architecture.md#invocation`, `docs/hosts.md#invocation-policy` and the `captain.md` block.
+
 ## Next
 
+0. Before making the repository public: decide whether to rewrite history to drop the Nightbind evidence blobs (most of the 28 MiB pack), and replace the GitHub description, which still says research and design.
 1. Trial a saved workflow run by name through a model-driven primary, and one `direct-PR` or `no-mistakes` project, to cover the placements the two trials left untried.
-2. Try a Codex primary once, which would also settle the manual-only skill flag question in `docs/hosts.md`.
+2. Try a Codex primary once, which would exercise the `agents/openai.yaml` invocation policy through a Codex primary.
 3. Record a primary's cost from a `--output-format stream-json` run if cost per request matters.
 
 ## Constraints

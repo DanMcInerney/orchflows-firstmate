@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orch Work"
+  short_description: "Dispatch a fresh FirstMate agent to make a result"
+
+policy:
+  allow_implicit_invocation: false

@@ -15,7 +15,7 @@ Start a new FirstMate session. A remote secondmate needs steps 1 and 4 on its ow
 
 ```markdown
 ## Orchflows
-- Run every ship and scout through orch-dynamic-workflow unless I name another workflow or say "plain". Run a custom workflow only when I name it.
+- Run every ship and scout through orch-dynamic-workflow unless I name another workflow or say "plain". Run any other workflow only when I name it: invoke it by its slash command or read its SKILL.md by path.
 - Resolve each agent's model and effort per <core>/docs/architecture.md#model-and-effort: my request, then the saved workflow, then the Orchflows rules in crew-dispatch.json, then your effort fallback.
 - Record each workflow's phase and task IDs in the backlog item note and resume from it after a restart.
 - Read <core>/docs/firstmate.md before the first Orchflows dispatch of a session.
@@ -88,9 +88,9 @@ On a `no-mistakes` project the pipeline is the Review: FirstMate's captain contr
 
 A local-only project must have no `origin` remote. When a worktree has an origin configured, `fm-spawn.sh` fetches it and resets the pooled worktree to `origin/<default>`; `fm-merge-local.sh` advances only local `main`, so every task after the first would start from a stale base. Remove the remote before registering the project; a purely local project created through FirstMate's `project-management` skill has none.
 
-## Manual-only workflows
+## Named workflows
 
-See [hosts](hosts.md#manual-only-workflows). The captain runs a custom workflow only when the request names it, by reading its `SKILL.md` from the resolved library path.
+Every skill except orch-dynamic-workflow is manual-only per the [invocation policy](hosts.md#invocation-policy). The captain runs one when the request names it: by its slash command, or by reading its `SKILL.md` from `<core>/skills/` or the resolved library path. Skills that a running workflow links are read as files.
 
 ## What this library does not do
 
