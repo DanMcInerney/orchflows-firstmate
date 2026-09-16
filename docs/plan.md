@@ -1,7 +1,7 @@
 # Plan: Orchflows as a FirstMate skill library
 
 Written September 15, 2026. This replaces the dev.1 through dev.9 direction
-recorded in [archive/research](../archive/research/).
+recorded in the local, ignored `archive/research/`.
 
 ## Goal
 

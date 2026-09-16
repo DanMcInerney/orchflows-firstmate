@@ -18,4 +18,4 @@ Kept in step with upstream:
 - Invocation policy: only `orch-dynamic-workflow` is model-invocable; Work, Review, build-workflow and every saved workflow are manual-only through `disable-model-invocation` and `agents/openai.yaml`.
 - Guidance is byte-identical to upstream.
 
-An earlier development line (`0.1.0-dev.1` through `dev.9`) implemented FirstMate-owned component tasks through patches to FirstMate and a package client. It is retired; its research and evidence are archived under the repository's `archive/research/` directory.
+An earlier development line (`0.1.0-dev.1` through `dev.9`) implemented FirstMate-owned component tasks through patches to FirstMate and a package client. It is retired; its research and evidence are kept outside the published repository.
