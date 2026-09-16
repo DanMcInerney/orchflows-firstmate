@@ -4,7 +4,7 @@ This library runs Orchflows' pattern with FirstMate's own agents. The FirstMate 
 
 ## Install
 
-1. Install this package into the harness that runs your FirstMate primary session, per [hosts](hosts.md#register-and-refresh), and run `python scripts/orchflows.py setup` once to create `~/.orchflows-firstmate` for your own libraries.
+1. Install the checkout as a plugin in the harness that runs your FirstMate primary session, per [hosts](hosts.md#register-and-refresh), and run `python scripts/orchflows.py setup` once to create `~/.orchflows-firstmate` for the workflows you save.
 2. Append the block below to `$FM_HOME/data/captain.md`. FirstMate prints that file in every session-start digest.
 3. Optionally add the role defaults below to `$FM_HOME/config/crew-dispatch.json`. FirstMate's bootstrap validates the file, and its quota ranker applies to any profile array.
 4. Register `~/.orchflows-firstmate` as a `local-only` FirstMate project with [no origin remote](#local-only-projects) so [orch-build-workflow](../skills/orch-build-workflow/SKILL.md) can ship saved workflows into it.
@@ -21,7 +21,7 @@ Start a new FirstMate session. A remote secondmate needs steps 1 and 4 on its ow
 - Read <core>/docs/firstmate.md before the first Orchflows dispatch of a session.
 ```
 
-Replace `<core>` with the installed package path from [hosts](hosts.md#register-and-refresh).
+Replace `<core>` with the checkout path.
 
 ### crew-dispatch.json roles
 
@@ -71,7 +71,7 @@ The Firstmate spec of every Orchflows agent opens with its identity, and the tri
 - Both: "Read first, then apply the Make sections" or "the Review sections", followed by absolute guidance paths, then the assignment, the numbered checks, and "end with a verdict: ready, ready with the listed repairs, or not ready" for a reviewer.
 - A repair steer names the report path and asks the worker to read it in full, lists exactly the repairs to make, names any finding not to act on and why, forbids other changes, and ends with "append a fresh `done: ...` line to your status file". A steered worker that finishes without a new status line never wakes the captain.
 
-Codex workers need the captain on their first launch in a project: the repository trust prompt, which FirstMate's `harness-adapters` reference covers, and on Codex 0.154 or later a one-time review of new or changed hooks. Answer the first with `fm-send.sh <id> --key Enter` and the second in the worker's pane; later Codex tasks in that project start unattended. A Codex worker may also report `blocked:` on a tooling limit, such as backticks in a shell command; answer by steer with a workaround, such as a committed script or the native file-edit tool.
+Codex workers need the captain on their first launch in a project; FirstMate's `harness-adapters` skill owns those prompts and the captain follows it. A Codex worker may also report `blocked:` on a tooling limit, such as backticks in a shell command; answer by steer with a workaround, such as a committed script or the native file-edit tool.
 
 ## Delivery modes
 

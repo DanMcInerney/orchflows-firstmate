@@ -1,6 +1,0 @@
-interface:
-  display_name: "Implement Increment"
-  short_description: "Implement one approved-scope design in an isolated candidate..."
-
-policy:
-  allow_implicit_invocation: false

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Review Short Video"
-  short_description: "Independently examine the exact exported short video with..."
-
-policy:
-  allow_implicit_invocation: false

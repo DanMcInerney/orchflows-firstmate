@@ -6,17 +6,17 @@ Registration commands checked 2026-09-12: Codex 0.144.0, Claude Code 2.1.233. Th
 
 ## Register and refresh
 
-Setup writes catalogs into the home; register the home with the harness that runs the primary, install the core and each library, then start a new FirstMate session. Keep one enabled core installation. Bump the package version in every host manifest before refreshing; Claude Code can reuse its cached copy at an unchanged version. If edits are missing, check the installed cache and restart.
+Install the core from the checkout into the harness that runs the primary. Register the home only when you want a saved library by slash command; the captain reads a named workflow from the home's `libraries/` path either way. Start a new FirstMate session after installing. Keep one enabled core installation. Bump the package version in every host manifest before refreshing; Claude Code can reuse its cached copy at an unchanged version. If edits are missing, check the installed cache and restart.
 
 | | Codex | Claude Code |
 | --- | --- | --- |
-| Register home | `codex plugin marketplace add <home>` | `claude plugin marketplace add <home>` |
-| Install | `codex plugin add <lib>@orchflows-firstmate-home` | `claude plugin install <lib>@orchflows-firstmate-home --scope user` |
+| Install the core | `codex plugin marketplace add <checkout>`; `codex plugin add orchflows-firstmate@orchflows-firstmate-local` | `claude plugin marketplace add <checkout>`; `claude plugin install orchflows-firstmate@orchflows-firstmate-local --scope user`, or `claude --plugin-dir <checkout>` for one session |
+| Register the home | `codex plugin marketplace add <home>` | `claude plugin marketplace add <home>` |
+| Install a library | `codex plugin add <lib>@orchflows-firstmate-home` | `claude plugin install <lib>@orchflows-firstmate-home --scope user` |
 | After editing a library | bump manifest versions; `codex plugin add <lib>@orchflows-firstmate-home` | bump manifest versions; `claude plugin marketplace update orchflows-firstmate-home`; `claude plugin update <lib>@orchflows-firstmate-home` |
 | Invoke | `$<lib>:<skill>` or `/skills` | `/<lib>:<skill>` |
-| Core development | register the checkout's `orchflows-firstmate-local` catalog; install `orchflows-firstmate@orchflows-firstmate-local` | same, or `claude --plugin-dir <checkout>` |
 
-`<core>` in `captain.md` is the installed package path, `<home>/.local/packages/orchflows-firstmate`. A primary on Pi, omp, Grok or Cursor has no manifest here; give `captain.md` the absolute path of `<core>/skills/orch-dynamic-workflow/SKILL.md` and FirstMate reads skills by path.
+`<core>` in `captain.md` is the checkout path. A primary on Pi, omp, Grok or Cursor has no manifest here; give `captain.md` the absolute path of `<core>/skills/orch-dynamic-workflow/SKILL.md` and FirstMate reads skills by path.
 
 Registration references: [Codex plugins](https://developers.openai.com/plugins/build/plugins), [Claude plugins](https://code.claude.com/docs/en/plugins).
 

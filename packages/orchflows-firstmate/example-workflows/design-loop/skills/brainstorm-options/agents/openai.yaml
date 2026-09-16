@@ -1,6 +1,0 @@
-interface:
-  display_name: "Brainstorm Options"
-  short_description: "Propose a few scoped next increments from an endgoal,..."
-
-policy:
-  allow_implicit_invocation: false

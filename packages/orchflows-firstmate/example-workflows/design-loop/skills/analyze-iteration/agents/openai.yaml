@@ -1,6 +1,0 @@
-interface:
-  display_name: "Analyze Iteration"
-  short_description: "Analyze one project increment's design and comparison..."
-
-policy:
-  allow_implicit_invocation: false

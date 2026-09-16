@@ -32,7 +32,7 @@ Give each instruction and mechanism one owner; reference shared facts. READMEs a
 
 ## Invocation
 
-[orch-dynamic-workflow](../skills/orch-dynamic-workflow/SKILL.md) is the automatic fallback when the request names no workflow; the `captain.md` block makes it FirstMate's default. Every other core skill, every workflow under `example-workflows/` and every custom workflow in `~/.orchflows-firstmate/libraries/` is manual-only: the captain runs one when the request names it, by its slash command or by reading its `SKILL.md` from the resolved path. A skill that a running workflow links is read as a file and needs no invocation. When creating or copying a workflow, write and verify the [host invocation settings](hosts.md#invocation-policy) for every skill, including helpers.
+[orch-dynamic-workflow](../skills/orch-dynamic-workflow/SKILL.md) is the automatic fallback when the request names no workflow; the `captain.md` block makes it FirstMate's default. Every other core skill and every saved workflow in `~/.orchflows-firstmate/libraries/` is manual-only: the captain runs one when the request names it, by its slash command or by reading its `SKILL.md` from the resolved path. A skill that a running workflow links is read as a file and needs no invocation. When creating or copying a workflow, write and verify the [host invocation settings](hosts.md#invocation-policy) for every skill, including helpers.
 
 ## Model and effort
 
@@ -57,7 +57,7 @@ Resolve once at the outer entrypoint, including a leaf invoked alone:
 2. For each name, visit dotted prefixes from general to specific. At each prefix, read core then selected libraries in caller-supplied order. Example: `short-video` across packages, then `short-video.marketing` across packages.
 3. Keep each resolved file once, in first-use order. More specific guidance wins within its domain; independent domains compose.
 4. Missing implicit parents are allowed; library-only domains are valid. An explicit selection must exist in core or a selected library; report a gap and block dependent work otherwise. Use general guidance for unfamiliar sites or genres.
-5. Resolve package dependencies through supplied roots or the [home CLI](home.md#resolve). Pass absolute paths and request context unchanged into every brief and composed skill; workers read guidance as files and need no plugin. Extend only for new dependencies.
+5. Resolve package dependencies through supplied roots or the home's [`libraries/<name>/`](home.md#libraries). Pass absolute paths and request context unchanged into every brief and composed skill; workers read guidance as files and need no plugin. Extend only for new dependencies.
 
 Selected libraries may supply removable model corrections under existing domain names. Normal specificity applies; model names are not domain specializations.
 
@@ -65,13 +65,13 @@ Selected libraries may supply removable model corrections under existing domain 
 
 | Root | Contents / editing owner |
 | --- | --- |
-| Core checkout | Built-in `skills/orch-*/`, guidance, docs, CLI, tests, example libraries; orchflows developers |
-| Home `~/.orchflows-firstmate` | User-owned libraries and runtime; setup-managed core per [home.md](home.md) |
+| Core checkout | Built-in `skills/orch-*/`, guidance, docs, CLI, tests; installed as the plugin and named as `<core>` in `captain.md` |
+| Home `~/.orchflows-firstmate` | Your saved libraries and their catalogs per [home.md](home.md); a local-only FirstMate project |
 | Project workspace | Task outputs, in FirstMate worktrees |
 
-Reserve `orch-` for built-ins. Create custom workflows in `~/.orchflows-firstmate/libraries/personal/skills/<workflow>/` unless the caller names another library or repository. The author is a Work agent shipping into the home, which is a registered FirstMate project per [home.md](home.md#authoring). Edit the checkout or user library, never managed core or host caches.
+Reserve `orch-` for built-ins. Create custom workflows in `~/.orchflows-firstmate/libraries/personal/skills/<workflow>/` unless the caller names another library or repository. The author is a Work agent shipping into the home, which is a registered FirstMate project per [home.md](home.md#authoring). Edit the checkout or your library, never a host cache.
 
-Setup's `CORE_ENTRIES` in `scripts/orchflows.py` owns the shipped file list. Tests and example libraries stay in the checkout; core Markdown links must resolve within the shipped core. To update core: edit the checkout, run `python -m unittest discover -s tests`, then [load it for development](hosts.md#register-and-refresh) or [run setup](home.md#setup) to update a home.
+Core Markdown links must resolve within the checkout. To update core: edit the checkout, run `python -m unittest discover -s tests`, then [refresh the registration](hosts.md#register-and-refresh).
 
 ## A library
 
@@ -90,7 +90,7 @@ Setup's `CORE_ENTRIES` in `scripts/orchflows.py` owns the shipped file list. Tes
 └── trials/                         request.md, expected-behavior.md
 ```
 
-Skill identity is `<library>:<skill>`. Keep links within the package; reach other packages by resolved paths. Never embed machine-specific paths. Declare runtime dependencies in the README; setup installs none for libraries. Upstream example libraries also carry a `.kimi-plugin/plugin.json`; neither primary host here reads it.
+Skill identity is `<library>:<skill>`. Keep links within the package; reach other packages by resolved paths. Never embed machine-specific paths. Declare runtime dependencies in the README; setup installs none.
 
 ## Invariants
 

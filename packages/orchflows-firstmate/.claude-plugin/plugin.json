@@ -1,6 +1,6 @@
 {
   "name": "orchflows-firstmate",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Orchflows for FirstMate: fresh FirstMate agents for Work and Review, composed into reusable workflows with per-agent model and effort.",
   "author": {
     "name": "orchflows"

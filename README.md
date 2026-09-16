@@ -1,8 +1,8 @@
 # orchflows-firstmate
 
-Orchflows' pattern for [FirstMate](https://github.com/kunchenguid/firstmate): fresh agents for Work and Review, two terse composable skills, reusable workflows with optional model and effort per agent. FirstMate launches every agent exactly as it does today; this library only changes the pattern the first mate follows.
+Orchflows' pattern for [FirstMate](https://github.com/kunchenguid/firstmate): fresh agents for Work and Review, two terse composable skills, reusable workflows with optional model and effort per agent. FirstMate launches every agent exactly as it does today and keeps every record; this library only changes the pattern the first mate follows and never duplicates what FirstMate owns.
 
-The installable package is [packages/orchflows-firstmate](packages/orchflows-firstmate/README.md). Install it into the harness that runs your FirstMate primary session, add one block to `data/captain.md`, and optionally two rules to `config/crew-dispatch.json`. No FirstMate file is patched and workers need no plugin. Full steps: [FirstMate integration](packages/orchflows-firstmate/docs/firstmate.md).
+The installable package is [packages/orchflows-firstmate](packages/orchflows-firstmate/README.md). Install the checkout as a plugin in the harness that runs your FirstMate primary session, add one block to `data/captain.md`, and optionally two rules to `config/crew-dispatch.json`. No FirstMate file is patched, workers need no plugin, and no example libraries ship: you build workflows by asking. Full steps: [FirstMate integration](packages/orchflows-firstmate/docs/firstmate.md).
 
 | Document | Purpose |
 | --- | --- |
