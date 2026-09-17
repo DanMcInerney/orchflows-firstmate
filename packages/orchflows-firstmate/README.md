@@ -10,7 +10,7 @@
 
 Skill libraries grow around a model's current limitations, and the procedure they embed ages badly. Orchflows keeps two skills and moves everything else into workflows, which describe the relationships between making and reviewing, and guidance documents, which hold domain preferences and removable model corrections. A workflow is reusable because it names assignments and guidance, not a runtime.
 
-FirstMate already owns the runtime: briefs, spawns, worktrees, supervision, steering, recovery, records and delivery. This library never duplicates any of it. It gives the first mate the pattern to use those owners well, so an ordinary request becomes fresh agents for the work and one fresh reviewer, with any model and effort per agent, plus the guidance and a home for the workflows you save.
+FirstMate already owns dispatch, model and effort selection, briefs, spawns, worktrees, supervision, steering, recovery, records and delivery. This library gives it reusable Work and Review compositions, layered guidance and a home for the workflows you save. FirstMate uses its normal routing for every assignment.
 
 ## Install
 
@@ -31,7 +31,7 @@ codex plugin add orchflows-firstmate@orchflows-firstmate-local
 python scripts/orchflows.py setup   # creates ~/.orchflows-firstmate
 ```
 
-Append the Orchflows block to `$FM_HOME/data/captain.md`, optionally add the role rules to `$FM_HOME/config/crew-dispatch.json`, register the home as a local-only FirstMate project, and start a new FirstMate session. [Full steps](docs/firstmate.md#install) · [Home](docs/home.md) · [Registration](docs/hosts.md#register-and-refresh).
+Append the Orchflows block to `$FM_HOME/data/captain.md`, register the home as a local-only FirstMate project, and start a new FirstMate session. Your existing FirstMate dispatch configuration applies. [Full steps](docs/firstmate.md#install) · [Upgrade from 0.4 or earlier](docs/firstmate.md#upgrading-from-04-or-earlier) · [Home](docs/home.md) · [Registration](docs/hosts.md#register-and-refresh).
 
 ## Usage
 
@@ -54,13 +54,9 @@ flowchart TD
     class T,D result;
 ```
 
-**Models and effort.** Every agent is its own FirstMate spawn, so each can use any verified harness. Give Work and Review defaults in `crew-dispatch.json`, then override any named assignment in the request:
+**Models and effort.** FirstMate chooses the harness, model and effort for every assignment using its normal dispatch. Dynamic and saved workflows carry no execution preferences; they describe the work, its inputs, guidance, dependencies and checks. Put execution preferences in your request to FirstMate or its own configuration. [Ownership](docs/architecture.md#model-and-effort).
 
-> Work: claude-sonnet-5 at xhigh. Review: claude-fable-5-1 at high. Final fixer: codex gpt-6-astra at xhigh.
-
-Saved workflows keep such preferences beside their assignments when you ask them to. [Resolution order](docs/architecture.md#model-and-effort).
-
-**Custom workflows.** Use [orch-build-workflow](skills/orch-build-workflow/SKILL.md) to turn a recurring request into a reusable workflow in `~/.orchflows-firstmate/libraries/`. It drafts the composition, has FirstMate run a real trial, and refines it before independent review. Only the dynamic workflow runs by description; Work, Review, build-workflow, the examples and your custom workflows are manual-only, so name them or invoke them by slash command. [Invocation policy](docs/hosts.md#invocation-policy).
+**Custom workflows.** Use [orch-build-workflow](skills/orch-build-workflow/SKILL.md) to turn a recurring request into a reusable workflow in `~/.orchflows-firstmate/libraries/`. It drafts the composition, has FirstMate run a real trial, and refines it before independent review. Only the dynamic workflow runs by description; Work, Review, build-workflow and your custom workflows are manual-only, so name them or invoke them by slash command. [Invocation policy](docs/hosts.md#invocation-policy).
 
 ## Design
 

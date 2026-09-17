@@ -1,8 +1,8 @@
 # Handoff
 
-## Direction (September 15, 2026)
+## Direction (September 17, 2026)
 
-The user redirected the project. FirstMate launches agents natively as it always has; this library supplies Orchflows' pattern for how that work is done: two terse composable skills, workflows built from workflows, per-agent model and effort, the dynamic workflow as FirstMate's default, and custom workflows that run only when named. Plug-and-play means nothing in FirstMate changes. [docs/plan.md](docs/plan.md) records the decisions and acceptance.
+FirstMate owns dispatch and execution, including every agent's harness, model and effort. This library supplies two terse composable skills, workflows built from workflows, layered guidance, the dynamic workflow as FirstMate's default, and custom workflows that run only when named. Workflows save no execution preferences; older saved profile and vendor settings are ignored and removed when a workflow is updated. Plug-and-play means no FirstMate code or dispatch-rule changes. [docs/plan.md](docs/plan.md) records the decisions and acceptance.
 
 ## Increment of September 15, 2026
 
@@ -36,12 +36,27 @@ Synced with upstream Orchflows `f34f886e`, thirteen commits past the previous pi
 
 The user set the standing principle: build on FirstMate and avoid overlapping its functionality, and ship no example workflows. This cut removed `example-workflows/` (all ten upstream libraries), the managed core copy, the venv runtime, the `resolve` command and the `--source`/`--example` flags. The checkout is now the core that the host's plugin system installs and that `captain.md` names as `<core>`; `scripts/orchflows.py` keeps `setup` and `doctor` for the home, which holds only saved libraries and their catalogs. Package version `0.4.0`; the tests are rewritten around that shape. The September 16 trial ran on the previous install shape (core copied into the home); the skills and the captain.md block are unchanged, so only the `<core>` path differs.
 
+## FirstMate-owned dispatch (September 17, 2026)
+
+The user removed execution preferences from both dynamic and saved workflows. Package version `0.5.0` updates all four skills to use FirstMate's ordinary intake and recovery, removes the library's model policy, effort fallback, role-profile examples and repair-profile logic, and keeps the workflow composition and guidance. The architecture now ignores legacy saved harness/model/effort/vendor settings and authoring removes them when updating a workflow. `docs/firstmate.md` covers replacing the old captain block and reviewing any copied role rules without overwriting personal configuration. All three manifests carry the version bump for cache refresh.
+
+FirstMate's dispatch owners were researched at `3eb5b6334a80e06083e3837f0032a5cec39b8e52`; neither FirstMate nor the ignored research copies were changed. Guidance and earlier trial artifacts are unchanged. The 15 package tests pass on Windows and Ubuntu/WSL, and all four skill bodies are under 200 words. The generic skill-creator validator rejects the pre-existing Claude `disable-model-invocation` frontmatter field; the package's own cross-host invocation tests pass, and that field is retained.
+
+An independent read-only instruction check followed an unnamed dynamic request, the historical quickfix workflow with conflicting saved profiles and a repair, and authoring with run-specific execution settings. It kept routing with FirstMate, ignored legacy profile and cross-vendor constraints, and kept authoring-session settings out of saved workflows. Its two wording findings were fixed: the skills now consult the delivery-mode mapping before dispatching a reviewer, and build-workflow distinguishes slash-command registration from availability by path. This check launched no workers. The September 15–16 trials exercised the previous routing contract.
+
+## Live E2E suite (September 17, 2026)
+
+[tests/e2e/](tests/e2e/README.md) adds an opt-in WSL harness outside the package. Four cases ran through stock FirstMate `3eb5b63` with the 0.5.0 core: unnamed dynamic build, saved-workflow authoring plus trial, reuse in a fresh primary, and a dynamic regression change. All 462 independent artifact assertions and 149 non-resolver workflow assertions passed. Reviews found real defects; FirstMate handled repair steering, guarded local merges and cleanup. The generated library saved no execution settings and stayed unchanged during reuse. No example library or runtime ships in the package.
+
+The strict suite failed 14 resolver assertions: 11 of 12 worker briefs had no native resolver call, plus three case-level failures. Typed routing was off without configuration; all workers actually used Opus 5, with low, medium or high effort. This does not validate cheaper-model routing. FirstMate and the core package stayed unchanged; full private logs and artifacts remain in `/var/tmp/orchflows-e2e-20260917` after guarded lab teardown. [docs/e2e-routing-2026-09-17.md](docs/e2e-routing-2026-09-17.md) records exact commits, findings, test-development interventions and limits. The 16 harness tests and 15 package tests pass on Windows and WSL.
+
 ## Next
 
-0. Flip the repository public. On September 16 the history was rewritten to drop the Nightbind snapshot (pack 28 MiB to 4.4 MiB, every commit's tree unchanged, merged feature branches pruned from the remote) and the GitHub description was replaced; the pre-rewrite history is kept in a local bundle outside the repository. Trial evidence keeps machine-local paths such as `/home/danhm/...`; no secrets are tracked.
-1. Trial one `direct-PR` or `no-mistakes` project, and a saved workflow whose review returns repairs, so the repair-by-steer branch of a saved workflow runs through a model-driven primary.
-2. Try a Codex primary once, which would exercise the `agents/openai.yaml` invocation policy through a Codex primary.
-3. Record a primary's cost from a `--output-format stream-json` run if cost per request matters.
+1. Investigate the native resolver omissions without introducing a library routing owner. Trial existing configured smart routing and a saved workflow with legacy settings; newly authored workflows and fresh-session reuse are now covered live.
+2. Flip the repository public. On September 16 the history was rewritten to drop the Nightbind snapshot (pack 28 MiB to 4.4 MiB, every commit's tree unchanged, merged feature branches pruned from the remote) and the GitHub description was replaced; the pre-rewrite history is kept in a local bundle outside the repository. Trial evidence keeps machine-local paths such as `/home/danhm/...`; no secrets are tracked.
+3. Trial one `direct-PR` or `no-mistakes` project. The saved-workflow repair-by-steer branch is now covered by the September 17 live suite.
+4. Try a Codex primary once, which would exercise the `agents/openai.yaml` invocation policy through a Codex primary.
+5. Record a primary's cost from a `--output-format stream-json` run if cost per request matters.
 
 ## Constraints
 
