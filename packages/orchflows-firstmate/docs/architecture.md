@@ -5,7 +5,7 @@
 - [orch-work](../skills/orch-work/SKILL.md): a fresh FirstMate agent makes a result under chosen guidance.
 - [orch-review](../skills/orch-review/SKILL.md): a fresh FirstMate scout who did not make it reviews without fixing.
 
-All delegation goes through these primitives. FirstMate owns agent execution: brief, spawn, worktree, watcher, steering, relaunch, recovery, cancellation and delivery. Orchflows adds no runtime, scheduler or workflow language. Loading a `SKILL.md` applies its instructions in the caller's context, which is the FirstMate primary session; it does not launch an agent. Composing workflows add only their own decisions and supply each agent's assignment and context. [FirstMate](firstmate.md) records how each primitive maps onto FirstMate's commands and checkpoints.
+All delegation goes through these primitives. FirstMate owns dispatch, execution profiles, brief, spawn, worktree, watcher, steering, relaunch, recovery, cancellation and delivery. Orchflows adds no runtime, scheduler or workflow language. Loading a `SKILL.md` applies its instructions in the caller's context, which is the FirstMate primary session; it does not launch an agent. Composing workflows add only their own decisions and supply each agent's assignment and context. [FirstMate](firstmate.md) records how each primitive maps onto FirstMate's owners and checkpoints.
 
 The coordinator never edits a project, so the smallest workflow is one Work and one Review. Choose planning, delegation and isolation from unknowns, dependencies and edit conflicts. Run independent work concurrently.
 
@@ -15,7 +15,8 @@ Give each instruction and mechanism one owner; reference shared facts. READMEs a
 
 | Concept | Owner / location |
 | --- | --- |
-| Request and defaults: question, dates, sources, bounds, model, effort, output location | Captain's request; [model and effort](#model-and-effort) covers saved preferences |
+| Request: question, dates, sources, bounds, output location | Captain's request |
+| Harness, model, effort and quota | FirstMate's ordinary dispatch; [model and effort](#model-and-effort) defines the workflow boundary |
 | Coordination: composition, control flow, agent count | Composing workflow's `SKILL.md` |
 | Workflow state in flight: phase and task IDs | FirstMate backlog item note |
 | Quality criteria, including source-specific preferences | `guidance/<domain>.md` |
@@ -36,16 +37,9 @@ Give each instruction and mechanism one owner; reference shared facts. READMEs a
 
 ## Model and effort
 
-Every Work and Review is its own FirstMate spawn, so each assignment may use any harness, model and effort FirstMate has verified, independently of the others. Resolve model and effort separately, highest first:
+FirstMate owns harness, model and effort for every Work, Review and repair. Follow its installed intake, dispatch and recovery procedures; FirstMate resolves the concrete launch settings before each spawn. Its handling of the current request, local configuration, quota and adapter capabilities applies unchanged. Describe each assignment's purpose, inputs, uncertainty and checks so FirstMate can judge the work.
 
-1. The current request: a named assignment, then its Work or Review default.
-2. The saved workflow: a named assignment, then its Work or Review default.
-3. FirstMate's dispatch rules for the Orchflows Work and Review roles, then its configured default.
-4. FirstMate's effort fallback: low for well-understood bounded work, xhigh for ambiguous investigation or design, intermediate levels as uncertainty rises, never max unless the captain chose it.
-
-Prefer a cheaper model for makers with a clear assignment and the strongest available model for investigation and Review. Pass resolved values as explicit `--harness`, `--model` and `--effort` spawn flags on every agent, including repairs. Steer an existing maker only when it already honors the fixer's settings; otherwise relaunch it with the new profile or dispatch fresh Work. Report an unsupported setting as a gap instead of substituting another value.
-
-Record saved preferences in plain language beside the relevant assignments only when the user asks the generated workflow to use them. The authoring session's settings do not become workflow defaults. No model file or role registry is required. Behavioral corrections remain in guidance.
+Dynamic and saved workflows define no harness, model, effort or vendor-selection preferences, including in composed steps and repairs. Ignore those settings in older saved workflows and remove them when updating the workflow. Do not save the authoring session's execution settings. Execution preferences belong in the captain's current request or FirstMate's own configuration, handled by FirstMate. Behavioral corrections remain in guidance.
 
 ## Guidance selection
 

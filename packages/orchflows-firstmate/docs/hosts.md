@@ -37,7 +37,7 @@ Include `interface.display_name` and `interface.short_description` in the Codex 
 
 ## Model and effort
 
-FirstMate applies the [resolved choices](architecture.md#model-and-effort) as `--harness`, `--model` and `--effort` spawn flags and validates them per harness; an effort a harness cannot take is recorded in task metadata and omitted from the launch. Writing a model name in a brief does not select it. This package changes no host settings; FirstMate owns concurrency and quota.
+FirstMate owns [execution settings](architecture.md#model-and-effort), capability discovery and launch controls. Follow its installed `harness-adapters` guidance for dispatch and recovery. This package changes no host settings; FirstMate owns concurrency and quota.
 
 ## Isolation
 
